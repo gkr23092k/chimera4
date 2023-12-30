@@ -12,3 +12,20 @@
   .inputbox{
     width: 100% !important;
  }
+ .btn-customize{
+    background-color: #212142 !important;
+    color: whitesmoke !important;
+}
+h1 {
+    font-family: 'Fantasy'; 
+    font-size: 2em;
+    color: #ddc9c9; 
+    margin: auto;
+    margin-bottom:  0.3em;
+    margin-top: 0.3em; 
+
+
+  }
+  
+ 
+ 

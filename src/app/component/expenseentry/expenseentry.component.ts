@@ -19,6 +19,7 @@ export class ExpenseentryComponent implements OnInit {
   planned: any = '';
   dateentry: any = '';
   comment: any = '';
+  showcontent: any = '';
   constructor(private githubService: GithubServiceService) { }
 
 
@@ -33,6 +34,15 @@ export class ExpenseentryComponent implements OnInit {
     this.githubService.fetchDataFromGitHub().subscribe(
       (response: any) => {
         this.content = atob(response.content); // Decode content from base64
+        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+        contentfake.pop()
+        contentfake.forEach((el: any) => {
+          el.replace('Name:', '')
+          let indexcut = el.indexOf(',') + 1
+          let datecrindexcut = el.indexOf('Datecr:') - 1
+          this.showcontent += `\n${el.substring(indexcut, datecrindexcut)}`
+        })
+        
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -44,9 +54,13 @@ export class ExpenseentryComponent implements OnInit {
 
     if (this.user.trim() != '' || this.material.trim() != '' || this.materialgroup.trim() != '' || this.price.trim() != '' || this.accbalance.trim() != '' || this.inhandbalance.trim() != '' || this.offer.trim() != '' ||
       this.planned.trim() != '' || this.dateentry != '') {
-      const currentDate = new Date().toLocaleString('en-US', { timeZone: 'UTC' });
-      console.log('Current Date and Time (UTC):', currentDate);
-      const newData = `Name:${this.user},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Date:${this.dateentry},Comment:${this.comment},Datecr:${currentDate}`;
+      if (this.comment == '') this.comment = 'No comments'
+      const currentDate = new Date();
+      const formattedDateTime = `${currentDate.toDateString()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+      const formattedentryDateTime = `${this.dateentry.toDateString()}`;
+
+      this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
+      const newData = this.content + `Name:${this.user},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
       this.githubService.fetchDataFromGitHub().subscribe(
         (response: any) => {
           const sha = response.sha;
