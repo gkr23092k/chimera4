@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-
+import {MatChipsModule} from '@angular/material/chips';
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +20,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
   ],
   imports: [
     BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,
-    AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule
+    AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

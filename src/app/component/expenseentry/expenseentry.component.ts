@@ -20,6 +20,10 @@ export class ExpenseentryComponent implements OnInit {
   dateentry: any = '';
   comment: any = '';
   showcontent: any = '';
+  materialdropdown: any = []
+  selectedChip: string | null = 'New Material';
+  ismaterialdropdown: boolean = false;
+
   constructor(private githubService: GithubServiceService) { }
 
 
@@ -31,6 +35,7 @@ export class ExpenseentryComponent implements OnInit {
   }
 
   fetchData() {
+    this.materialdropdown=[]
     this.githubService.fetchDataFromGitHub().subscribe(
       (response: any) => {
         this.content = atob(response.content); // Decode content from base64
@@ -40,9 +45,13 @@ export class ExpenseentryComponent implements OnInit {
           el.replace('Name:', '')
           let indexcut = el.indexOf(',') + 1
           let datecrindexcut = el.indexOf('Datecr:') - 1
-          this.showcontent += `\n${el.substring(indexcut, datecrindexcut)}`
+          let data=el.substring(indexcut, datecrindexcut)
+          this.showcontent += `\n${data}`
+          this.materialdropdown.push(data.split(',')[0].replace('Material:',''))
+
         })
-        
+        this.materialdropdown = [...new Set(this.materialdropdown)];
+        console.log(this.materialdropdown)
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -99,4 +108,27 @@ export class ExpenseentryComponent implements OnInit {
     }
 
   }
+
+  chipSelectionChange(event: any) {
+    if (event.source.selected) {
+      // console.log('Selected:', event.source.value);
+      this.selectedChip = event.source.value;
+      this.ismaterialdropdown = this.selectedChip === 'Existing Material';
+    } else {
+      // console.log('Deselected:', event.source.value);
+      // If 'Existing Material' is deselected, automatically select 'New Material'
+      if (event.source.value === 'Existing Material') {
+        this.selectedChip = 'New Material';
+      } else if (event.source.value === 'New Material') {
+        // If 'New Material' is deselected, automatically select 'Existing Material'
+        this.selectedChip = 'Existing Material';
+      } else {
+        this.selectedChip = null;
+      }
+      // Update the dropdown flag based on the selected chip
+      this.ismaterialdropdown = this.selectedChip === 'Existing Material';
+    }
+  }
+
+
 }

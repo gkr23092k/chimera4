@@ -9,10 +9,20 @@
         <mat-label>User</mat-label>
         <input matInput placeholder="usercode" [(ngModel)]="user">
     </mat-form-field>
-
-    <mat-form-field class="example-full-width inputbox">
+    <mat-chip-listbox aria-label="Material selection">
+        <mat-chip-option [selected]="selectedChip === 'New Material'" (selectionChange)="chipSelectionChange($event)">New Material</mat-chip-option>
+        <mat-chip-option [selected]="selectedChip === 'Existing Material'" (selectionChange)="chipSelectionChange($event)">Existing Material</mat-chip-option>
+      </mat-chip-listbox>
+      
+    <mat-form-field *ngIf="ismaterialdropdown==false"class="example-full-width inputbox">
         <mat-label>Material</mat-label>
         <input matInput placeholder="spent on" [(ngModel)]="material">
+    </mat-form-field>
+    <mat-form-field  *ngIf="ismaterialdropdown==true" class="inputbox">
+        <mat-label>Material</mat-label>
+        <mat-select required  [(ngModel)]="material">
+            <mat-option *ngFor="let ma of materialdropdown" [value]="'Dress'">{{ma}}</mat-option>
+        </mat-select>
     </mat-form-field>
 
     <mat-form-field class="inputbox">
