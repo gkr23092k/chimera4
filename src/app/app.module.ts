@@ -8,13 +8,15 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ExpenseentryComponent } from './component/expenseentry/expenseentry.component';
 import {MatSelectModule} from '@angular/material/select';
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [
     AppComponent,
     ExpenseentryComponent
   ],
   imports: [
-    BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,
+    BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,
     AppRoutingModule,BrowserAnimationsModule,MatSelectModule
   ],
   providers: [],

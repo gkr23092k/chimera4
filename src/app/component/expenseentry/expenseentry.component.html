@@ -1,3 +1,4 @@
+    <div class="container">
     <div class="d-flex justify-content-around mt-5">
     <mat-form-field class="example-full-width inputbox">
       <mat-label>USER</mat-label>
@@ -37,7 +38,7 @@
         <mat-select required >
             <mat-option [value]="'Yes'">Yes</mat-option>
             <mat-option [value]="'No'">No</mat-option>
-            <mat-option [value]="''"></mat-option>
+            <mat-option [value]="'Emergency'">Emergency</mat-option>
         </mat-select>
     </mat-form-field>
 
@@ -48,3 +49,10 @@
       <mat-label>Leave a comment</mat-label>
       <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
     </mat-form-field>
+</div>
+
+<div *ngIf="content">
+    <h2>GitHub File Content:</h2>
+    <pre>{{ content }}</pre>
+  </div>
+  <button (click)="appendData()">Append Data to GitHub</button>
