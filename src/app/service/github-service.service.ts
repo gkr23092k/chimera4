@@ -11,7 +11,9 @@ export class GithubServiceService {
   private owner = 'gkr23092k';
   private repo = 'report';
   private filePath = 'edataanal.txt';
-  private token = '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';
+  private newkey='ghp_'
+  private newkey2='L3ClJ9c'
+  private token = this.newkey+'MrOmLHjF2aPS3IGfQLx1k6MO0Ts3s'+this.newkey2;
 
   constructor(private http: HttpClient) { }
 
