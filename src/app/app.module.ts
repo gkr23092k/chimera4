@@ -9,6 +9,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ExpenseentryComponent } from './component/expenseentry/expenseentry.component';
 import {MatSelectModule} from '@angular/material/select';
 import { HttpClientModule } from '@angular/common/http';
+import {MatButtonModule} from '@angular/material/button';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -16,8 +19,8 @@ import { HttpClientModule } from '@angular/common/http';
     ExpenseentryComponent
   ],
   imports: [
-    BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,
-    AppRoutingModule,BrowserAnimationsModule,MatSelectModule
+    BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,
+    AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
