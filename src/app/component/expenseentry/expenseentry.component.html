@@ -1,0 +1,50 @@
+    <div class="d-flex justify-content-around mt-5">
+    <mat-form-field class="example-full-width inputbox">
+      <mat-label>USER</mat-label>
+      <input matInput placeholder="usercode" >
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width inputbox">
+        <mat-label>Material</mat-label>
+        <input matInput placeholder="spent on" >
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width inputbox">
+        <mat-label>Material Group</mat-label>
+        <input matInput placeholder="spent on group" >
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width inputbox">
+        <mat-label>Price</mat-label>
+        <input matInput placeholder="price in rupees" >
+      </mat-form-field>
+
+      
+    </div>
+
+
+    <div class="d-flex justify-content-around mt-3">
+        <mat-form-field class="ms-1" [style.width.%]="25">
+        <mat-label>Offer</mat-label>
+        <mat-select required >
+            <mat-option [value]="'Yes'">Yes</mat-option>
+            <mat-option [value]="'No'">No</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="ms-1" [style.width.%]="25">
+        <mat-label>Planned</mat-label>
+        <mat-select required >
+            <mat-option [value]="'Yes'">Yes</mat-option>
+            <mat-option [value]="'No'">No</mat-option>
+            <mat-option [value]="''"></mat-option>
+        </mat-select>
+    </mat-form-field>
+
+</div>
+
+
+    <mat-form-field class="example-full-width ">
+      <mat-label>Leave a comment</mat-label>
+      <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
+    </mat-form-field>
