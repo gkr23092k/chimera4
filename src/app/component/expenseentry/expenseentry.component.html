@@ -97,7 +97,16 @@
     <div class="d-flex justify-content-center">
         <button class="border border-5" mat-button color="primary" (click)="appendData()">Add Expense</button>
     </div>
-    <div class="border border-info-subtle border-3 p-2 mt-2" *ngIf="content">
+    <!-- <div class="border border-info-subtle border-3 p-2 mt-2" *ngIf="content">
         <pre>{{ showcontent }}</pre>
-    </div>
+    </div> -->
+</div>
+<div class="d-fleX container">
+    <h1>Daily Expenses</h1>
+    <app-line-chart></app-line-chart>
+    <h1>Monthly Expenses</h1>
+    <app-negative-line-chart></app-negative-line-chart>
+    <h1>Material Group Expenses</h1>
+    <app-donut-chart></app-donut-chart>
+
 </div>

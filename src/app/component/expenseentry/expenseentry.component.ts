@@ -15,14 +15,15 @@ export class ExpenseentryComponent implements OnInit {
   price: any = '';
   accbalance: any = '';
   inhandbalance: any = '';
-  offer: any = '';
-  planned: any = '';
+  offer: any = 'No';
+  planned: any = 'No';
   dateentry: any = '';
   comment: any = '';
   showcontent: any = '';
   materialdropdown: any = []
   selectedChip: string | null = 'New Material';
   ismaterialdropdown: boolean = false;
+  dataarrayobj: any = []
 
   constructor(private githubService: GithubServiceService) { }
 
@@ -35,7 +36,8 @@ export class ExpenseentryComponent implements OnInit {
   }
 
   fetchData() {
-    this.materialdropdown=[]
+    this.showcontent = ''
+    this.materialdropdown = []
     this.githubService.fetchDataFromGitHub().subscribe(
       (response: any) => {
         this.content = atob(response.content); // Decode content from base64
@@ -45,13 +47,21 @@ export class ExpenseentryComponent implements OnInit {
           el.replace('Name:', '')
           let indexcut = el.indexOf(',') + 1
           let datecrindexcut = el.indexOf('Datecr:') - 1
-          let data=el.substring(indexcut, datecrindexcut)
+          let data = el.substring(indexcut, datecrindexcut)
+          let objdata: any = data.split(',');
           this.showcontent += `\n${data}`
-          this.materialdropdown.push(data.split(',')[0].replace('Material:',''))
+          this.materialdropdown.push(data.split(',')[0].replace('Material:', ''))
 
+          const dataObject: any = {};
+
+          objdata.forEach((pair: any) => {
+            const [key, value] = pair.split(':');
+            dataObject[key] = isNaN(value) ? value.trim() : parseFloat(value);
+          });
+          this.dataarrayobj.push(dataObject)
         })
         this.materialdropdown = [...new Set(this.materialdropdown)];
-        console.log(this.materialdropdown)
+        console.log(this.dataarrayobj)
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -61,38 +71,84 @@ export class ExpenseentryComponent implements OnInit {
 
   appendData() {
 
-    if (this.user.trim() != '' || this.material.trim() != '' || this.materialgroup.trim() != '' || this.price.trim() != '' || this.accbalance.trim() != '' || this.inhandbalance.trim() != '' || this.offer.trim() != '' ||
-      this.planned.trim() != '' || this.dateentry != '') {
-      if (this.comment == '') this.comment = 'No comments'
-      const currentDate = new Date();
-      const formattedDateTime = `${currentDate.toDateString()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-      const formattedentryDateTime = `${this.dateentry.toDateString()}`;
+    if (this.user.trim() != '' && this.material.trim() != '' && this.materialgroup.trim() != '' &&
+      this.price.trim() != '' && this.accbalance.trim() != '' && this.inhandbalance.trim() != '' && this.offer.trim() != '' &&
+      this.planned.trim() != '' && this.dateentry != '') {
+      if (/^[a-zA-Z]/.test(this.material) === true) {
+        if (this.comment == '') this.comment = 'No comments'
+        const currentDate = new Date();
+        const formattedDateTime = `${currentDate.toDateString()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
 
-      this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
-      const newData = this.content + `Name:${this.user},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
-      this.githubService.fetchDataFromGitHub().subscribe(
-        (response: any) => {
-          const sha = response.sha;
-          this.githubService.appendDataToGitHub(newData, sha).subscribe(
-            () => {
-              console.log('Data appended successfully!');
-              this.fetchData(); // Fetch updated content
+        try {
+          const formattedentryDateTime = `${this.dateentry.toDateString()}`;
+          // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
+          const newData = this.content + `Name:${this.user},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
+          this.githubService.fetchDataFromGitHub().subscribe(
+            (response: any) => {
+              const sha = response.sha;
+              this.githubService.appendDataToGitHub(newData, sha).subscribe(
+                () => {
+                  console.log('Data appended successfully!');
+                  Swal.fire({
+                    title: "Success",
+                    text: "Material Added Successfully",
+                    icon: "success"
+                  });
+                  this.fetchData(); // Fetch updated content
+                },
+                error => {
+                  console.error('Error appending data to GitHub:', error);
+                }
+              );
             },
             error => {
-              console.error('Error appending data to GitHub:', error);
+              console.error('Error fetching data from GitHub:', error);
             }
           );
-        },
-        error => {
-          console.error('Error fetching data from GitHub:', error);
+        } catch (error) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 13000,
+            showCloseButton: true,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+
+          Toast.fire({
+            icon: 'info',
+            title: 'Fill all the Date Properly'
+          })
         }
-      );
+      } else {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 10000,
+          showCloseButton: true,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+
+        Toast.fire({
+          icon: 'info',
+          title: 'Fill all the Material with Characters'
+        })
+      }
     } else {
       const Toast = Swal.mixin({
         toast: true,
         position: 'center',
         showConfirmButton: false,
-        timer: 15000,
+        timer: 13000,
         showCloseButton: true,
         timerProgressBar: true,
         didOpen: (toast) => {

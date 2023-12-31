@@ -13,10 +13,16 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatChipsModule} from '@angular/material/chips';
+import { LineChartComponent } from './component/line-chart/line-chart.component';
+import { DonutChartComponent } from './component/donut-chart/donut-chart.component';
+import { NegativeLineChartComponent } from './component/negative-line-chart/negative-line-chart.component';
 @NgModule({
   declarations: [
     AppComponent,
-    ExpenseentryComponent
+    ExpenseentryComponent,
+    LineChartComponent,
+    DonutChartComponent,
+    NegativeLineChartComponent
   ],
   imports: [
     BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,
