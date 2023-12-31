@@ -53,7 +53,7 @@ export class ExpenseentryComponent implements OnInit {
           let data = el.substring(indexcut, datecrindexcut)
           let objdata: any = data.split(',');
           this.showcontent += `\n${data}`
-          this.materialdropdown.push(data.split(',')[0].replace('Material:', ''))
+          this.materialdropdown.push(data.split(',')[0].replace('Material:', '').toUpperCase())
 
           const dataObject: any = {};
 
