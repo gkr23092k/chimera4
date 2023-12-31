@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import Swal from 'sweetalert2';
 
@@ -25,7 +26,7 @@ export class ExpenseentryComponent implements OnInit {
   ismaterialdropdown: boolean = false;
   dataarrayobj: any = []
 
-  constructor(private githubService: GithubServiceService) { }
+  constructor(private githubService: GithubServiceService,private router:Router) { }
 
 
 
@@ -94,7 +95,10 @@ export class ExpenseentryComponent implements OnInit {
                     text: "Material Added Successfully",
                     icon: "success"
                   });
-                  this.fetchData(); // Fetch updated content
+                  this.fetchData(); 
+                  this.router.navigateByUrl('/entry', { skipLocationChange: true }).then(() => {
+                    this.router.navigate(['entry']);
+                  });
                 },
                 error => {
                   console.error('Error appending data to GitHub:', error);
@@ -121,7 +125,7 @@ export class ExpenseentryComponent implements OnInit {
 
           Toast.fire({
             icon: 'info',
-            title: 'Fill all the Date Properly'
+            title: 'Fill the Date Properly'
           })
         }
       } else {
@@ -140,7 +144,7 @@ export class ExpenseentryComponent implements OnInit {
 
         Toast.fire({
           icon: 'info',
-          title: 'Fill all the Material with Characters'
+          title: 'Fill the Material with Characters'
         })
       }
     } else {
