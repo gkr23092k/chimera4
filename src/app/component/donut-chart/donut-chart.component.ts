@@ -11,29 +11,43 @@ am4core.useTheme(am4themes_animated);
   templateUrl: './donut-chart.component.html',
   styleUrls: ['./donut-chart.component.css']
 })
-export class DonutChartComponent implements OnInit, OnDestroy {
+export class DonutChartComponent implements OnInit {
   private chart!: am4charts.PieChart3D;
-  dataarrayobj: any=[];
+  dataarrayobj: any = [];
   content: string = '';
-  groupedData: any=[];
+  groupedData: any = [];
+  msg: any = '';
 
   constructor(private githubService: GithubServiceService) { }
 
   ngOnInit() {
-    this.fetchData()
+    this.fetchData('NO');
+
+    this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
+      console.log('line chart component')
+    });
+
+    this.githubService.currentvalue.subscribe(async (msg: any) => {
+      console.log('msg', msg)
+      this.msg = msg
+      this.disposeChart()
+      if (msg != '') await this.fetchData('YES')
+    })
+
   }
-  fetchData() {
+  async fetchData(checkcase: any) {
     this.githubService.fetchDataFromGitHub().subscribe(
       (response: any) => {
         this.content = atob(response.content); // Decode content from base64
         let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
         contentfake.pop()
+        this.dataarrayobj = []
         contentfake.forEach((el: any) => {
           el.replace('Name:', '')
-          let indexcut = el.indexOf(',') + 1
-          let datecrindexcut = el.indexOf('Datecr:') - 1
-          let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = data.split(',');
+          // let indexcut = el.indexOf(',') + 1
+          // let datecrindexcut = el.indexOf('Datecr:') - 1
+          // let data = el.substring(indexcut, datecrindexcut)
+          let objdata: any = el.trim().split(',');
           const dataObject: any = {};
 
           objdata.forEach((pair: any) => {
@@ -42,14 +56,24 @@ export class DonutChartComponent implements OnInit, OnDestroy {
           });
           this.dataarrayobj.push(dataObject)
         })
-        
-       this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
+        if (checkcase === 'YES') {
+          let tempstoreuser: any = []
+          this.dataarrayobj.filter((el: any) => {
+            console.log(el)
+            if (el.Name === this.msg) {
+              tempstoreuser.push(el)
+            }
+          });
+          this.dataarrayobj = tempstoreuser
+          console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
+        }
+        this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
         console.log(this.groupedData);
-        this.groupedData.forEach((el:any)=>{
-          el.category=el.Materialgroup
-          el.value=el.Price
+        this.groupedData.forEach((el: any) => {
+          el.category = el.Materialgroup
+          el.value = el.Price
         })
-
+        this.disposeChart()
         this.initializeChart();
       },
       error => {
@@ -72,13 +96,10 @@ export class DonutChartComponent implements OnInit, OnDestroy {
     }, {});
   }
 
-  ngOnDestroy() {
-    this.disposeChart();
-  }
+
 
   private initializeChart() {
     // Check if the chart is already initialized
-    if (!this.chart) {
       this.chart = am4core.create('donut-chartdiv', am4charts.PieChart3D); // Unique container ID
       this.chart.innerRadius = am4core.percent(40);
 
@@ -96,13 +117,10 @@ export class DonutChartComponent implements OnInit, OnDestroy {
       series.labels.template.fill = am4core.color('Black');
 
       this.chart.legend = new am4charts.Legend();
-      
-    } else {
-      console.warn('Chart is already initialized.');
-    }
+
   }
 
-  private disposeChart() {
+  disposeChart() {
     if (this.chart) {
       this.chart.dispose();
       console.log('Chart disposed successfully.');

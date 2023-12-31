@@ -25,8 +25,9 @@ export class ExpenseentryComponent implements OnInit {
   selectedChip: string | null = 'New Material';
   ismaterialdropdown: boolean = false;
   dataarrayobj: any = []
+  searchusername: any = '';
 
-  constructor(private githubService: GithubServiceService,private router:Router) { }
+  constructor(private githubService: GithubServiceService, private router: Router) { }
 
 
 
@@ -34,6 +35,7 @@ export class ExpenseentryComponent implements OnInit {
 
   ngOnInit() {
     this.fetchData();
+    this.dateentry = new Date();
   }
 
   fetchData() {
@@ -75,6 +77,8 @@ export class ExpenseentryComponent implements OnInit {
     if (this.user.trim() != '' && this.material.trim() != '' && this.materialgroup.trim() != '' &&
       this.price.trim() != '' && this.accbalance.trim() != '' && this.inhandbalance.trim() != '' && this.offer.trim() != '' &&
       this.planned.trim() != '' && this.dateentry != '') {
+      this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
+      this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
       if (/^[a-zA-Z]/.test(this.material) === true) {
         if (this.comment == '') this.comment = 'No comments'
         const currentDate = new Date();
@@ -95,7 +99,7 @@ export class ExpenseentryComponent implements OnInit {
                     text: "Material Added Successfully",
                     icon: "success"
                   });
-                  this.fetchData(); 
+                  this.fetchData();
                   this.router.navigateByUrl('/entry', { skipLocationChange: true }).then(() => {
                     this.router.navigate(['entry']);
                   });
@@ -168,6 +172,33 @@ export class ExpenseentryComponent implements OnInit {
     }
 
   }
+  searchuser() {
+    if (this.searchusername.trim() == '') {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 13000,
+        showCloseButton: true,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      Toast.fire({
+        icon: 'info',
+        title: 'Fill the User name filter!'
+      })
+
+    }
+    else{
+    this.githubService.changemessage(this.searchusername)
+    this.githubService.onFirstComponentButtonClick()
+    }
+  }
+
 
   chipSelectionChange(event: any) {
     if (event.source.selected) {

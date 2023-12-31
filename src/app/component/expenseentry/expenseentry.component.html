@@ -21,20 +21,23 @@
     <mat-form-field  *ngIf="ismaterialdropdown==true" class="inputbox">
         <mat-label>Material</mat-label>
         <mat-select required  [(ngModel)]="material">
-            <mat-option *ngFor="let ma of materialdropdown" [value]="'Dress'">{{ma}}</mat-option>
+            <mat-option *ngFor="let ma of materialdropdown" [value]="ma">{{ma}}</mat-option>
         </mat-select>
     </mat-form-field>
 
     <mat-form-field class="inputbox">
         <mat-label>Material Group</mat-label>
         <mat-select required [(ngModel)]="materialgroup">
-            <mat-option [value]="'Dress'">Dress</mat-option>
-            <mat-option [value]="'Food'">Food</mat-option>
-            <mat-option [value]="'Travel'">Travel</mat-option>
-            <mat-option [value]="'Medical'">Medical</mat-option>
             <mat-option [value]="'Cosmetics'">Cosmetics</mat-option>
-            <mat-option [value]="'Selfcare'">Selfcare</mat-option>
+            <mat-option [value]="'Dress'">Dress</mat-option>
             <mat-option [value]="'Investment'">Investment</mat-option>
+            <mat-option [value]="'Education'">Education</mat-option>
+            <mat-option [value]="'Electronics'">Electronics</mat-option>
+            <mat-option [value]="'Electricity'">Electricity</mat-option>
+            <mat-option [value]="'Food'">Food</mat-option>
+            <mat-option [value]="'Medical'">Medical</mat-option>
+            <mat-option [value]="'Selfcare'">Selfcare</mat-option>
+            <mat-option [value]="'Travel'">Travel</mat-option>
             <mat-option [value]="'Others'">Others</mat-option>
 
         </mat-select>
@@ -95,13 +98,23 @@
     </mat-form-field>
 
     <div class="d-flex justify-content-center">
+        
         <button class="border border-5" mat-button color="primary" (click)="appendData()">Add Expense</button>
     </div>
     <!-- <div class="border border-info-subtle border-3 p-2 mt-2" *ngIf="content">
         <pre>{{ showcontent }}</pre>
     </div> -->
 </div>
-<div class="d-fleX container">
+<div class="d-fleX container mt-5">
+    <mat-form-field class="example-full-width inputbox">
+        <mat-label>User Filter</mat-label>
+        <input matInput placeholder="usercode" [(ngModel)]="searchusername">
+    </mat-form-field>
+    <div class="d-flex justify-content-center mb-5">
+
+    <button class="border border-5" mat-button color="primary" (click)="searchuser()">Filter By User</button>
+</div>
+
     <h1>Daily Expenses</h1>
     <app-line-chart></app-line-chart>
     <h1>Monthly Expenses</h1>
