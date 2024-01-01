@@ -10,17 +10,19 @@
         <input matInput placeholder="usercode" [(ngModel)]="user">
     </mat-form-field>
     <mat-chip-listbox aria-label="Material selection">
-        <mat-chip-option [selected]="selectedChip === 'New Material'" (selectionChange)="chipSelectionChange($event)">New Material</mat-chip-option>
-        <mat-chip-option [selected]="selectedChip === 'Existing Material'" (selectionChange)="chipSelectionChange($event)">Existing Material</mat-chip-option>
-      </mat-chip-listbox>
-      
-    <mat-form-field *ngIf="ismaterialdropdown==false"class="example-full-width inputbox">
+        <mat-chip-option [selected]="selectedChip === 'New Material'"
+            (selectionChange)="chipSelectionChange($event)">New Material</mat-chip-option>
+        <mat-chip-option [selected]="selectedChip === 'Existing Material'"
+            (selectionChange)="chipSelectionChange($event)">Existing Material</mat-chip-option>
+    </mat-chip-listbox>
+
+    <mat-form-field *ngIf="ismaterialdropdown==false" class="example-full-width inputbox">
         <mat-label>Material</mat-label>
         <input matInput placeholder="spent on" [(ngModel)]="material">
     </mat-form-field>
-    <mat-form-field  *ngIf="ismaterialdropdown==true" class="inputbox">
+    <mat-form-field *ngIf="ismaterialdropdown==true" class="inputbox">
         <mat-label>Material</mat-label>
-        <mat-select required  [(ngModel)]="material">
+        <mat-select required [(ngModel)]="material">
             <mat-option *ngFor="let ma of materialdropdown" [value]="ma">{{ma}}</mat-option>
         </mat-select>
     </mat-form-field>
@@ -51,12 +53,18 @@
 
     <!-- </div> -->
     <!-- <div class="d-flex justify-content-around mt-3"> -->
-
+    <div class="d-flex justify-content-center mb-2">
+        <button class="border border-5" mat-button color="primary" (click)="calcbalance('ACC')">Calculate Acc
+            Balance</button>
+    </div>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>Account Balance</mat-label>
         <input [type]="'number'" [(ngModel)]="accbalance" matInput placeholder="balance in rupees">
     </mat-form-field>
-
+    <div class="d-flex justify-content-center mb-2">
+        <button class="border border-5" mat-button color="primary" (click)="calcbalance('IHB')">Calculate Ihb
+            Balance</button>
+    </div>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>In Hand Balance</mat-label>
         <input [type]="'number'" [(ngModel)]="inhandbalance" matInput placeholder="balance in rupees">
@@ -98,7 +106,7 @@
     </mat-form-field>
 
     <div class="d-flex justify-content-center">
-        
+
         <button class="border border-5" mat-button color="primary" (click)="appendData()">Add Expense</button>
     </div>
     <!-- <div class="border border-info-subtle border-3 p-2 mt-2" *ngIf="content">
@@ -112,8 +120,8 @@
     </mat-form-field>
     <div class="d-flex justify-content-center mb-5">
 
-    <button class="border border-5" mat-button color="primary" (click)="searchuser()">Filter By User</button>
-</div>
+        <button class="border border-5" mat-button color="primary" (click)="searchuser()">Filter By User</button>
+    </div>
 
     <h1>Daily Expenses</h1>
     <app-line-chart></app-line-chart>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { take } from 'rxjs';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import Swal from 'sweetalert2';
 
@@ -15,7 +16,9 @@ export class ExpenseentryComponent implements OnInit {
   materialgroup: any = '';
   price: any = '';
   accbalance: any = '';
+  calcaccbalance: any = '';
   inhandbalance: any = '';
+  calcinhandbalance: any = '';
   offer: any = 'No';
   planned: any = 'No';
   dateentry: any = '';
@@ -26,6 +29,7 @@ export class ExpenseentryComponent implements OnInit {
   ismaterialdropdown: boolean = false;
   dataarrayobj: any = []
   searchusername: any = '';
+  code: boolean = false;
 
   constructor(private githubService: GithubServiceService, private router: Router) { }
 
@@ -48,12 +52,12 @@ export class ExpenseentryComponent implements OnInit {
         contentfake.pop()
         contentfake.forEach((el: any) => {
           el.replace('Name:', '')
-          let indexcut = el.indexOf(',') + 1
-          let datecrindexcut = el.indexOf('Datecr:') - 1
-          let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = data.split(',');
-          this.showcontent += `\n${data}`
-          this.materialdropdown.push(data.split(',')[0].replace('Material:', '').toUpperCase())
+          // let indexcut = el.indexOf(',') + 1
+          // let datecrindexcut = el.indexOf('Datecr:') - 1
+          // let data = el.substring(indexcut, datecrindexcut)
+          let objdata: any = el.trim().split(',');
+          this.showcontent += `\n${el}`
+          this.materialdropdown.push(el.split(',')[1].replace('Material:', '').toUpperCase())
 
           const dataObject: any = {};
 
@@ -63,6 +67,7 @@ export class ExpenseentryComponent implements OnInit {
           });
           this.dataarrayobj.push(dataObject)
         })
+
         this.materialdropdown = [...new Set(this.materialdropdown)];
         console.log(this.dataarrayobj)
       },
@@ -72,10 +77,77 @@ export class ExpenseentryComponent implements OnInit {
     );
   }
 
+  calcbalance(val: any) {
+    console.log('called', val, this.price, this.user)
+    if (this.price != 0 && this.price.trim() != '' && this.price.replaceAll('0', '') != ''
+      && this.user != undefined && this.user.trim() != '') {
+      console.log('called', val, this.price, this.user)
+
+      this.dataarrayobj.filter((bal: any) => {
+        if (bal.Name == this.user) {
+          console.log(bal, this.user)
+          this.calcaccbalance = bal.AccountBalance
+          this.calcinhandbalance = bal.InhandBalance
+        }
+      })
+      if (val == 'ACC') {
+        this.accbalance = this.calcaccbalance - this.price
+        this.inhandbalance = this.calcinhandbalance
+
+      }
+      else if (val == 'IHB') {
+        this.accbalance = this.calcaccbalance
+        this.inhandbalance = this.calcinhandbalance - this.price
+      }
+      console.log(this.accbalance, this.inhandbalance)
+    } else {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 13000,
+        showCloseButton: true,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      Toast.fire({
+        icon: 'info',
+        title: 'Fill the User & Price Properly '
+      })
+    }
+
+
+
+  }
+
+   containsSymbolsNumbersCharacters(inputString:any) {
+    const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    const containsSymbols = regex.test(inputString);
+  
+    // Check for numbers and characters
+    const containsNumbersCharacters = /[0-9a-zA-Z]/.test(inputString);
+    let containsNumbersCharacterslength=false
+    if(inputString.length>=5){
+       containsNumbersCharacterslength=true
+    }
+        return containsSymbols && containsNumbersCharacters &&containsNumbersCharacterslength;
+  }
+  
+ 
+  
+
+
   appendData() {
+    const result = this.containsSymbolsNumbersCharacters(this.user);
+    console.log(result); 
+    if(result){
 
     if (this.user.trim() != '' && this.material.trim() != '' && this.materialgroup.trim() != '' &&
-      this.price.trim() != '' && this.accbalance.trim() != '' && this.inhandbalance.trim() != '' && this.offer.trim() != '' &&
+      this.price.trim() != '' && this.accbalance.toString().trim() != '' && this.inhandbalance.toString().trim() != '' && this.offer.trim() != '' &&
       this.planned.trim() != '' && this.dateentry != '') {
       this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
       this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
@@ -91,23 +163,41 @@ export class ExpenseentryComponent implements OnInit {
           this.githubService.fetchDataFromGitHub().subscribe(
             (response: any) => {
               const sha = response.sha;
-              this.githubService.appendDataToGitHub(newData, sha).subscribe(
+              this.githubService.appendDataToGitHub(newData, sha).pipe(take(1)).subscribe(
                 () => {
+                  this.code = true
                   console.log('Data appended successfully!');
+
+                  this.fetchData();
                   Swal.fire({
                     title: "Success",
                     text: "Material Added Successfully",
                     icon: "success"
-                  });
-                  this.fetchData();
-                  this.router.navigateByUrl('/entry', { skipLocationChange: true }).then(() => {
+                  })
+                  this.router.navigate(['ch']);
+                  setTimeout(() => {
                     this.router.navigate(['entry']);
-                  });
-                },
-                error => {
-                  console.error('Error appending data to GitHub:', error);
-                }
-              );
+                    // const Toast = Swal.mixin({
+                    //   toast: true,
+                    //   position: 'center',
+                    //   showConfirmButton: false,
+                    //   timer: 10000,
+                    //   showCloseButton: true,
+                    //   timerProgressBar: true,
+                    //   didOpen: (toast) => {
+                    //     toast.addEventListener('mouseenter', Swal.stopTimer)
+                    //     toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    //   }
+                    // })
+          
+                    // Toast.fire({
+                    //   icon: 'info',
+                    //   title: 'Fill the Date Properly'
+                    // })
+                  }, 1000);
+
+
+                });
             },
             error => {
               console.error('Error fetching data from GitHub:', error);
@@ -118,7 +208,7 @@ export class ExpenseentryComponent implements OnInit {
             toast: true,
             position: 'center',
             showConfirmButton: false,
-            timer: 13000,
+            timer: 10000,
             showCloseButton: true,
             timerProgressBar: true,
             didOpen: (toast) => {
@@ -170,6 +260,25 @@ export class ExpenseentryComponent implements OnInit {
         title: 'Fill all the Details Properly'
       })
     }
+  }else{
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 13000,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+
+    Toast.fire({
+      icon: 'info',
+      title: 'Username should have characters, numbers, symbols and minimum 5 digits'
+    })
+  }
 
   }
   searchuser() {
@@ -193,9 +302,9 @@ export class ExpenseentryComponent implements OnInit {
       })
 
     }
-    else{
-    this.githubService.changemessage(this.searchusername)
-    this.githubService.onFirstComponentButtonClick()
+    else {
+      this.githubService.changemessage(this.searchusername.replaceAll(',','_').replaceAll(':','_'))
+      this.githubService.onFirstComponentButtonClick()
     }
   }
 
