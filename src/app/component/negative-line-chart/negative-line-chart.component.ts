@@ -148,7 +148,7 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
     series.dataFields.dateX = 'date';
     series.dataFields.valueY = 'value';
     series.strokeWidth = 2;
-    series.tooltipText = '{valueY} in {date}';
+    series.tooltipText = '{valueY} Rs in {date}';
 
     // Enable chart cursor
     this.chart.cursor = new am4charts.XYCursor();

@@ -84,81 +84,95 @@ export class LineChartComponent implements OnInit {
               title: 'No user data! Check username filter'
             })
 
-          
-        } console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
-      }
 
+          } console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
+        }
+        this.dataarrayobj= Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'Price'));
+        console.log(this.dataarrayobj);
         this.dataarrayobj.forEach((el: any) => {
-        el.value = el.Price
-        el.date = new Date(el.Date)
-      });
-    this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
-    // console.log(this.dataarrayobj)
-    this.dataloaded()
-  },
+          el.value = el.Price
+          el.date = new Date(el.Date)
+        });
+        this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
+        // console.log(this.dataarrayobj)
+        this.dataloaded()
+      },
       error => {
-  // console.error('Error fetching data from GitHub:', error);
-}
+        // console.error('Error fetching data from GitHub:', error);
+      }
     );
   }
 
+  groupAndSum(array: any, groupByKey: any, sumByKey: any) {
+    return array.reduce((result: any, item: any) => {
+      const key = item[groupByKey];
+      const value = item[sumByKey];
+
+      if (!result[key]) {
+        result[key] = { [groupByKey]: key, [sumByKey]: 0 };
+      }
+
+      result[key][sumByKey] += value;
+
+      return result;
+    }, {});
+  }
+
+  dataloaded() {
+    // Create chart instance
+    this.chart = am4core.create('chartdiv', am4charts.XYChart);
 
 
-dataloaded() {
-  // Create chart instance
-  this.chart = am4core.create('chartdiv', am4charts.XYChart);
+    this.chart.data = this.dataarrayobj
 
+    // Create date axis
+    const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.minGridDistance = 60;
+    dateAxis.renderer.labels.template.fontSize = 12; // Adjust the font size as needed
+    dateAxis.renderer.labels.template.rotation = 45; // Adjust the rotation angle as needed
+    dateAxis.renderer.grid.template.location = 0.5; // Adjust the grid location to center the labels
 
-  this.chart.data = this.dataarrayobj
+    // Create value axis
+    const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
 
-  // Create date axis
-  const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
-  dateAxis.renderer.minGridDistance = 60;
-  dateAxis.renderer.labels.template.fontSize = 12; // Adjust the font size as needed
-  dateAxis.renderer.labels.template.rotation = 45; // Adjust the rotation angle as needed
-  dateAxis.renderer.grid.template.location = 0.5; // Adjust the grid location to center the labels
+    // Create series
+    const series = this.chart.series.push(new am4charts.LineSeries());
+    series.dataFields.dateX = 'date';
+    series.dataFields.valueY = 'value';
+    series.tooltipText = '{value} Rs in {date}';
+    series.strokeWidth = 2;
 
-  // Create value axis
-  const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
+    // Enable chart cursor
+    this.chart.cursor = new am4charts.XYCursor();
+    this.chart.cursor.behavior = 'zoomX';
 
-  // Create series
-  const series = this.chart.series.push(new am4charts.LineSeries());
-  series.dataFields.dateX = 'date';
-  series.dataFields.valueY = 'value';
-  series.tooltipText = '{value} Ruppees in {date}';
-  series.strokeWidth = 2;
+    // Enable scrollbar
+    this.chart.scrollbarX = new am4core.Scrollbar();
+    this.chart.scrollbarX.marginBottom = 30;
 
-  // Enable chart cursor
-  this.chart.cursor = new am4charts.XYCursor();
-  this.chart.cursor.behavior = 'zoomX';
+    // Add legend
+    this.chart.legend = new am4charts.Legend();
 
-  // Enable scrollbar
-  this.chart.scrollbarX = new am4core.Scrollbar();
-  this.chart.scrollbarX.marginBottom = 30;
+    this.chart.events.on('ready', () => {
+      const currentDate = new Date();
+      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-  // Add legend
-  this.chart.legend = new am4charts.Legend();
-
-  this.chart.events.on('ready', () => {
-    const currentDate = new Date();
-    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-    dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
-  });
+      dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
+    });
 
 
 
-}
+  }
 
   private disposeChart() {
-  if (this.chart) {
-    this.chart.dispose();
-    console.log('Chart disposed successfully.');
-  } else {
-    console.warn('Chart was not initialized before disposal.');
+    if (this.chart) {
+      this.chart.dispose();
+      console.log('Chart disposed successfully.');
+    } else {
+      console.warn('Chart was not initialized before disposal.');
+    }
   }
-}
 
 
 
