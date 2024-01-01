@@ -101,7 +101,7 @@ export class DonutChartComponent implements OnInit {
   private initializeChart() {
     // Check if the chart is already initialized
       this.chart = am4core.create('donut-chartdiv', am4charts.PieChart3D); // Unique container ID
-      this.chart.innerRadius = am4core.percent(40);
+      this.chart.innerRadius = am4core.percent(55);
 
       // Add data (replace this with your actual data)
       this.chart.data = this.groupedData
@@ -113,13 +113,24 @@ export class DonutChartComponent implements OnInit {
 
       // Add labels
       series.labels.template.text = '{category}:{value.value}';
-      series.labels.template.radius = am4core.percent(-20);
       series.labels.template.fill = am4core.color('Black');
+      this.setLabelRadius();
 
       this.chart.legend = new am4charts.Legend();
 
   }
 
+  private setLabelRadius() {
+    const screenWidth = window.innerWidth;
+  console.log(screenWidth,'screenWidth')
+    // Adjust the radius based on the screen size
+    const radiusPercent = screenWidth < 767 ? -75 : -25;
+  
+    const series = this.chart.series.getIndex(0) as am4charts.PieSeries3D;
+    if (series) {
+      series.labels.template.radius = am4core.percent(radiusPercent);
+    }
+  }
   disposeChart() {
     if (this.chart) {
       this.chart.dispose();
