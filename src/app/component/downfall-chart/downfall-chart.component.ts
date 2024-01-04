@@ -43,11 +43,11 @@ export class DownfallChartComponent implements OnInit {
     this.fetchData('NO');
 
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
-      console.log('line chart component')
+      // console.log('line chart component')
     });
 
     this.githubService.currentvalue.subscribe((msg: any) => {
-      console.log('msg', msg)
+      // console.log('msg', msg)
       this.msg = msg
       // this.disposeChart()
       if (msg != '') this.fetchData('YES')
@@ -79,7 +79,7 @@ export class DownfallChartComponent implements OnInit {
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
             }
@@ -105,16 +105,30 @@ export class DownfallChartComponent implements OnInit {
             })
 
 
-          } console.log([this.dataarrayobj, tempstoreuser, 'afterdown', this.msg])
+          }
+          // console.log([this.dataarrayobj, tempstoreuser, 'afterdown', this.msg])
         }
-        this.dataarrayobj = Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'AccountBalance', 'InhandBalance', 'Price'));
-        console.log(this.dataarrayobj);
-        this.dataarrayobj.forEach((el: any) => {
-          el.value1 = el.AccountBalance
-          el.value2 = el.InhandBalance
-          el.value3 = el.Price
 
+
+        let lastEnteredDataForEachUser:any = _.map(_.groupBy(this.dataarrayobj, 'Name'), userObjects => {
+          return _.map(_.groupBy(userObjects, 'Date'), dateObjects => _.last(dateObjects));
+        });
+        lastEnteredDataForEachUser=_.flattenDeep(lastEnteredDataForEachUser)
+        lastEnteredDataForEachUser = Object.values(this.groupAndSum(lastEnteredDataForEachUser, 'Date', 'AccountBalance', 'InhandBalance', 'Price', 'Name'));
+        console.log(lastEnteredDataForEachUser);
+
+        this.dataarrayobj = Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'AccountBalance', 'InhandBalance', 'Price', 'Name'));
+        // console.log(this.dataarrayobj);
+        this.dataarrayobj.forEach((el: any) => {
+          lastEnteredDataForEachUser.forEach((user: any) => {
+
+            if(user.Date==el.Date){
+          el.value1 = user.AccountBalance
+          el.value2 = user.InhandBalance
+          }
+          })
           el.date = new Date(el.Date)
+          el.value3 = el.Price
         });
         this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
         console.log([this.dataarrayobj, 'afterdown'])
@@ -126,15 +140,26 @@ export class DownfallChartComponent implements OnInit {
     );
   }
 
-  groupAndSum(array: any, groupByKey: any, sumByKey1: any, sumByKey2: any, sumByKey3: any) {
+
+
+
+
+
+
+
+
+
+  groupAndSum(array: any, groupByKey: any, sumByKey1: any, sumByKey2: any, sumByKey3: any, userKey: any) {
     return Object.values(array.reduce((result: any, item: any) => {
       const key = item[groupByKey];
       const value1 = item[sumByKey1];
       const value2 = item[sumByKey2];
       const value3 = item[sumByKey3];
+      const Name = item[userKey];
+
 
       if (!result[key]) {
-        result[key] = { [groupByKey]: key, [sumByKey1]: 0, [sumByKey2]: 0, [sumByKey3]: 0 };
+        result[key] = { [groupByKey]: key, [sumByKey1]: 0, [sumByKey2]: 0, [sumByKey3]: 0, ['Name']: Name };
       }
 
       result[key][sumByKey1] += value1;
@@ -219,7 +244,7 @@ export class DownfallChartComponent implements OnInit {
 
       dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
     });
-}
+  }
 
 
 
