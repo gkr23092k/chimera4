@@ -80,15 +80,15 @@ export class GridComponent {
     );
 
     this.columnDefs = [
-      { headerName: 'Id', field: 'Id', filter: true, flex: 1 },
-      { headerName: 'Material', field: 'Material', filter: true, flex: 1 },
-      { headerName: 'Materialgroup', field: 'Materialgroup', filter: true, flex: 1 },
-      { headerName: 'Price', field: 'Price', filter: true, flex: 1 },
-      { headerName: 'AccountBalance', field: 'AccountBalance', filter: true, flex: 1 },
-      { headerName: 'InhandBalance', field: 'InhandBalance', filter: true, flex: 1 },
-      { headerName: 'Date', field: 'Date', filter: true, flex: 1 },
-      { headerName: 'Planned', field: 'Planned', filter: true, flex: 1 },
-      { headerName: 'Offer', field: 'Offer', filter: true, flex: 1 },
+      { headerName: 'Id', field: 'Id', filter: true, minWidth:10,maxWidth:300 },
+      { headerName: 'Material', field: 'Material', filter: true, minWidth:100, maxWidth:300 },
+      { headerName: 'Materialgroup', field: 'Materialgroup', filter: true, minWidth:100 ,maxWidth:300 },
+      { headerName: 'Price', field: 'Price', filter: true, minWidth:50 ,maxWidth:300 },
+      { headerName: 'AccountBalance', field: 'AccountBalance', filter: true, minWidth:100 ,maxWidth:300 },
+      { headerName: 'InhandBalance', field: 'InhandBalance', filter: true, minWidth:100 ,maxWidth:300 },
+      { headerName: 'Date', field: 'Date', filter: true, minWidth:100 ,maxWidth:300 },
+      { headerName: 'Planned', field: 'Planned', filter: true, minWidth:100 ,maxWidth:300 },
+      { headerName: 'Offer', field: 'Offer', filter: true, minWidth:100 ,maxWidth:300 }
 
     ];
 
