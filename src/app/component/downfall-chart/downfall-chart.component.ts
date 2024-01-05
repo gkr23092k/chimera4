@@ -195,8 +195,10 @@ export class DownfallChartComponent implements OnInit {
     const series1 = this.chart.series.push(new am4charts.LineSeries());
     series1.dataFields.dateX = 'date';
     series1.dataFields.valueY = 'value1';
-    series1.tooltipText = '{value1} Rs AccountBalance in {date}';
+    series1.tooltipText = `{value1} Rs AccountBalance in {date}`;
     series1.strokeWidth = 2;
+    series1.stroke = am4core.color("green");
+
 
     // Create second X-axis
     const x2Axis = this.chart.xAxes.push(new am4charts.DateAxis());
@@ -225,6 +227,7 @@ export class DownfallChartComponent implements OnInit {
     series3.dataFields.valueY = 'value3';
     series3.tooltipText = '{value3} Rs Spent in {date}';
     series3.strokeWidth = 2;
+    series3.stroke = am4core.color("red");
 
     // Enable chart cursor
     this.chart.cursor = new am4charts.XYCursor();

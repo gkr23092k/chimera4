@@ -194,7 +194,7 @@ export class ExpenseentryComponent implements OnInit {
                     //   icon: 'info',
                     //   title: 'Fill the Date Properly'
                     // })
-                  }, 1000);
+                  }, 800);
 
 
                 });
