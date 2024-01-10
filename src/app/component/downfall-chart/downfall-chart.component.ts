@@ -110,10 +110,10 @@ export class DownfallChartComponent implements OnInit {
         }
 
 
-        let lastEnteredDataForEachUser:any = _.map(_.groupBy(this.dataarrayobj, 'Name'), userObjects => {
+        let lastEnteredDataForEachUser: any = _.map(_.groupBy(this.dataarrayobj, 'Name'), userObjects => {
           return _.map(_.groupBy(userObjects, 'Date'), dateObjects => _.last(dateObjects));
         });
-        lastEnteredDataForEachUser=_.flattenDeep(lastEnteredDataForEachUser)
+        lastEnteredDataForEachUser = _.flattenDeep(lastEnteredDataForEachUser)
         lastEnteredDataForEachUser = Object.values(this.groupAndSum(lastEnteredDataForEachUser, 'Date', 'AccountBalance', 'InhandBalance', 'Price', 'Name'));
         console.log(lastEnteredDataForEachUser);
 
@@ -122,10 +122,10 @@ export class DownfallChartComponent implements OnInit {
         this.dataarrayobj.forEach((el: any) => {
           lastEnteredDataForEachUser.forEach((user: any) => {
 
-            if(user.Date==el.Date){
-          el.value1 = user.AccountBalance
-          el.value2 = user.InhandBalance
-          }
+            if (user.Date == el.Date) {
+              el.value1 = user.AccountBalance
+              el.value2 = user.InhandBalance
+            }
           })
           el.date = new Date(el.Date)
           el.value3 = el.Price
@@ -187,9 +187,11 @@ export class DownfallChartComponent implements OnInit {
     dateAxis.renderer.labels.template.fontSize = 12;
     dateAxis.renderer.labels.template.rotation = 45;
     dateAxis.renderer.grid.template.location = 0;
+    dateAxis.zoomable = true;
 
     // Create value axis
     const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
+    dateAxis.zoomable = true;
 
     // Create first series (line for the first X-axis)
     const series1 = this.chart.series.push(new am4charts.LineSeries());
@@ -200,12 +202,6 @@ export class DownfallChartComponent implements OnInit {
     series1.stroke = am4core.color("green");
 
 
-    // Create second X-axis
-    const x2Axis = this.chart.xAxes.push(new am4charts.DateAxis());
-    x2Axis.renderer.minGridDistance = 25;
-    x2Axis.renderer.labels.template.fontSize = 0;
-    x2Axis.renderer.labels.template.rotation = 0;
-    x2Axis.renderer.grid.template.location = 0;
 
     // Create second series (line for the second X-axis)
     const series2 = this.chart.series.push(new am4charts.LineSeries());
@@ -214,12 +210,7 @@ export class DownfallChartComponent implements OnInit {
     series2.tooltipText = '{value2} Rs InhandBalance in {date}';
     series2.strokeWidth = 2;
 
-    // Create third X-axis
-    const x3Axis = this.chart.xAxes.push(new am4charts.DateAxis());
-    x3Axis.renderer.minGridDistance = 25;
-    x3Axis.renderer.labels.template.fontSize = 0;
-    x3Axis.renderer.labels.template.rotation = 0;
-    x3Axis.renderer.grid.template.location = 0;
+
 
     // Create third series (line for the third X-axis)
     const series3 = this.chart.series.push(new am4charts.LineSeries());
@@ -241,23 +232,23 @@ export class DownfallChartComponent implements OnInit {
     this.chart.legend = new am4charts.Legend();
     const screenWidth = window.innerWidth;
 
-    if( screenWidth < 767 ){
+    if (screenWidth < 767) {
       this.chart.events.on('ready', () => {
         const currentDate = new Date();
         const startOfLast7Days = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7);
-        
+
         dateAxis.zoomToDates(startOfLast7Days, currentDate, true);
-       
+
 
       });
-      
+
     }
-    else{
+    else {
       this.chart.events.on('ready', () => {
         const currentDate = new Date();
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() +1, 0);
-        
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
         dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
       });
     }
