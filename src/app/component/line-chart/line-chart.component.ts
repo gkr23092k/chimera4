@@ -127,7 +127,7 @@ export class LineChartComponent implements OnInit {
 
     // Create date axis
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
-    dateAxis.renderer.minGridDistance = 60;
+    dateAxis.renderer.minGridDistance = 30;
     dateAxis.renderer.labels.template.fontSize = 12; // Adjust the font size as needed
     dateAxis.renderer.labels.template.rotation = 45; // Adjust the rotation angle as needed
     dateAxis.renderer.grid.template.location = 0.5; // Adjust the grid location to center the labels
@@ -139,29 +139,42 @@ export class LineChartComponent implements OnInit {
     const series = this.chart.series.push(new am4charts.LineSeries());
     series.dataFields.dateX = 'date';
     series.dataFields.valueY = 'value';
-    series.tooltipText = '{value} Rs in {date}';
     series.strokeWidth = 2;
-
+    
     // Enable chart cursor
     this.chart.cursor = new am4charts.XYCursor();
     this.chart.cursor.behavior = 'zoomX';
-
+    
     // Enable scrollbar
     this.chart.scrollbarX = new am4core.Scrollbar();
     this.chart.scrollbarX.marginBottom = 30;
-
+    
     // Add legend
     this.chart.legend = new am4charts.Legend();
+    const screenWidth = window.innerWidth;
+    console.log(screenWidth,'screenWidth')
+    if( screenWidth < 767 ){
+      this.chart.events.on('ready', () => {
+        const currentDate = new Date();
+        const startOfLast10Days = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7);
+        
+        dateAxis.zoomToDates(startOfLast10Days, currentDate, true);
+        series.tooltipText = `{value} Rs 
+         {date}`;
 
-    this.chart.events.on('ready', () => {
-      const currentDate = new Date();
-      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-      dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
-    });
-
-
+      });
+      
+    }
+    else{
+      this.chart.events.on('ready', () => {
+        const currentDate = new Date();
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() +1, 0);
+        
+        dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
+        series.tooltipText = '{value} Rs in {date}';
+      });
+    }
 
   }
 

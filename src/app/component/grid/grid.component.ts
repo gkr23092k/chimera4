@@ -13,7 +13,8 @@ export class GridComponent {
   rowData: any = [];
   columnDefs: any = []
   msg: any;
-
+  window: number = 0;
+  intialwidth: number = 0;
   constructor(private githubService: GithubServiceService) { }
   ngOnInit() {
     this.fetchData('NO');
@@ -21,13 +22,14 @@ export class GridComponent {
       console.log('line chart component')
     });
 
+  
     this.githubService.currentvalue.subscribe((msg: any) => {
       console.log('msg', msg)
       this.msg = msg
-      if (msg != '')  this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
+      if (msg != '') this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
         console.log('line chart component')
       });
-  
+
       this.githubService.currentvalue.subscribe((msg: any) => {
         console.log('msg', msg)
         this.msg = msg
@@ -41,7 +43,7 @@ export class GridComponent {
       (response: any) => {
         this.content = atob(response.content); // Decode content from base64
         let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        this.dataarrayobj=[]
+        this.dataarrayobj = []
         contentfake.pop()
         contentfake.forEach((el: any) => {
           el.replace('Name:', '')
@@ -67,9 +69,9 @@ export class GridComponent {
           });
           this.dataarrayobj = tempstoreuser
         }
-        this.dataarrayobj.filter((el: any,index:any) => {
-            el.Id=index+1
-          
+        this.dataarrayobj.filter((el: any, index: any) => {
+          el.Id = index + 1
+
         });
         console.log([this.dataarrayobj, 'this.dataarrayobj'])
         this.rowData = this.dataarrayobj
@@ -78,19 +80,28 @@ export class GridComponent {
         console.error('Error fetching data from GitHub:', error);
       }
     );
+    this.window = window.innerWidth;
+    if (this.window < 767) {
+      this.intialwidth = 150
+    } else {
+      this.intialwidth = 250
+    }
+    console.log(this.window, 'scrreee')
 
-    this.columnDefs = [
-      { headerName: 'Id', field: 'Id', filter: true, minWidth:10,maxWidth:300 },
-      { headerName: 'Material', field: 'Material', filter: true, minWidth:100, maxWidth:300 },
-      { headerName: 'Materialgroup', field: 'Materialgroup', filter: true, minWidth:100 ,maxWidth:300 },
-      { headerName: 'Price', field: 'Price', filter: true, minWidth:50 ,maxWidth:300 },
-      { headerName: 'AccountBalance', field: 'AccountBalance', filter: true, minWidth:100 ,maxWidth:300 },
-      { headerName: 'InhandBalance', field: 'InhandBalance', filter: true, minWidth:100 ,maxWidth:300 },
-      { headerName: 'Date', field: 'Date', filter: true, minWidth:100 ,maxWidth:300 },
-      { headerName: 'Planned', field: 'Planned', filter: true, minWidth:100 ,maxWidth:300 },
-      { headerName: 'Offer', field: 'Offer', filter: true, minWidth:100 ,maxWidth:300 }
+    if (this.intialwidth != 0) {
+      this.columnDefs = [
+        { headerName: 'Id', field: 'Id', filter: true, initialWidth: 100, maxWidth: 300 },
+        { headerName: 'Material', field: 'Material', filter: true, initialWidth: this.intialwidth, minWidth: 100, maxWidth: 300 },
+        { headerName: 'Materialgroup', field: 'Materialgroup', filter: true, initialWidth: this.intialwidth-30, minWidth: 100, maxWidth: 300 },
+        { headerName: 'Price', field: 'Price', filter: true, initialWidth: 150, minWidth: 50, maxWidth: 300 },
+        { headerName: 'AccBalance', field: 'AccountBalance', filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300 },
+        { headerName: 'IHBalance', field: 'InhandBalance', initialWidth: 150, filter: true, minWidth: 100, maxWidth: 300 },
+        { headerName: 'Date', field: 'Date', filter: true, initialWidth: 200, minWidth: this.intialwidth-30, maxWidth: 300 },
+        { headerName: 'Planned', field: 'Planned', filter: true, initialWidth: 150,minWidth: 100, maxWidth: 300 },
+        { headerName: 'Offer', field: 'Offer', filter: true, initialWidth: 100, minWidth: 100, maxWidth: 300 }
 
-    ];
+      ];
+    }
 
 
   }

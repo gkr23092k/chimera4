@@ -183,10 +183,10 @@ export class DownfallChartComponent implements OnInit {
 
     // Create date axis
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
-    dateAxis.renderer.minGridDistance = 60;
+    dateAxis.renderer.minGridDistance = 25;
     dateAxis.renderer.labels.template.fontSize = 12;
     dateAxis.renderer.labels.template.rotation = 45;
-    dateAxis.renderer.grid.template.location = 0.5;
+    dateAxis.renderer.grid.template.location = 0;
 
     // Create value axis
     const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
@@ -202,7 +202,7 @@ export class DownfallChartComponent implements OnInit {
 
     // Create second X-axis
     const x2Axis = this.chart.xAxes.push(new am4charts.DateAxis());
-    x2Axis.renderer.minGridDistance = 0;
+    x2Axis.renderer.minGridDistance = 25;
     x2Axis.renderer.labels.template.fontSize = 0;
     x2Axis.renderer.labels.template.rotation = 0;
     x2Axis.renderer.grid.template.location = 0;
@@ -216,7 +216,7 @@ export class DownfallChartComponent implements OnInit {
 
     // Create third X-axis
     const x3Axis = this.chart.xAxes.push(new am4charts.DateAxis());
-    x3Axis.renderer.minGridDistance = 0;
+    x3Axis.renderer.minGridDistance = 25;
     x3Axis.renderer.labels.template.fontSize = 0;
     x3Axis.renderer.labels.template.rotation = 0;
     x3Axis.renderer.grid.template.location = 0;
@@ -239,14 +239,29 @@ export class DownfallChartComponent implements OnInit {
 
     // Add legend
     this.chart.legend = new am4charts.Legend();
+    const screenWidth = window.innerWidth;
 
-    this.chart.events.on('ready', () => {
-      const currentDate = new Date();
-      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    if( screenWidth < 767 ){
+      this.chart.events.on('ready', () => {
+        const currentDate = new Date();
+        const startOfLast7Days = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7);
+        
+        dateAxis.zoomToDates(startOfLast7Days, currentDate, true);
+       
 
-      dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
-    });
+      });
+      
+    }
+    else{
+      this.chart.events.on('ready', () => {
+        const currentDate = new Date();
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() +1, 0);
+        
+        dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
+      });
+    }
+
   }
 
 
