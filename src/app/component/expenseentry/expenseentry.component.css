@@ -35,12 +35,12 @@ h1 {
     width: 40rem;
   }
   
-  @media (max-width: 750px) {
+  @media (max-width: 650px) {
     .cardlength {
-      width: 11.5rem;
+      width: 10rem;
     }
     .cardlengthtotal {
-      width: 11.5rem;
+      width: 10rem;
     }
     .h1{
       font-size: 0.5em;
