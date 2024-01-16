@@ -74,6 +74,7 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
           this.dataarrayobj = tempstoreuser
           // console.log([this.dataarrayobj,tempstoreuser,'after',this.msg])
         }
+        this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'Investment');
         this.groupedData = Object.values(this.groupAndSumByMonthYear(this.dataarrayobj, 'Date', 'Price'));
         console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {

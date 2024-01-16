@@ -100,44 +100,45 @@ export class DonutChartComponent implements OnInit {
 
   private initializeChart() {
     // Check if the chart is already initialized
-      this.chart = am4core.create('donut-chartdiv', am4charts.PieChart3D); // Unique container ID
-      this.chart.innerRadius = am4core.percent(55);
+    this.chart = am4core.create('donut-chartdiv', am4charts.PieChart3D); // Unique container ID
+    this.chart.innerRadius = am4core.percent(55);
 
-      // Add data (replace this with your actual data)
-      this.chart.data = this.groupedData
+    // Add data (replace this with your actual data)
+    this.chart.data = this.groupedData
 
-      // Add series
-      const series = this.chart.series.push(new am4charts.PieSeries3D());
-      series.dataFields.value = 'value';
-      series.dataFields.category = 'category';
+    // Add series
+    const series = this.chart.series.push(new am4charts.PieSeries3D());
+    series.dataFields.value = 'value';
+    series.dataFields.category = 'category';
 
-      // Add labels
-      series.labels.template.text = '{category}:{value.value}';
-      series.labels.template.fill = am4core.color('Black');
-      this.setLabelRadius();
-      series.colors.list = [
-        
-        am4core.color("#5FB3D9"),
-        am4core.color("#845EC9"),
-        
-        am4core.color("#AA2121"),
-        am4core.color("#FF6F91"),
-        am4core.color("#FF9671"),
-        am4core.color("#FFC75F"),
-        am4core.color("#97C465"),
-        am4core.color("#F9F871"),
-      ];
+    // Add labels
+    series.labels.template.text = '{category}:{value.value}';
+    series.labels.template.fill = am4core.color('Black');
+    this.setLabelRadius();
+    series.colors.list = [
+      am4core.color("#5FB3D9"),
+      am4core.color("#845EC9"),
+      am4core.color("#AA2121"),
+      am4core.color("#FF6F91"),
+      am4core.color("#FE2671"),
+      am4core.color("#97C465"),
+      am4core.color("#FFC75F"),
+      am4core.color("#F9F871"),
+      am4core.color("#E3C471"),
+      am4core.color("#ADC772"),
 
-      this.chart.legend = new am4charts.Legend();
+    ];
+
+    this.chart.legend = new am4charts.Legend();
 
   }
 
   private setLabelRadius() {
     const screenWidth = window.innerWidth;
-  console.log(screenWidth,'screenWidth')
+    console.log(screenWidth, 'screenWidth')
     // Adjust the radius based on the screen size
     const radiusPercent = screenWidth < 767 ? -75 : -25;
-  
+
     const series = this.chart.series.getIndex(0) as am4charts.PieSeries3D;
     if (series) {
       series.labels.template.radius = am4core.percent(radiusPercent);

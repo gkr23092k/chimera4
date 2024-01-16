@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { take } from 'rxjs';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import Swal from 'sweetalert2';
+import * as _ from 'lodash';
+
 
 @Component({
   selector: 'app-expenseentry',
@@ -30,19 +32,48 @@ export class ExpenseentryComponent implements OnInit {
   dataarrayobj: any = []
   searchusername: any = '';
   code: boolean = false;
+  highestofalltime: any = []
+  last7DaysData: any = [];
+  todayData: any = [];
+  last30DaysData: any = [];
+  resultArray: any = []
+  resultArray7: any = []
+  resultArray30: any = []
+  dataarrayobjinvest: any = [];
+  highestofalltimeinv: any = []
+  last30DaysDatainv: any = [];
+  last30Daysinv: any = [];
+  totalinvest: any = []
+  last7DaysDatainv: any = [];
+  last7Daysinv: any = [];
+  msg: any = '';
+  last1DaysDatainv: any = [];
+  last1Daysinv: any = []
+  totalspent: number=0;
 
-  constructor(private githubService: GithubServiceService, private router: Router) { }
+  constructor(private githubService: GithubServiceService, private router: Router) {
+
+  }
 
 
 
 
 
   ngOnInit() {
-    this.fetchData();
+    this.fetchData('NO');
     this.dateentry = new Date();
+    this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
+      console.log('expense component')
+    });
+    this.githubService.currentvalue.subscribe((msg: any) => {
+      console.log('msg', msg, 'expense')
+      this.msg = msg
+      if (msg != '') this.fetchData('YES')
+    })
+
   }
 
-  fetchData() {
+  fetchData(checkcase: any) {
     this.showcontent = ''
     this.materialdropdown = []
     this.githubService.fetchDataFromGitHub().subscribe(
@@ -66,19 +97,119 @@ export class ExpenseentryComponent implements OnInit {
             dataObject[key] = isNaN(value) ? value.trim() : parseFloat(value);
           });
           this.dataarrayobj.push(dataObject)
-
-
-
         })
+        if (checkcase === 'YES') {
+          let tempstoreuser: any = []
+          this.dataarrayobj.filter((el: any) => {
+            console.log(el)
+            if (el.Name === this.msg) {
+              tempstoreuser.push(el)
+            }
+          });
+          this.dataarrayobj = tempstoreuser
+        }
+        this.highestofalltime = []
+        this.last7DaysData = [];
+        this.todayData = [];
+        this.last30DaysData = [];
+        this.resultArray = []
+        this.resultArray7 = []
+        this.resultArray30 = []
+        this.last30DaysDatainv = [];
+        this.last30Daysinv = [];
+        this.totalinvest = []
+        this.last7DaysDatainv = [];
+        this.last7Daysinv = [];
+        this.last1DaysDatainv = []
+        this.last1Daysinv = []
+        this.totalspent=0
+        this.dataarrayobjinvest = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] === 'Investment');
+        if (this.dataarrayobjinvest.length == 0) {
+          this.dataarrayobjinvest = [{ "Price": "Nil" }]
+        }
+        this.highestofalltimeinv = _.maxBy(this.dataarrayobjinvest, 'Price')
+
+        this.filterDataByDate(this.dataarrayobjinvest, 1, this.last1DaysDatainv);
+        // console.log(['resultArray', this.resultArray])
+        if (this.last1DaysDatainv.length == 0) {
+          this.last1DaysDatainv = [{ "Price": "Nil" }]
+        }
+        this.last1Daysinv = _.maxBy(this.last1DaysDatainv, 'Price')
+
+
+        this.filterDataByDate(this.dataarrayobjinvest, 7, this.last7DaysDatainv);
+        // console.log(['resultArray', this.resultArray])
+        if (this.last7DaysDatainv.length == 0) {
+          this.last7DaysDatainv = [{ "Price": "Nil" }]
+        }
+        this.last7Daysinv = _.maxBy(this.last7DaysDatainv, 'Price')
+
+
+        this.filterDataByDate(this.dataarrayobjinvest, 30, this.last30DaysDatainv);
+        // console.log(['resultArray', this.resultArray])
+        if (this.last30DaysDatainv.length == 0) {
+          this.last30DaysDatainv = [{ "Price": "Nil" }]
+        }
+        this.last30Daysinv = _.maxBy(this.last30DaysDatainv, 'Price')
+
+        if (this.dataarrayobjinvest.length == 0) {
+          this.dataarrayobjinvest = [{ "Price": 0 }]
+        }
+        this.totalinvest = _.sumBy(this.dataarrayobjinvest, 'Price');
+
+
+
+        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'Investment');
+        if (this.dataarrayobj.length == 0) {
+          this.dataarrayobj = [{ "Price": "Nil" }]
+        }
+        this.totalspent = _.sumBy(this.dataarrayobj, 'Price');
+        this.highestofalltime = _.maxBy(this.dataarrayobj, 'Price')
+
+
+        this.filterDataByDate(this.dataarrayobj, 1, this.resultArray);
+        if (this.resultArray.length == 0) {
+          this.resultArray = [{ "Price": "Nil" }]
+        }
+        this.todayData = _.maxBy(this.resultArray, 'Price')
+
+
+        this.filterDataByDate(this.dataarrayobj, 7, this.resultArray7);
+        if (this.resultArray7.length == 0) {
+          this.resultArray7 = [{ "Price": "Nil" }]
+        }
+        this.last7DaysData = _.maxBy(this.resultArray7, 'Price')
+
+
+        this.filterDataByDate(this.dataarrayobj, 30, this.resultArray30);
+        if (this.resultArray30.length == 0) {
+          this.resultArray30 = [{ "Price": "Nil" }]
+        }
+        this.last30DaysData = _.maxBy(this.resultArray30, 'Price')
+
+
 
         this.materialdropdown = [...new Set(this.materialdropdown)];
-        console.log([this.dataarrayobj, 'sdsd'])
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
       }
     );
   }
+
+  async filterDataByDate(data: any[], daysAgo: number, resultArray: any[]) {
+    const currentDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(currentDate.getDate() - daysAgo);
+
+    data.forEach(item => {
+      const itemDate = new Date(item.Date);
+      if (itemDate >= startDate && itemDate <= currentDate) {
+        resultArray.push(item);
+      }
+    });
+  }
+
 
   calcbalance(val: any) {
     console.log('called', val, this.price, this.user)
@@ -102,7 +233,7 @@ export class ExpenseentryComponent implements OnInit {
         this.accbalance = this.calcaccbalance
         this.inhandbalance = this.calcinhandbalance - this.price
       }
-      console.log(this.accbalance, this.inhandbalance)
+      // console.log(this.accbalance, this.inhandbalance)
     } else {
       const Toast = Swal.mixin({
         toast: true,
@@ -171,7 +302,7 @@ export class ExpenseentryComponent implements OnInit {
                     this.code = true
                     console.log('Data appended successfully!');
 
-                    this.fetchData();
+                    this.fetchData('NO');
                     Swal.fire({
                       title: "Success",
                       text: "Material Added Successfully",

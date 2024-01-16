@@ -28,4 +28,26 @@ h1 {
   }
   
  
- 
+  .cardlength {
+    width: 20rem;
+  }
+  .cardlengthtotal{
+    width: 40rem;
+  }
+  
+  @media (max-width: 750px) {
+    .cardlength {
+      width: 11.5rem;
+    }
+    .cardlengthtotal {
+      width: 11.5rem;
+    }
+    .h1{
+      font-size: 0.5em;
+
+    }
+  }
+  
+  .highcard{
+    color: beige;
+  }

@@ -62,7 +62,7 @@ export class GridComponent {
           let tempstoreuser: any = []
           this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
           this.dataarrayobj.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
             }
@@ -73,7 +73,7 @@ export class GridComponent {
           el.Id = index + 1
 
         });
-        console.log([this.dataarrayobj, 'this.dataarrayobj'])
+        // console.log([this.dataarrayobj, 'this.dataarrayobj'])
         this.rowData = this.dataarrayobj
       },
       error => {
@@ -98,9 +98,16 @@ export class GridComponent {
         { headerName: 'IHBalance', field: 'InhandBalance', initialWidth: 150, filter: true, minWidth: 100, maxWidth: 300 },
         { headerName: 'Date', field: 'Date', filter: true, initialWidth: 200, minWidth: this.intialwidth-30, maxWidth: 300 },
         { headerName: 'Planned', field: 'Planned', filter: true, initialWidth: 150,minWidth: 100, maxWidth: 300 },
-        { headerName: 'Offer', field: 'Offer', filter: true, initialWidth: 100, minWidth: 100, maxWidth: 300 }
+        { headerName: 'Offer', field: 'Offer', filter: true, initialWidth: 100, minWidth: 100, maxWidth: 300 },
+        { headerName: 'Comment', field: 'Comment', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 }
+
 
       ];
+      let temprefresh=this.columnDefs
+      this.columnDefs=[]
+      setTimeout(() => {
+        this.columnDefs=temprefresh
+      }, 10);
     }
 
 

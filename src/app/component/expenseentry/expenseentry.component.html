@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center container mt-3 border border-5 rounded-5"
     style="background-color: #003153; color: aliceblue;">
-    <h1 class="text-center">GORA EXPENSE HELPER</h1>
+    <h1 class="text-center">GORA MONEY HELPER</h1>
 </div>
 
 <div class="container mt-3">
@@ -37,11 +37,11 @@
             <mat-option [value]="'Electronics'">Electronics</mat-option>
             <mat-option [value]="'Electricity'">Electricity</mat-option>
             <mat-option [value]="'Food'">Food</mat-option>
+            <mat-option [value]="'Liability'">Liability</mat-option>
             <mat-option [value]="'Medical'">Medical</mat-option>
             <mat-option [value]="'Selfcare'">Selfcare</mat-option>
             <mat-option [value]="'Travel'">Travel</mat-option>
             <mat-option [value]="'Others'">Others</mat-option>
-
         </mat-select>
     </mat-form-field>
 
@@ -113,11 +113,82 @@
     <!-- <div class="border border-info-subtle border-3 p-2 mt-2" *ngIf="content">
         <pre>{{ showcontent }}</pre>
     </div> -->
+    <h1>Spent Margin</h1>
+    <div class="d-flex flex-wrap my-4">
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">MaxofToday</h1>
+            <h2 class="text-center highcard">{{todayData.Price}}</h2>
+            <h3 class="text-center highcard">{{todayData.Material | uppercase }}</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">Maxof7Days</h1>
+            <h2 class="text-center highcard">{{last7DaysData.Price}}</h2>
+            <h3 class="text-center highcard">{{last7DaysData.Material | uppercase }}</h3>
+        </mat-card>
+
+
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">Maxof30Days</h1>
+            <h2 class="text-center highcard">{{last30DaysData.Price}}</h2>
+            <h3 class="text-center highcard">{{last30DaysData.Material | uppercase }}</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">Maxofalltime</h1>
+            <h2 class="text-center highcard">{{highestofalltime.Price}}</h2>
+            <h3 class="text-center highcard">{{highestofalltime.Material | uppercase }}</h3>
+        </mat-card>
+
+    </div>
+    <h1>Invest Margin</h1>
+
+    <div class="d-flex flex-wrap my-4">
+
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">MaxofToday</h1>
+            <h2 class="text-center highcard">{{last1Daysinv.Price}}</h2>
+            <h3 class="text-center highcard">{{last1Daysinv.Material | uppercase }}</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">Max7Days</h1>
+            <h2 class="text-center highcard">{{last7Daysinv.Price}}</h2>
+            <h3 class="text-center highcard">{{last7Daysinv.Material | uppercase }}</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">Max30Days</h1>
+            <h2 class="text-center highcard">{{last30Daysinv.Price}}</h2>
+            <h3 class="text-center highcard">{{last30Daysinv.Material | uppercase }}</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center">MaxAlltime</h1>
+            <h2 class="text-center highcard">{{highestofalltimeinv.Price}}</h2>
+            <h3 class="text-center highcard">{{highestofalltimeinv.Material | uppercase }}</h3>
+        </mat-card>
+
+
+
+    </div>
+    <h1>Total Margin</h1>
+
+    <div class="d-flex flex-wrap my-4">
+        <mat-card class="cardlengthtotal mb-1 ms-1">
+            <h1 class="text-center">TotalSpent</h1>
+            <h2 class="text-center highcard">{{totalspent}}</h2>
+            <h3 class="text-center highcard">OVERALL</h3>
+        </mat-card>
+        <mat-card class="cardlengthtotal mb-1 ms-1">
+            <h1 class="text-center">TotalInvest</h1>
+            <h2 class="text-center highcard">{{totalinvest}}</h2>
+            <h3 class="text-center highcard">OVERALL</h3>
+        </mat-card>
+        
+    </div>
+
     <mat-form-field class="example-full-width inputbox">
         <mat-label>User Filter</mat-label>
         <input matInput placeholder="usercode" [(ngModel)]="searchusername">
     </mat-form-field>
 </div>
+
 <div class="d-fleX mx-2 ">
 
     <div class="d-flex justify-content-center mb-5">
@@ -129,11 +200,16 @@
     <app-line-chart></app-line-chart>
     <h1 class="ms-4">Monthly Expenses</h1>
     <app-negative-line-chart></app-negative-line-chart>
+    <h1 class="ms-4">Liability</h1>
+    <app-liability-chart></app-liability-chart>
+    <h1 class="ms-4">Investment</h1>
+    <app-investment-chart></app-investment-chart>
     <h1 class="ms-4">Material Group Expenses</h1>
     <app-donut-chart></app-donut-chart>
     <!-- <div *ngIf="user=='pillow80Fragaria85@23'"> -->
     <h1 class="ms-4">Money Flow</h1>
     <app-downfall-chart></app-downfall-chart>
+   
     <h1 class="ms-4">Data Grid</h1>
     <app-grid></app-grid>
     <!-- </div> -->

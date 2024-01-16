@@ -1,3 +1,4 @@
+
 import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
@@ -7,13 +8,12 @@ import * as _ from 'lodash';
 import Swal from 'sweetalert2';
 
 am4core.useTheme(am4themes_animated);
-
 @Component({
-  selector: 'app-line-chart',
-  templateUrl: './line-chart.component.html',
-  styleUrls: ['./line-chart.component.css']
+  selector: 'app-liability-chart',
+  templateUrl: './liability-chart.component.html',
+  styleUrls: ['./liability-chart.component.css']
 })
-export class LineChartComponent implements OnInit {
+export class LiabilityChartComponent implements OnInit {
   private chart!: am4charts.XYChart;
   content: string = '';
   dataarrayobj: any = [];
@@ -87,7 +87,7 @@ export class LineChartComponent implements OnInit {
 
           } console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
         }
-        this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'Investment');
+        this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] === 'Liability');
         this.dataarrayobj= Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'Price'));
         console.log(this.dataarrayobj);
         this.dataarrayobj.forEach((el: any) => {
@@ -121,7 +121,7 @@ export class LineChartComponent implements OnInit {
 
   dataloaded() {
     // Create chart instance
-    this.chart = am4core.create('chartdiv', am4charts.XYChart);
+    this.chart = am4core.create('liabilitychart', am4charts.XYChart);
 
 
     this.chart.data = this.dataarrayobj
@@ -141,6 +141,8 @@ export class LineChartComponent implements OnInit {
     series.dataFields.dateX = 'date';
     series.dataFields.valueY = 'value';
     series.strokeWidth = 2;
+    series.stroke = am4core.color("red");
+
     
     // Enable chart cursor
     this.chart.cursor = new am4charts.XYCursor();
@@ -157,9 +159,12 @@ export class LineChartComponent implements OnInit {
     if( screenWidth < 767 ){
       this.chart.events.on('ready', () => {
         const currentDate = new Date();
-        const startOfLast10Days = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7);
-        
-        dateAxis.zoomToDates(startOfLast10Days, currentDate, true);
+        const pastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 1);
+        const futureDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 3, 31);
+    
+        this.chart.events.on('ready', () => {
+          dateAxis.zoomToDates(pastDate, futureDate, true);
+        });
         series.tooltipText = `{value} Rs 
          {date}`;
 
@@ -169,10 +174,12 @@ export class LineChartComponent implements OnInit {
     else{
       this.chart.events.on('ready', () => {
         const currentDate = new Date();
-        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() +1, 0);
-        
-        dateAxis.zoomToDates(startOfMonth, endOfMonth, true);
+        const pastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 5, 1);
+        const futureDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 5, 31);
+    
+        this.chart.events.on('ready', () => {
+          dateAxis.zoomToDates(pastDate, futureDate, true);
+        });
         series.tooltipText = '{value} Rs in {date}';
       });
     }
@@ -187,6 +194,7 @@ export class LineChartComponent implements OnInit {
       console.warn('Chart was not initialized before disposal.');
     }
   }
+
 
 
 

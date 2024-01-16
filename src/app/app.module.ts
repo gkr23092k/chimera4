@@ -19,6 +19,9 @@ import { NegativeLineChartComponent } from './component/negative-line-chart/nega
 import { DownfallChartComponent } from './component/downfall-chart/downfall-chart.component';
 import { GridComponent } from './component/grid/grid.component';
 import { AgGridModule } from 'ag-grid-angular';
+import {MatCardModule} from '@angular/material/card';
+import { LiabilityChartComponent } from './component/liability-chart/liability-chart.component';
+import { InvestmentChartComponent } from './component/investment-chart/investment-chart.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,10 +30,13 @@ import { AgGridModule } from 'ag-grid-angular';
     DonutChartComponent,
     NegativeLineChartComponent,
     DownfallChartComponent,
-    GridComponent
+    GridComponent,
+    LiabilityChartComponent,
+    InvestmentChartComponent,
+    
   ],
   imports: [
-    BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,
+    BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,MatCardModule,
     AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,AgGridModule,
     MatChipsModule
   ],
