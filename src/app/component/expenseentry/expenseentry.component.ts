@@ -4,6 +4,7 @@ import { take } from 'rxjs';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import Swal from 'sweetalert2';
 import * as _ from 'lodash';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -49,9 +50,16 @@ export class ExpenseentryComponent implements OnInit {
   msg: any = '';
   last1DaysDatainv: any = [];
   last1Daysinv: any = []
-  totalspent: number=0;
+  totalspent: number = 0;
+  networth: number = 0
+  userfiltered: any = [];
+  liabilitystatus: any = 'No';
+  liableget: any=[];
+  liablegive: any=[];
+  liablegetval: number=0;
+  liablegiveval: number=0;
 
-  constructor(private githubService: GithubServiceService, private router: Router) {
+  constructor(private githubService: GithubServiceService, private router: Router,private spinner: NgxSpinnerService) {
 
   }
 
@@ -60,6 +68,11 @@ export class ExpenseentryComponent implements OnInit {
 
 
   ngOnInit() {
+    this.spinner.show();
+
+    setTimeout(() => {
+      this.spinner.hide();
+    }, 500);
     this.fetchData('NO');
     this.dateentry = new Date();
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
@@ -122,7 +135,31 @@ export class ExpenseentryComponent implements OnInit {
         this.last7Daysinv = [];
         this.last1DaysDatainv = []
         this.last1Daysinv = []
-        this.totalspent=0
+        this.totalspent = 0
+        this.liableget=[]
+        this.liablegive=[]
+        const groupedByKeys = _.groupBy(this.dataarrayobj, 'Name');
+        let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
+        resultObjectAcc = _.values(resultObjectAcc);
+        let resultObjectIhb: any = _.mapValues(groupedByKeys, group => _.last(group).InhandBalance);
+        resultObjectIhb = _.values(resultObjectIhb);
+       
+        this.dataarrayobj.filter((el:any)=>{if(el.Liabilitystatus=='Get') this.liableget.push(el)})
+        this.dataarrayobj.filter((el:any)=>{if(el.Liabilitystatus=='Give') this.liablegive.push(el)})
+        const groupedByKeysliableget= _.groupBy(this.liableget, 'Name');
+        const groupedByKeysliablegive = _.groupBy(this.liablegive, 'Name');
+
+
+        let resultObjectget: any = _.mapValues(groupedByKeysliableget, group => _.last(group).Price);
+        resultObjectget = _.values(resultObjectget);
+        let resultObjectgive: any = _.mapValues(groupedByKeysliablegive, group => _.last(group).Price);
+        resultObjectgive = _.values(resultObjectgive);
+        let accbalance = _.sum(resultObjectAcc);
+        let ihbbalance = _.sum(resultObjectIhb);
+        this.liablegetval = _.sum(resultObjectget);
+        this.liablegiveval = _.sum(resultObjectgive);
+
+        this.networth = accbalance + ihbbalance
         this.dataarrayobjinvest = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] === 'Investment');
         if (this.dataarrayobjinvest.length == 0) {
           this.dataarrayobjinvest = [{ "Price": "Nil" }]
@@ -220,20 +257,56 @@ export class ExpenseentryComponent implements OnInit {
       this.dataarrayobj.filter((bal: any) => {
         if (bal.Name == this.user) {
           console.log(bal, this.user)
+          this.userfiltered.push(bal)
           this.calcaccbalance = bal.AccountBalance
           this.calcinhandbalance = bal.InhandBalance
         }
       })
-      if (val == 'ACC') {
+
+      if (val == 'ACC' && this.materialgroup!='Liability') {
         this.accbalance = this.calcaccbalance - this.price
         this.inhandbalance = this.calcinhandbalance
 
       }
-      else if (val == 'IHB') {
+      else if (val == 'IHB'&& this.materialgroup!='Liability') {
         this.accbalance = this.calcaccbalance
         this.inhandbalance = this.calcinhandbalance - this.price
       }
-      // console.log(this.accbalance, this.inhandbalance)
+      else if (val == 'ACC'&& this.materialgroup=='Liability' && this.liabilitystatus=='Get') {
+        this.accbalance = parseInt(this.calcaccbalance)+parseInt(this.price)
+        this.inhandbalance = this.calcinhandbalance 
+      }
+      else if (val == 'ACC'&& this.materialgroup=='Liability' && this.liabilitystatus=='Give') {
+        this.accbalance = this.calcaccbalance -this.price
+        this.inhandbalance = this.calcinhandbalance 
+      }
+      else if (val == 'IHB'&& this.materialgroup=='Liability' && this.liabilitystatus=='Get') {
+        this.accbalance = this.calcaccbalance
+        this.inhandbalance = parseInt(this.calcinhandbalance) +parseInt( this.price)
+      }
+      else if (val == 'IHB'&& this.materialgroup=='Liability' && this.liabilitystatus=='Give') {
+        this.accbalance = this.calcaccbalance
+        this.inhandbalance = this.calcinhandbalance - this.price
+      }
+      else{
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 13000,
+          showCloseButton: true,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+  
+        Toast.fire({
+          icon: 'info',
+          title: 'Select the Liability Status'
+        })
+      }
     } else {
       const Toast = Swal.mixin({
         toast: true,
@@ -279,89 +352,16 @@ export class ExpenseentryComponent implements OnInit {
     const result = this.containsSymbolsNumbersCharacters(this.user);
     console.log(result);
     if (result) {
-
-      if (this.user.trim() != '' && this.material.trim() != '' && this.materialgroup.trim() != '' &&
-        this.price.trim() != '' && this.accbalance.toString().trim() != '' && this.inhandbalance.toString().trim() != '' && this.offer.trim() != '' &&
-        this.planned.trim() != '' && this.dateentry != '') {
-        this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
-        this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
-        if (/^[a-zA-Z]/.test(this.material) === true) {
-          if (this.comment == '') this.comment = 'No comments'
-          const currentDate = new Date();
-          const formattedDateTime = `${currentDate.toDateString()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-
-          try {
-            const formattedentryDateTime = `${this.dateentry.toDateString()}`;
-            // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
-            const newData = this.content + `Name:${this.user},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
-            this.githubService.fetchDataFromGitHub().subscribe(
-              (response: any) => {
-                const sha = response.sha;
-                this.githubService.appendDataToGitHub(newData, sha).pipe(take(1)).subscribe(
-                  () => {
-                    this.code = true
-                    console.log('Data appended successfully!');
-
-                    this.fetchData('NO');
-                    Swal.fire({
-                      title: "Success",
-                      text: "Material Added Successfully",
-                      icon: "success"
-                    })
-                    this.router.navigate(['ch']);
-                    setTimeout(() => {
-                      this.router.navigate(['entry']);
-                      // const Toast = Swal.mixin({
-                      //   toast: true,
-                      //   position: 'center',
-                      //   showConfirmButton: false,
-                      //   timer: 10000,
-                      //   showCloseButton: true,
-                      //   timerProgressBar: true,
-                      //   didOpen: (toast) => {
-                      //     toast.addEventListener('mouseenter', Swal.stopTimer)
-                      //     toast.addEventListener('mouseleave', Swal.resumeTimer)
-                      //   }
-                      // })
-
-                      // Toast.fire({
-                      //   icon: 'info',
-                      //   title: 'Fill the Date Properly'
-                      // })
-                    }, 800);
-
-
-                  });
-              },
-              error => {
-                console.error('Error fetching data from GitHub:', error);
-              }
-            );
-          } catch (error) {
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'center',
-              showConfirmButton: false,
-              timer: 10000,
-              showCloseButton: true,
-              timerProgressBar: true,
-              didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-              }
-            })
-
-            Toast.fire({
-              icon: 'info',
-              title: 'Fill the Date Properly'
-            })
-          }
-        } else {
+      if (this.materialgroup == 'Liability') {
+        if (this.liabilitystatus != 'No') {
+          this.appendincall(result)
+        }
+        else {
           const Toast = Swal.mixin({
             toast: true,
             position: 'center',
             showConfirmButton: false,
-            timer: 10000,
+            timer: 13000,
             showCloseButton: true,
             timerProgressBar: true,
             didOpen: (toast) => {
@@ -372,27 +372,12 @@ export class ExpenseentryComponent implements OnInit {
 
           Toast.fire({
             icon: 'info',
-            title: 'Fill the Material with Characters'
+            title: 'Fill all the Details Properly'
           })
+
         }
       } else {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'center',
-          showConfirmButton: false,
-          timer: 13000,
-          showCloseButton: true,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          }
-        })
-
-        Toast.fire({
-          icon: 'info',
-          title: 'Fill all the Details Properly'
-        })
+        this.appendincall(result)
       }
     } else {
       const Toast = Swal.mixin({
@@ -412,6 +397,7 @@ export class ExpenseentryComponent implements OnInit {
         icon: 'info',
         title: 'Username should have characters, numbers, symbols and minimum 5 digits'
       })
+
     }
 
   }
@@ -464,5 +450,109 @@ export class ExpenseentryComponent implements OnInit {
     }
   }
 
+  appendincall(result: any) {
+    if (this.user.trim() != '' && this.material.trim() != '' && this.materialgroup.trim() != '' &&
+      this.price.trim() != '' && this.accbalance.toString().trim() != '' && this.inhandbalance.toString().trim() != '' && this.offer.trim() != '' &&
+      this.planned.trim() != '' && this.dateentry != '') {
+      this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
+      this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
+      if (/^[a-zA-Z]/.test(this.material) === true) {
+        if (this.comment == '') this.comment = 'No comments'
+        const currentDate = new Date();
+        const formattedDateTime = `${currentDate.toDateString()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+
+        try {
+          this.spinner.show();
+
+          const formattedentryDateTime = `${this.dateentry.toDateString()}`;
+          // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
+          const newData = this.content + `Name:${this.user},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
+          this.githubService.fetchDataFromGitHub().subscribe(
+            (response: any) => {
+              const sha = response.sha;
+              this.spinner.hide();
+
+              this.githubService.appendDataToGitHub(newData, sha).pipe(take(1)).subscribe(
+                () => {
+                  this.code = true
+                  console.log('Data appended successfully!');
+
+                  this.fetchData('NO');
+                  Swal.fire({
+                    title: "Success",
+                    text: "Material Added Successfully",
+                    icon: "success"
+                  })
+                  this.router.navigate(['ch']);
+                  setTimeout(() => {
+                    this.router.navigate(['entry']);
+
+                  }, 200);
+
+
+                });
+            },
+            error => {
+              console.error('Error fetching data from GitHub:', error);
+            }
+          );
+        } catch (error) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 10000,
+            showCloseButton: true,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+
+          Toast.fire({
+            icon: 'info',
+            title: 'Fill the Date Properly'
+          })
+        }
+      } else {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 10000,
+          showCloseButton: true,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+
+        Toast.fire({
+          icon: 'info',
+          title: 'Fill the Material with Characters'
+        })
+      }
+    } else {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 13000,
+        showCloseButton: true,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      Toast.fire({
+        icon: 'info',
+        title: 'Fill all the Details Properly'
+      })
+    }
+  }
 
 }

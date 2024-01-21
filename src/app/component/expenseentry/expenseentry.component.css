@@ -32,7 +32,7 @@ h1 {
     width: 20rem;
   }
   .cardlengthtotal{
-    width: 40rem;
+    width: 26.6rem;
   }
   
   @media (max-width: 650px) {
@@ -40,7 +40,7 @@ h1 {
       width: 10rem;
     }
     .cardlengthtotal {
-      width: 10rem;
+      width: 6.5rem;
     }
     .h1{
       font-size: 0.5em;
@@ -55,4 +55,8 @@ h1 {
   
   .highcard{
     color: beige;
+  }
+
+  img{
+    height: 10px;
   }

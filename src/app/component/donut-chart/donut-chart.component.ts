@@ -67,6 +67,8 @@ export class DonutChartComponent implements OnInit {
           this.dataarrayobj = tempstoreuser
           console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
         }
+        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment'&& expense['Materialgroup'] != 'Liability');
+
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
         console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {
@@ -124,8 +126,8 @@ export class DonutChartComponent implements OnInit {
       am4core.color("#97C465"),
       am4core.color("#FFC75F"),
       am4core.color("#F9F871"),
-      am4core.color("#E3C471"),
-      am4core.color("#ADC772"),
+      am4core.color("#81D4FA"),
+      am4core.color("#AZE278"),
 
     ];
 

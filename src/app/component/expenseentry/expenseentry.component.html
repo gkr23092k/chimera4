@@ -44,7 +44,13 @@
             <mat-option [value]="'Others'">Others</mat-option>
         </mat-select>
     </mat-form-field>
-
+    <mat-form-field *ngIf="materialgroup=='Liability'" class="inputbox">
+        <mat-label>Liability Status</mat-label>
+            <mat-select required [(ngModel)]="liabilitystatus">
+                <mat-option [value]="'Give'">Give</mat-option>
+                <mat-option [value]="'Get'">Get</mat-option>
+            </mat-select>
+        </mat-form-field>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>Price</mat-label>
         <input [type]="'number'" [(ngModel)]="price" matInput placeholder="price in rupees">
@@ -113,6 +119,15 @@
     <!-- <div class="border border-info-subtle border-3 p-2 mt-2" *ngIf="content">
         <pre>{{ showcontent }}</pre>
     </div> -->
+    <mat-form-field class="example-full-width inputbox">
+        <mat-label>User Filter</mat-label>
+        <input matInput placeholder="usercode" [(ngModel)]="searchusername">
+    </mat-form-field>
+    <div class="d-flex justify-content-center mb-5">
+
+        <button class="border border-5" mat-button color="primary" (click)="searchuser()">Filter By User</button>
+    </div>
+
     <h1>Spent Margin</h1>
     <div class="d-flex flex-wrap my-4">
         <mat-card class="cardlength mb-1 ms-1">
@@ -170,37 +185,40 @@
     <h1>Total Margin</h1>
 
     <div class="d-flex flex-wrap my-4">
-        <mat-card class="cardlengthtotal mb-1 ms-1">
+        <mat-card class="cardlength mb-1 ms-1">
             <h1 class="text-center cards">TotalSpent</h1>
             <h2 class="text-center highcard">{{totalspent}}</h2>
             <h3 class="text-center highcard">OVERALL</h3>
         </mat-card>
-        <mat-card class="cardlengthtotal mb-1 ms-1">
+        <mat-card class="cardlength mb-1 ms-1">
             <h1 class="text-center cards">TotalInvest</h1>
             <h2 class="text-center highcard">{{totalinvest}}</h2>
             <h3 class="text-center highcard">OVERALL</h3>
         </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center cards">CurrentLiqudity</h1>
+            <h2 class="text-center highcard">{{networth}}</h2>
+            <h3 class="text-center highcard">OVERALL</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center cards">Liabilities</h1>
+            <h2 class="text-center highcard">{{liablegetval}}/{{liablegiveval}}</h2>
+            <h3 class="text-center highcard"> Get/Give</h3>
+        </mat-card>
         
     </div>
 
-    <mat-form-field class="example-full-width inputbox">
-        <mat-label>User Filter</mat-label>
-        <input matInput placeholder="usercode" [(ngModel)]="searchusername">
-    </mat-form-field>
+    
 </div>
 
 <div class="d-fleX mx-2 ">
 
-    <div class="d-flex justify-content-center mb-5">
-
-        <button class="border border-5" mat-button color="primary" (click)="searchuser()">Filter By User</button>
-    </div>
-
+   
     <h1 class="ms-4">Daily Expenses</h1>
     <app-line-chart></app-line-chart>
     <h1 class="ms-4">Monthly Expenses</h1>
     <app-negative-line-chart></app-negative-line-chart>
-    <h1 class="ms-4">Liability</h1>
+    <h1 class="ms-4">Liability Overall</h1>
     <app-liability-chart></app-liability-chart>
     <h1 class="ms-4">Investment</h1>
     <app-investment-chart></app-investment-chart>
@@ -214,3 +232,4 @@
     <app-grid></app-grid>
     <!-- </div> -->
 </div>
+<ngx-spinner  bdColor="rgba(0.5, 0.9, 0.7, 0.7)"  template="<img src='../../../assets/images/output-onlinegiftools.gif' style='width: 15rem; height: 15rem'/>"></ngx-spinner>

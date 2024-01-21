@@ -1,0 +1,11 @@
+.chart1,
+.chart2 {
+    height: 380px;
+    width: 50%
+}
+
+@media only screen and (min-width: 200px) and (max-width: 900px) {
+    .chart1 ,.chart2{
+        width: 100%
+    }
+}
