@@ -23,7 +23,14 @@ export class LiabilityChartComponent implements OnInit {
   liableget: any = [];
   liablegive: any = [];
   secondchart: any = [];
+  investlast: any = [];
 
+  finallibiliity: any;
+  window: number = 0;
+  rowData: any;
+  intialwidth: number = 0;
+  columnDefs: any = []
+  endpiechartliable: any = [];
   constructor(private githubService: GithubServiceService) { }
 
   ngOnInit() {
@@ -75,7 +82,7 @@ export class LiabilityChartComponent implements OnInit {
         }
         this.liableget = []
         this.liablegive = []
-        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liableget.push(el) })
+        this.investlast = []
         this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegive.push(el) })
         const groupedByKeysliableget = _.groupBy(this.liableget, 'Name');
         const groupedByKeysliablegive = _.groupBy(this.liablegive, 'Name');
@@ -83,28 +90,109 @@ export class LiabilityChartComponent implements OnInit {
         const resultObjectValueget: any = {
           ...resultObjectget,
           value: _.sum(Object.values(resultObjectget)),
-                    category:'Liability Get'
+          category: 'Get'
 
         };
 
         let resultObjectgive: any = _.mapValues(groupedByKeysliablegive, group => _.last(group).Price);
-       const resultObjectValuegive: any = {
+        const resultObjectValuegive: any = {
           ...resultObjectgive,
           value: _.sum(Object.values(resultObjectgive)),
-          category:'Liability Give'
+          category: 'Give'
         };
 
         this.secondchart = [resultObjectValueget, resultObjectValuegive]
-console.log('resultObjectValueget',this.secondchart,resultObjectValueget)
+        console.log('resultObjectValueget', this.secondchart, resultObjectValueget)
+        this.finallibiliity = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] == 'Liability');
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
         this.dataarrayobj.filter((el: any) => {
           if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Give') {
-            el.Materialgroup = 'Liability Give'
+            el.Materialgroup = 'Give'
+            el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
           }
           else if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Get') {
-            el.Materialgroup = 'Liability Get'
+            el.Materialgroup = 'Get'
+            el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
+
           }
         })
+
+        this.finallibiliity = Object.values(this.groupAndSum(this.finallibiliity, 'Materialendname', 'Price'))
+        this.finallibiliity.forEach((l: any) => {
+          if (l.Materialendname != undefined) {
+            let splitter = l.Materialendname.split('*|*')
+            l.name = splitter[0]
+            l.material = splitter[1]
+            l.materialnames = splitter[0] + splitter[1]
+            l.materialstatus = splitter[2]
+            l.Materialgroup = 'Liabillity ' + splitter[2]
+          }
+        })
+
+
+        this.finallibiliity.forEach((overall: any) => {
+          this.finallibiliity.forEach((give: any) => {
+            if (give.materialnames == overall.materialnames && give.materialstatus != overall.materialstatus) {
+              if (give.Price > overall.Price) {
+                overall.final = give.Price - overall.Price
+                overall.status = give.materialstatus
+
+              }
+              else if (give.Price < overall.Price && give.materialstatus != overall.materialstatus) {
+                overall.final = overall.Price - give.Price
+                overall.status = overall.materialstatus + ' Crossed'
+              }
+              else if (give.Price == overall.Price && give.materialstatus != overall.materialstatus) {
+                overall.final = overall.Price - give.Price
+                overall.status = 'Over'
+              }
+            }
+          });
+        });
+        this.finallibiliity.forEach((overall: any) => {
+          if (overall.status == undefined) {
+            overall.status = overall.materialstatus + 'Pending'
+            overall.final = overall.Price
+
+          }
+          overall.category = overall.status
+          overall.value = overall.Price
+        })
+        console.log(['c jhkjfd', this.finallibiliity])
+        this.endpiechartliable = _.uniqBy(_.reverse(_.cloneDeep(this.finallibiliity)), 'material');
+        _.remove(this.endpiechartliable, (obj: any) => obj['final'] == 0);
+        this.endpiechartliable.forEach((el: any) => {
+          el.category = el.material
+          el.value = el.final
+        })
+        this.window = window.innerWidth;
+        this.rowData = this.finallibiliity
+        if (this.window < 767) {
+          this.intialwidth = 150
+        } else {
+          this.intialwidth = 250
+        }
+        console.log(this.window, 'scrreee')
+
+        if (this.intialwidth != 0) {
+          this.columnDefs = [
+            { headerName: 'Amount', field: 'final', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 },
+            { headerName: 'Status', field: 'status', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 },
+            // { headerName: 'Materialendname', field: 'Materialendname', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 },
+            { headerName: 'material', field: 'material', filter: true, initialWidth: this.intialwidth, minWidth: 100, maxWidth: 300 },
+            { headerName: 'Materialgroup', field: 'Materialgroup', filter: true, initialWidth: this.intialwidth - 30, minWidth: 100, maxWidth: 300 },
+            { headerName: 'Price', field: 'Price', filter: true, initialWidth: 150, minWidth: 50, maxWidth: 300 },
+            { headerName: 'materialstatus', field: 'materialstatus', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 },
+          ];
+          let temprefresh = this.columnDefs
+          this.columnDefs = []
+          setTimeout(() => {
+            this.columnDefs = temprefresh
+          }, 10);
+        }
+
+
+
 
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
         console.log(this.groupedData);
@@ -114,7 +202,7 @@ console.log('resultObjectValueget',this.secondchart,resultObjectValueget)
         })
         this.disposeChart()
         this.initializeChart();
-        this.initializeChart1();
+        // this.initializeChart1();
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -144,7 +232,7 @@ console.log('resultObjectValueget',this.secondchart,resultObjectValueget)
     this.chart.innerRadius = am4core.percent(55);
 
     // Add data (replace this with your actual data)
-    this.chart.data = this.groupedData
+    this.chart.data = this.endpiechartliable
 
     // Add series
     const series = this.chart.series.push(new am4charts.PieSeries3D());
@@ -152,7 +240,7 @@ console.log('resultObjectValueget',this.secondchart,resultObjectValueget)
     series.dataFields.category = 'category';
 
     // Add labels
-    series.labels.template.text = '{category}:{value.value}';
+    series.labels.template.text = '{category}:{value.value} {status}';
     series.labels.template.fill = am4core.color('Black');
     this.setLabelRadius(series);
     series.colors.list = [
@@ -169,60 +257,73 @@ console.log('resultObjectValueget',this.secondchart,resultObjectValueget)
     this.chart.legend = new am4charts.Legend();
 
   }
-  private initializeChart1() {
-    // Check if the chart is already initialized
-    this.chart1 = am4core.create('liability-chartdiv1', am4charts.PieChart3D); // Unique container ID
-    this.chart1.innerRadius = am4core.percent(55);
+  // private initializeChart1() {
+  //   // Check if the chart is already initialized
+  //   this.chart1 = am4core.create('liability-chartdiv1', am4charts.PieChart3D); // Unique container ID
+  //   this.chart1.innerRadius = am4core.percent(55);
 
-    // Add data (replace this with your actual data)
-    this.chart1.data = this.secondchart
+  //   // Add data (replace this with your actual data)
+  //   this.chart1.data = this.secondchart
 
-    // Add series
-    const series1 = this.chart1.series.push(new am4charts.PieSeries3D());
-    series1.dataFields.value = 'value';
-    series1.dataFields.category = 'category';
+  //   // Add series
+  //   const series1 = this.chart1.series.push(new am4charts.PieSeries3D());
+  //   series1.dataFields.value = 'value';
+  //   series1.dataFields.category = 'category';
 
-    // Add labels
-    series1.labels.template.text = '{category}:{value.value}';
-    series1.labels.template.fill = am4core.color('Black');
-    this.setLabelRadius1(series1);
-    series1.colors.list = [
+  //   // Add labels
+  //   series1.labels.template.text = '{category}:{value.value}';
 
-      am4core.color("#97C465"),
-      am4core.color("#D32F2F"),
-      am4core.color("#FFC75F"),
-      am4core.color("#F9F871"),
-      am4core.color("#81D4FA"),
-      am4core.color("#AZE278"),
+  //   series1.labels.template.fill = am4core.color('Black');
+  //   this.setLabelRadius1(series1);
+  //   series1.colors.list = [
 
-    ];
+  //     am4core.color("#97C465"),
+  //     am4core.color("#D32F2F"),
+  //     am4core.color("#FFC75F"),
+  //     am4core.color("#F9F871"),
+  //     am4core.color("#81D4FA"),
+  //     am4core.color("#AZE278"),
 
-    this.chart1.legend = new am4charts.Legend();
+  //   ];
 
-  }
+  //   this.chart1.legend = new am4charts.Legend();
 
-  private setLabelRadius(series:any) {
+  // }
+
+  private setLabelRadius(series: any) {
     const screenWidth = window.innerWidth;
     console.log(screenWidth, 'screenWidth')
     // Adjust the radius based on the screen size
-    const radiusPercent = screenWidth < 950 ? -75 : -25;
+    let radiusPercent = 0
+    if (screenWidth < 950) {
+      radiusPercent = -75;
+      series.labels.template.disabled = true; // Disable labels when window width is less than 950
 
-     series = this.chart.series.getIndex(0) as am4charts.PieSeries3D;
+    }
+    else {
+      radiusPercent = -25
+    }
+
+    series = this.chart.series.getIndex(0) as am4charts.PieSeries3D;
     if (series) {
       series.labels.template.radius = am4core.percent(radiusPercent);
     }
   }
-  private setLabelRadius1(series1:any) {
-    const screenWidth = window.innerWidth;
-    console.log(screenWidth, 'screenWidth')
-    // Adjust the radius based on the screen size
-    const radiusPercent = screenWidth < 950 ? -60 : -25;
-
-     series1 = this.chart1.series.getIndex(0) as am4charts.PieSeries3D;
-    if (series1) {
-      series1.labels.template.radius = am4core.percent(radiusPercent);
-    }
-  }
+  // private setLabelRadius1(series1: any) {
+  //   const screenWidth = window.innerWidth;
+  //   console.log(screenWidth, 'screenWidth')
+  //   let radiusPercent=0
+  //   if(screenWidth < 950){
+  //     radiusPercent = -75 ;
+  //     series1.labels.template.disabled = true;   }
+  //  else{
+  //     radiusPercent = -25
+  //  }
+  //   series1 = this.chart1.series.getIndex(0) as am4charts.PieSeries3D;
+  //   if (series1) {
+  //     series1.labels.template.radius = am4core.percent(radiusPercent);
+  //   }
+  // }
   disposeChart() {
     if (this.chart1) {
       this.chart.dispose();

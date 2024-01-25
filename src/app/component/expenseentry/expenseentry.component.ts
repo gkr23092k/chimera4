@@ -54,12 +54,13 @@ export class ExpenseentryComponent implements OnInit {
   networth: number = 0
   userfiltered: any = [];
   liabilitystatus: any = 'No';
-  liableget: any=[];
-  liablegive: any=[];
-  liablegetval: number=0;
-  liablegiveval: number=0;
+  liableget: any = [];
+  liablegive: any = [];
+  liablegetval: number = 0;
+  liablegiveval: number = 0;
+  dataarrayobjholder: any = [];
 
-  constructor(private githubService: GithubServiceService, private router: Router,private spinner: NgxSpinnerService) {
+  constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService) {
 
   }
 
@@ -101,7 +102,6 @@ export class ExpenseentryComponent implements OnInit {
           // let data = el.substring(indexcut, datecrindexcut)
           let objdata: any = el.trim().split(',');
           this.showcontent += `\n${el}`
-          this.materialdropdown.push(el.split(',')[1].replace('Material:', '').toUpperCase())
 
           const dataObject: any = {};
 
@@ -117,6 +117,8 @@ export class ExpenseentryComponent implements OnInit {
             console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
+              this.materialdropdown.push(el.Material.toUpperCase())
+
             }
           });
           this.dataarrayobj = tempstoreuser
@@ -136,30 +138,30 @@ export class ExpenseentryComponent implements OnInit {
         this.last1DaysDatainv = []
         this.last1Daysinv = []
         this.totalspent = 0
-        this.liableget=[]
-        this.liablegive=[]
+        this.liableget = []
+        this.liablegive = []
+        this.dataarrayobjholder = []
         const groupedByKeys = _.groupBy(this.dataarrayobj, 'Name');
         let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
         resultObjectAcc = _.values(resultObjectAcc);
         let resultObjectIhb: any = _.mapValues(groupedByKeys, group => _.last(group).InhandBalance);
         resultObjectIhb = _.values(resultObjectIhb);
-       
-        this.dataarrayobj.filter((el:any)=>{if(el.Liabilitystatus=='Get') this.liableget.push(el)})
-        this.dataarrayobj.filter((el:any)=>{if(el.Liabilitystatus=='Give') this.liablegive.push(el)})
-        const groupedByKeysliableget= _.groupBy(this.liableget, 'Name');
-        const groupedByKeysliablegive = _.groupBy(this.liablegive, 'Name');
-
-
-        let resultObjectget: any = _.mapValues(groupedByKeysliableget, group => _.last(group).Price);
-        resultObjectget = _.values(resultObjectget);
-        let resultObjectgive: any = _.mapValues(groupedByKeysliablegive, group => _.last(group).Price);
-        resultObjectgive = _.values(resultObjectgive);
         let accbalance = _.sum(resultObjectAcc);
         let ihbbalance = _.sum(resultObjectIhb);
-        this.liablegetval = _.sum(resultObjectget);
-        this.liablegiveval = _.sum(resultObjectgive);
+
 
         this.networth = accbalance + ihbbalance
+
+        this.dataarrayobj.forEach((el: any) => {
+          if (el.Materialgroup != 'Liability') {
+            this.materialdropdown.push(el.Material.toUpperCase())
+          }
+        })
+        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liableget.push(el) })
+        this.liablegetval = _.sumBy(this.liableget, 'Price');
+        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegive.push(el) })
+        this.liablegiveval = _.sumBy(this.liablegive, 'Price');
+
         this.dataarrayobjinvest = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] === 'Investment');
         if (this.dataarrayobjinvest.length == 0) {
           this.dataarrayobjinvest = [{ "Price": "Nil" }]
@@ -195,7 +197,7 @@ export class ExpenseentryComponent implements OnInit {
         this.totalinvest = _.sumBy(this.dataarrayobjinvest, 'Price');
 
 
-
+        this.dataarrayobjholder = this.dataarrayobj
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'Investment');
         if (this.dataarrayobj.length == 0) {
           this.dataarrayobj = [{ "Price": "Nil" }]
@@ -254,7 +256,7 @@ export class ExpenseentryComponent implements OnInit {
       && this.user != undefined && this.user.trim() != '') {
       console.log('called', val, this.price, this.user)
 
-      this.dataarrayobj.filter((bal: any) => {
+      this.dataarrayobjholder.filter((bal: any) => {
         if (bal.Name == this.user) {
           console.log(bal, this.user)
           this.userfiltered.push(bal)
@@ -263,32 +265,32 @@ export class ExpenseentryComponent implements OnInit {
         }
       })
 
-      if (val == 'ACC' && this.materialgroup!='Liability') {
+      if (val == 'ACC' && this.materialgroup != 'Liability') {
         this.accbalance = this.calcaccbalance - this.price
         this.inhandbalance = this.calcinhandbalance
 
       }
-      else if (val == 'IHB'&& this.materialgroup!='Liability') {
+      else if (val == 'IHB' && this.materialgroup != 'Liability') {
         this.accbalance = this.calcaccbalance
         this.inhandbalance = this.calcinhandbalance - this.price
       }
-      else if (val == 'ACC'&& this.materialgroup=='Liability' && this.liabilitystatus=='Get') {
-        this.accbalance = parseInt(this.calcaccbalance)+parseInt(this.price)
-        this.inhandbalance = this.calcinhandbalance 
+      else if (val == 'ACC' && this.materialgroup == 'Liability' && this.liabilitystatus == 'Get') {
+        this.accbalance = parseInt(this.calcaccbalance) + parseInt(this.price)
+        this.inhandbalance = this.calcinhandbalance
       }
-      else if (val == 'ACC'&& this.materialgroup=='Liability' && this.liabilitystatus=='Give') {
-        this.accbalance = this.calcaccbalance -this.price
-        this.inhandbalance = this.calcinhandbalance 
+      else if (val == 'ACC' && this.materialgroup == 'Liability' && this.liabilitystatus == 'Give') {
+        this.accbalance = this.calcaccbalance - this.price
+        this.inhandbalance = this.calcinhandbalance
       }
-      else if (val == 'IHB'&& this.materialgroup=='Liability' && this.liabilitystatus=='Get') {
+      else if (val == 'IHB' && this.materialgroup == 'Liability' && this.liabilitystatus == 'Get') {
         this.accbalance = this.calcaccbalance
-        this.inhandbalance = parseInt(this.calcinhandbalance) +parseInt( this.price)
+        this.inhandbalance = parseInt(this.calcinhandbalance) + parseInt(this.price)
       }
-      else if (val == 'IHB'&& this.materialgroup=='Liability' && this.liabilitystatus=='Give') {
+      else if (val == 'IHB' && this.materialgroup == 'Liability' && this.liabilitystatus == 'Give') {
         this.accbalance = this.calcaccbalance
         this.inhandbalance = this.calcinhandbalance - this.price
       }
-      else{
+      else {
         const Toast = Swal.mixin({
           toast: true,
           position: 'center',
@@ -301,7 +303,7 @@ export class ExpenseentryComponent implements OnInit {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           }
         })
-  
+
         Toast.fire({
           icon: 'info',
           title: 'Select the Liability Status'
@@ -343,9 +345,23 @@ export class ExpenseentryComponent implements OnInit {
     }
     return containsSymbols && containsNumbersCharacters && containsNumbersCharacterslength;
   }
+  onInputChange() {
+    console.log(this.materialgroup)
+    this.materialdropdown = []
+    this.dataarrayobj.forEach((el: any) => {
+      if (this.materialgroup != 'Liability') {
+        if (el.Materialgroup != 'Liability') {
+          this.materialdropdown.push(el.Material.toUpperCase())
+        }
+      }
+      else if (this.materialgroup == 'Liability') {
+        if (el.Materialgroup == 'Liability') {
+          this.materialdropdown.push(el.Material.toUpperCase())
+        }
+      }
+    })
 
-
-
+  }
 
 
   appendData() {

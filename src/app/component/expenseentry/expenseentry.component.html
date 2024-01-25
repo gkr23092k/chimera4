@@ -9,6 +9,25 @@
         <mat-label>User</mat-label>
         <input matInput placeholder="usercode" [(ngModel)]="user">
     </mat-form-field>
+    
+    <mat-form-field class="inputbox">
+        <mat-label>Material Group</mat-label>
+        <mat-select required [(ngModel)]="materialgroup" (ngModelChange)="onInputChange()">
+            <mat-option [value]="'Cosmetics'">Cosmetics</mat-option>
+            <mat-option [value]="'Dress'">Dress</mat-option>
+            <mat-option [value]="'Investment'">Investment</mat-option>
+            <mat-option [value]="'Education'">Education</mat-option>
+            <mat-option [value]="'Electronics'">Electronics</mat-option>
+            <mat-option [value]="'Electricity'">Electricity</mat-option>
+            <mat-option [value]="'Food'">Food</mat-option>
+            <mat-option [value]="'Liability'">Liability</mat-option>
+            <mat-option [value]="'Medical'">Medical</mat-option>
+            <mat-option [value]="'Selfcare'">Selfcare</mat-option>
+            <mat-option [value]="'Travel'">Travel</mat-option>
+            <mat-option [value]="'Others'">Others</mat-option>
+        </mat-select>
+    </mat-form-field>
+
     <mat-chip-listbox aria-label="Material selection">
         <mat-chip-option [selected]="selectedChip === 'New Material'"
             (selectionChange)="chipSelectionChange($event)">New Material</mat-chip-option>
@@ -27,23 +46,6 @@
         </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="inputbox">
-        <mat-label>Material Group</mat-label>
-        <mat-select required [(ngModel)]="materialgroup">
-            <mat-option [value]="'Cosmetics'">Cosmetics</mat-option>
-            <mat-option [value]="'Dress'">Dress</mat-option>
-            <mat-option [value]="'Investment'">Investment</mat-option>
-            <mat-option [value]="'Education'">Education</mat-option>
-            <mat-option [value]="'Electronics'">Electronics</mat-option>
-            <mat-option [value]="'Electricity'">Electricity</mat-option>
-            <mat-option [value]="'Food'">Food</mat-option>
-            <mat-option [value]="'Liability'">Liability</mat-option>
-            <mat-option [value]="'Medical'">Medical</mat-option>
-            <mat-option [value]="'Selfcare'">Selfcare</mat-option>
-            <mat-option [value]="'Travel'">Travel</mat-option>
-            <mat-option [value]="'Others'">Others</mat-option>
-        </mat-select>
-    </mat-form-field>
     <mat-form-field *ngIf="materialgroup=='Liability'" class="inputbox">
         <mat-label>Liability Status</mat-label>
             <mat-select required [(ngModel)]="liabilitystatus">
@@ -212,8 +214,6 @@
 </div>
 
 <div class="d-fleX mx-2 ">
-
-   
     <h1 class="ms-4">Daily Expenses</h1>
     <app-line-chart></app-line-chart>
     <h1 class="ms-4">Monthly Expenses</h1>
@@ -227,7 +227,6 @@
     <!-- <div *ngIf="user=='pillow80Fragaria85@23'"> -->
     <h1 class="ms-4">Money Flow</h1>
     <app-downfall-chart></app-downfall-chart>
-   
     <h1 class="ms-4">Data Grid</h1>
     <app-grid></app-grid>
     <!-- </div> -->
