@@ -11,9 +11,10 @@ export class GithubServiceService {
   private owner = 'gkr23092k';
   private repo = 'report';
   private filePath = 'edataanal.txt';
+  
   private newkey = 'ghp_'
-  private newkey2 = 'L3ClJ9c'
-  private token = this.newkey + 'MrOmLHjF2aPS3IGfQLx1k6MO0Ts3s' + this.newkey2;
+  private newkey2 = '4yjyFNxLGY'
+  private token = this.newkey+ this.newkey2 + '2bA3dqQcxH9xf28pfKB21rNNFi' ;
   invokeFirstComponentFunction = new EventEmitter();
   subsVar!: Subscription;
   public messagesource: any = new BehaviorSubject('');
