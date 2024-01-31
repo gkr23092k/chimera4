@@ -360,6 +360,8 @@ export class ExpenseentryComponent implements OnInit {
         }
       }
     })
+    this.materialdropdown = [...new Set(this.materialdropdown)];
+
 
   }
 
