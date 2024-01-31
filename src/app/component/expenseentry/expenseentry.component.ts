@@ -507,6 +507,7 @@ export class ExpenseentryComponent implements OnInit {
       // Update the dropdown flag based on the selected chip
       this.ismaterialdropdown = this.selectedChip === 'Existing Material';
     }
+    this.material=''
   }
 
   appendincall(result: any) {
