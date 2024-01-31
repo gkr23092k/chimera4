@@ -23,6 +23,9 @@ import {MatCardModule} from '@angular/material/card';
 import { LiabilityChartComponent } from './component/liability-chart/liability-chart.component';
 import { InvestmentChartComponent } from './component/investment-chart/investment-chart.component';
 import { NgxSpinnerModule } from "ngx-spinner";
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
 
 @NgModule({
   declarations: [
@@ -40,7 +43,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
   imports: [
     BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,MatCardModule,
     AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,AgGridModule,
-    MatChipsModule,NgxSpinnerModule
+    MatChipsModule,NgxSpinnerModule,NgxMatSelectSearchModule,NgMultiSelectDropDownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

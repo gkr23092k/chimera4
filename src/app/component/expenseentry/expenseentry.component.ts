@@ -59,7 +59,9 @@ export class ExpenseentryComponent implements OnInit {
   liablegetval: number = 0;
   liablegiveval: number = 0;
   dataarrayobjholder: any = [];
-
+  dropdownList: any = [];
+  selectedItems: any = [];
+  dropdownSettings: any = {};
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService) {
 
   }
@@ -74,6 +76,24 @@ export class ExpenseentryComponent implements OnInit {
     setTimeout(() => {
       this.spinner.hide();
     }, 500);
+
+    this.selectedItems = [
+      { item_id: 3, item_text: 'Pune' },
+      { item_id: 4, item_text: 'Navsari' }
+    ];
+    this.dropdownSettings = {
+      singleSelection: true,
+      idField: 'item_id',
+      textField: 'item_text',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true,
+      closeDropDownOnSelection: true
+    };
+
+
+
     this.fetchData('NO');
     this.dateentry = new Date();
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
@@ -86,6 +106,16 @@ export class ExpenseentryComponent implements OnInit {
     })
 
   }
+
+
+  onItemSelect(item: any) {
+    console.log(item, 'item');
+  }
+  onSelectAll(items: any) {
+    console.log(items);
+  }
+
+
 
   fetchData(checkcase: any) {
     this.showcontent = ''
@@ -228,7 +258,12 @@ export class ExpenseentryComponent implements OnInit {
 
 
 
-        this.materialdropdown = [...new Set(this.materialdropdown)];
+        let arraymateraildropdown = [...new Set(this.materialdropdown)];
+        this.materialdropdown = []
+        arraymateraildropdown.forEach((element: any, index: number) => {
+          this.materialdropdown.push({ item_id: index, item_text: element },
+          )
+        });
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -348,7 +383,7 @@ export class ExpenseentryComponent implements OnInit {
   onInputChange() {
     console.log(this.materialgroup)
     this.materialdropdown = []
-    this.dataarrayobj.forEach((el: any) => {
+    this.dataarrayobjholder.forEach((el: any) => {
       if (this.materialgroup != 'Liability') {
         if (el.Materialgroup != 'Liability') {
           this.materialdropdown.push(el.Material.toUpperCase())
@@ -360,8 +395,14 @@ export class ExpenseentryComponent implements OnInit {
         }
       }
     })
-    this.materialdropdown = [...new Set(this.materialdropdown)];
+    let arrmateraildropdown = [...new Set(this.materialdropdown)];
+    this.materialdropdown = []
+    arrmateraildropdown.forEach((element: any, index: number) => {
+      this.materialdropdown.push({ item_id: index, item_text: element },
+      )
+    });
 
+    console.log(this.materialdropdown,this.dataarrayobj)
 
   }
 
@@ -469,11 +510,13 @@ export class ExpenseentryComponent implements OnInit {
   }
 
   appendincall(result: any) {
-    if (this.user.trim() != '' && this.material.trim() != '' && this.materialgroup.trim() != '' &&
+
+    if (this.user.trim() != '' && this.material != '' && this.materialgroup.trim() != '' &&
       this.price.trim() != '' && this.accbalance.toString().trim() != '' && this.inhandbalance.toString().trim() != '' && this.offer.trim() != '' &&
       this.planned.trim() != '' && this.dateentry != '') {
       this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
-      this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
+      console.log(this.material, 'material')
+      this.material = this.material[0].replaceAll(",", "_").replaceAll("'", '_')
       if (/^[a-zA-Z]/.test(this.material) === true) {
         if (this.comment == '') this.comment = 'No comments'
         const currentDate = new Date();

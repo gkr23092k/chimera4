@@ -9,7 +9,7 @@
         <mat-label>User</mat-label>
         <input matInput placeholder="usercode" [(ngModel)]="user">
     </mat-form-field>
-    
+
     <mat-form-field class="inputbox">
         <mat-label>Material Group</mat-label>
         <mat-select required [(ngModel)]="materialgroup" (ngModelChange)="onInputChange()">
@@ -39,20 +39,27 @@
         <mat-label>Material</mat-label>
         <input matInput placeholder="spent on" [(ngModel)]="material">
     </mat-form-field>
-    <mat-form-field *ngIf="ismaterialdropdown==true" class="inputbox">
+    <!-- <mat-form-field *ngIf="ismaterialdropdown==true" class="inputbox">
         <mat-label>Material</mat-label>
         <mat-select required [(ngModel)]="material">
+            <input class="inputsearch p-2" matInput placeholder="search">
             <mat-option *ngFor="let ma of materialdropdown" [value]="ma">{{ma}}</mat-option>
         </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
 
-    <mat-form-field *ngIf="materialgroup=='Liability'" class="inputbox">
+    <ng-multiselect-dropdown *ngIf="ismaterialdropdown==true" style="margin-top: 10px;" [placeholder]="'Material'"
+        [settings]="dropdownSettings" [data]="materialdropdown" [(ngModel)]="material" (onSelect)="onItemSelect($event)"
+        (onSelectAll)="onSelectAll($event)">
+    </ng-multiselect-dropdown>
+
+
+    <mat-form-field *ngIf="materialgroup=='Liability'" class="inputbox mt-4">
         <mat-label>Liability Status</mat-label>
-            <mat-select required [(ngModel)]="liabilitystatus">
-                <mat-option [value]="'Give'">Give</mat-option>
-                <mat-option [value]="'Get'">Get</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <mat-select required [(ngModel)]="liabilitystatus">
+            <mat-option [value]="'Give'">Give</mat-option>
+            <mat-option [value]="'Get'">Get</mat-option>
+        </mat-select>
+    </mat-form-field>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>Price</mat-label>
         <input [type]="'number'" [(ngModel)]="price" matInput placeholder="price in rupees">
@@ -207,10 +214,10 @@
             <h2 class="text-center highcard">{{liablegetval}}/{{liablegiveval}}</h2>
             <h3 class="text-center highcard"> Get/Give</h3>
         </mat-card>
-        
+
     </div>
 
-    
+
 </div>
 
 <div class="d-fleX mx-2 ">
@@ -231,4 +238,5 @@
     <app-grid></app-grid>
     <!-- </div> -->
 </div>
-<ngx-spinner  bdColor="rgba(0.5, 0.9, 0.7, 0.7)"  template="<img src='./assets/images/output-onlinegiftools.gif' style='width: 15rem; height: 15rem'/>"></ngx-spinner>
+<ngx-spinner bdColor="rgba(0.5, 0.9, 0.7, 0.7)"
+    template="<img src='./assets/images/output-onlinegiftools.gif' style='width: 15rem; height: 15rem'/>"></ngx-spinner>
