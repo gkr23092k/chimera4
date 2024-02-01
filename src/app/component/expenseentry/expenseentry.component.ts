@@ -517,7 +517,12 @@ export class ExpenseentryComponent implements OnInit {
       this.planned.trim() != '' && this.dateentry != '') {
       this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
       console.log(this.material, 'material')
-      this.material = this.material[0].replaceAll(",", "_").replaceAll("'", '_')
+    if(typeof this.material =='object')
+      this.material = this.material[0].item_text.replaceAll(",", "_").replaceAll("'", '_')
+    else{
+      this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
+
+    }
       if (/^[a-zA-Z]/.test(this.material) === true) {
         if (this.comment == '') this.comment = 'No comments'
         const currentDate = new Date();
