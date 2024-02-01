@@ -402,7 +402,7 @@ export class ExpenseentryComponent implements OnInit {
       )
     });
 
-    console.log(this.materialdropdown,this.dataarrayobj)
+    console.log(this.materialdropdown, this.dataarrayobj)
 
   }
 
@@ -507,7 +507,7 @@ export class ExpenseentryComponent implements OnInit {
       // Update the dropdown flag based on the selected chip
       this.ismaterialdropdown = this.selectedChip === 'Existing Material';
     }
-    this.material=''
+    this.material = ''
   }
 
   appendincall(result: any) {
@@ -517,12 +517,12 @@ export class ExpenseentryComponent implements OnInit {
       this.planned.trim() != '' && this.dateentry != '') {
       this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
       console.log(this.material, 'material')
-    if(typeof this.material =='object')
-      this.material = this.material[0].item_text.replaceAll(",", "_").replaceAll("'", '_')
-    else{
-      this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
+      if (typeof this.material == 'object')
+        this.material = this.material[0].item_text.replaceAll(",", "_").replaceAll("'", '_')
+      else {
+        this.material = this.material.replaceAll(",", "_").replaceAll("'", '_')
 
-    }
+      }
       if (/^[a-zA-Z]/.test(this.material) === true) {
         if (this.comment == '') this.comment = 'No comments'
         const currentDate = new Date();
@@ -542,13 +542,27 @@ export class ExpenseentryComponent implements OnInit {
               this.githubService.appendDataToGitHub(newData, sha).pipe(take(1)).subscribe(
                 () => {
                   this.code = true
+
                   console.log('Data appended successfully!');
 
                   this.fetchData('NO');
-                  Swal.fire({
-                    title: "Success",
-                    text: "Material Added Successfully",
-                    icon: "success"
+
+                  const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'center',
+                    showConfirmButton: false,
+                    timer: 5000,
+                    showCloseButton: true,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.addEventListener('mouseenter', Swal.stopTimer)
+                      toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                  })
+
+                  Toast.fire({
+                    icon: 'info',
+                    title: 'Material Added Successfully'
                   })
                   this.router.navigate(['ch']);
                   setTimeout(() => {

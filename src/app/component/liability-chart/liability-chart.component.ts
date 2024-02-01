@@ -250,8 +250,19 @@ export class LiabilityChartComponent implements OnInit {
       am4core.color("#FFC75F"),
       am4core.color("#F9F871"),
       am4core.color("#81D4FA"),
-      am4core.color("#AZE278"),
-
+      am4core.color("#FCFFA6"),
+      am4core.color("#DCFFB7"),
+      am4core.color("#FFADAD"),
+      am4core.color("#FF9BD2"),
+      am4core.color("#FFB996"),
+      am4core.color("#D0BFFF"),
+      am4core.color("#D8D9DA"),
+      am4core.color("#EEEDED"),
+      am4core.color("#9336B4"),
+      am4core.color("#FFD4D4"),
+      am4core.color("#F3CCFF"),
+      am4core.color("#54B435"),
+      
     ];
 
     this.chart.legend = new am4charts.Legend();
