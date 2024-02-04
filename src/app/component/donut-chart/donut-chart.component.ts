@@ -118,7 +118,8 @@ export class DonutChartComponent implements OnInit {
     series.labels.template.fill = am4core.color('Black');
     this.setLabelRadius();
     series.colors.list = [
-      am4core.color("#5FB3D9"),
+      am4core.color("#EAD7BB"),
+      am4core.color("#9FB802"),
       am4core.color("#845EC9"),
       am4core.color("#AA2121"),
       am4core.color("#E1AA74"),
@@ -127,10 +128,17 @@ export class DonutChartComponent implements OnInit {
       am4core.color("#FFC75F"),
       am4core.color("#F9F871"),
       am4core.color("#81D4FA"),
-      am4core.color("#50623A"),
       am4core.color("#D4E7C5"),
+      am4core.color("#50623A"),
       am4core.color("#E0AED9"),
-      am4core.color("#EAD7BB"),
+      am4core.color("#D0BFFF"),
+      am4core.color("#FF6868"),
+      am4core.color("#43766C"),
+
+      
+
+
+      
 
       
       

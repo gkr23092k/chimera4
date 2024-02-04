@@ -72,10 +72,11 @@ export class ExpenseentryComponent implements OnInit {
 
   ngOnInit() {
     this.spinner.show();
-
+   this.user= localStorage.getItem('g0r@usern@mechimera');
+console.log(this.user,'thislocalstorage')
     setTimeout(() => {
       this.spinner.hide();
-    }, 500);
+    }, 1000);
 
     this.selectedItems = [
       { item_id: 3, item_text: 'Pune' },
@@ -635,5 +636,7 @@ export class ExpenseentryComponent implements OnInit {
       })
     }
   }
-
+  saveDataToLocal() {
+    localStorage.setItem('g0r@usern@mechimera', (this.user));
+  }
 }
