@@ -174,6 +174,7 @@ export class DownfallChartComponent implements OnInit {
 
   createChart(): void {
     // Create chart instance
+    const screenWidth = window.innerWidth;
     this.chart = am4core.create('chartdivdownfall', am4charts.XYChart);
 
     // Sample data (replace with your actual data)
@@ -230,7 +231,7 @@ export class DownfallChartComponent implements OnInit {
 
     // Add legend
     this.chart.legend = new am4charts.Legend();
-    const screenWidth = window.innerWidth;
+
 
     if (screenWidth < 767) {
       this.chart.events.on('ready', () => {
@@ -238,6 +239,9 @@ export class DownfallChartComponent implements OnInit {
         const startOfLast7Days = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7);
 
         dateAxis.zoomToDates(startOfLast7Days, currentDate, true);
+        series1.tooltipText = `{value1} Rs AccBal {date}`;
+        series2.tooltipText = '{value2} Rs InHBal {date}';
+        series3.tooltipText = '{value3} Rs Spent {date}';
 
 
       });
