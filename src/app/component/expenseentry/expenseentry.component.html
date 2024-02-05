@@ -20,12 +20,13 @@
         <mat-label>Material Group</mat-label>
         <mat-select required [(ngModel)]="materialgroup" (ngModelChange)="onInputChange()">
             <mat-option [value]="'Cosmetics'">Cosmetics</mat-option>
-            <mat-option [value]="'Dress'">Dress</mat-option>
+            <mat-option [value]="'Cloths'">Dress</mat-option>
             <mat-option [value]="'Investment'">Investment</mat-option>
             <mat-option [value]="'Education'">Education</mat-option>
             <mat-option [value]="'Electronics'">Electronics</mat-option>
             <mat-option [value]="'Electricity'">Electricity</mat-option>
             <mat-option [value]="'Family'">Family</mat-option>
+            <mat-option [value]="'Fashion'">Dress</mat-option>
             <mat-option [value]="'Food'">Food</mat-option>
             <mat-option [value]="'Liability'">Liability</mat-option>
             <mat-option [value]="'Loan'">Loan</mat-option>
@@ -244,7 +245,7 @@
     <!-- <div *ngIf="user=='pillow80Fragaria85@23'"> -->
     <h1 class="ms-4">Money Flow</h1>
     <app-downfall-chart></app-downfall-chart>
-    <h1 class="ms-4">Data Grid</h1>
+    <h1 class="ms-4">Data Grid</h1> 
     <app-grid></app-grid>
     <!-- </div> -->
 </div>

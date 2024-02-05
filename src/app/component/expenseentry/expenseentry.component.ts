@@ -72,16 +72,12 @@ export class ExpenseentryComponent implements OnInit {
 
   ngOnInit() {
     this.spinner.show();
-   this.user= localStorage.getItem('g0r@usern@mechimera');
-console.log(this.user,'thislocalstorage')
+    this.user = localStorage.getItem('g0r@usern@mechimera');
+    this.searchusername=this.user
+    console.log(this.user, 'thislocalstorage')
     setTimeout(() => {
       this.spinner.hide();
     }, 1000);
-
-    this.selectedItems = [
-      { item_id: 3, item_text: 'Pune' },
-      { item_id: 4, item_text: 'Navsari' }
-    ];
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'item_id',
@@ -121,6 +117,7 @@ console.log(this.user,'thislocalstorage')
   fetchData(checkcase: any) {
     this.showcontent = ''
     this.materialdropdown = []
+    this.dataarrayobj=[]
     this.githubService.fetchDataFromGitHub().subscribe(
       (response: any) => {
         this.content = atob(response.content); // Decode content from base64
@@ -566,6 +563,7 @@ console.log(this.user,'thislocalstorage')
                     title: 'Material Added Successfully'
                   })
                   this.router.navigate(['ch']);
+                  this.msg = ''
                   setTimeout(() => {
                     this.router.navigate(['entry']);
 

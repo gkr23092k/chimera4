@@ -3,6 +3,7 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import { GithubServiceService } from 'src/app/service/github-service.service';
+import _ from 'lodash';
 
 am4core.useTheme(am4themes_animated);
 
@@ -67,7 +68,7 @@ export class DonutChartComponent implements OnInit {
           this.dataarrayobj = tempstoreuser
           console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
         }
-        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment'&& expense['Materialgroup'] != 'Liability');
+        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment' && expense['Materialgroup'] != 'Liability');
 
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
         console.log(this.groupedData);
@@ -75,8 +76,11 @@ export class DonutChartComponent implements OnInit {
           el.category = el.Materialgroup
           el.value = el.Price
         })
+        
+        const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');
+        this.groupedData = sortedObject
         this.disposeChart()
-        this.initializeChart();
+        this.initializeChart(); 
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -135,13 +139,13 @@ export class DonutChartComponent implements OnInit {
       am4core.color("#FF6868"),
       am4core.color("#43766C"),
 
-      
 
 
-      
 
-      
-      
+
+
+
+
 
     ];
 

@@ -126,12 +126,12 @@ export class LineChartComponent implements OnInit {
 
     this.chart.data = this.dataarrayobj
 
-    // Create date axis
+    // Create date axis 
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
-    dateAxis.renderer.minGridDistance = 30;
+    dateAxis.renderer.minGridDistance = 25;
     dateAxis.renderer.labels.template.fontSize = 12; // Adjust the font size as needed
     dateAxis.renderer.labels.template.rotation = 45; // Adjust the rotation angle as needed
-    dateAxis.renderer.grid.template.location = 0.5; // Adjust the grid location to center the labels
+    dateAxis.renderer.grid.template.location = 0; // Adjust the grid location to center the labels
 
     // Create value axis
     const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
