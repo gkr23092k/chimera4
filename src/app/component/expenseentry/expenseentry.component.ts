@@ -262,6 +262,8 @@ export class ExpenseentryComponent implements OnInit {
           this.materialdropdown.push({ item_id: index, item_text: element },
           )
         });
+        this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
+
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -399,6 +401,8 @@ export class ExpenseentryComponent implements OnInit {
       this.materialdropdown.push({ item_id: index, item_text: element },
       )
     });
+
+     this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
 
     console.log(this.materialdropdown, this.dataarrayobj)
 
