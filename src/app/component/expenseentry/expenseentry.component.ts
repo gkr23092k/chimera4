@@ -480,8 +480,10 @@ export class ExpenseentryComponent implements OnInit {
 
     }
     else {
+      this.spinner.show()
       this.githubService.changemessage(this.searchusername.replaceAll(',', '_').replaceAll(':', '_'))
       this.githubService.onFirstComponentButtonClick()
+      this.spinner.hide()
     }
   }
 
