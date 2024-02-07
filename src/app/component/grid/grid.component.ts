@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import * as _ from 'lodash';
+import emailjs from '@emailjs/browser';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-grid',
@@ -12,12 +14,22 @@ export class GridComponent {
   dataarrayobj: any = [];
   rowData: any = [];
   columnDefs: any = []
-  msg: any;
+  msg: any = '';
   window: number = 0;
   intialwidth: number = 0;
   userverified: boolean = false;
-  constructor(private githubService: GithubServiceService) { }
+  usergroup: any = []
+  mailmsg: any = ''
+  maildataarrayobj: any;
+  startdate: any;
+  enddate: any;
+  constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService) { }
   ngOnInit() {
+
+    this.startdate = new Date()
+    this.startdate = new Date(this.startdate.getTime() - 86400000);
+    this.enddate = new Date()
+
     this.userverified = false
     this.fetchData('NO');
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
@@ -73,10 +85,13 @@ export class GridComponent {
         }
         this.dataarrayobj.filter((el: any, index: any) => {
           el.Id = index + 1
-
         });
-        // console.log([this.dataarrayobj, 'this.dataarrayobj'])
+        this.usergroup = _.uniqBy(this.dataarrayobj, 'Name');
+
+
+        console.log(this.usergroup)
         this.rowData = this.dataarrayobj
+
       },
       error => {
         console.error('Error fetching data from GitHub:', error);
@@ -113,6 +128,23 @@ export class GridComponent {
 
 
   }
+
+  groupAndSum(array: any, groupByKey: any, sumByKey: any) {
+    return array.reduce((result: any, item: any) => {
+      const key = item[groupByKey];
+      const value = item[sumByKey];
+
+      if (!result[key]) {
+        result[key] = { [groupByKey]: key, [sumByKey]: 0 };
+      }
+
+      result[key][sumByKey] += value;
+
+      return result;
+    }, {});
+  }
+
+
   refreshgrid() {
     let temprefresh = this.columnDefs
     this.columnDefs = []
@@ -130,5 +162,58 @@ export class GridComponent {
   codeaccess() {
     this.userverified = true
     console.log(this.userverified)
+
   }
+  mail() {
+    this.maildataarrayobj = []
+    if (this.mailmsg != '' && this.mailmsg != undefined) {
+      this.dataarrayobj.filter((el: any) => {
+        if (el.Name == this.mailmsg.Name && new Date(el.Date) >= this.startdate && new Date(el.Date) <= this.enddate) {
+          this.maildataarrayobj.push(el)
+        }
+      })
+      console.log(this.maildataarrayobj)
+
+      let groupedData: any = Object.values(this.groupAndSum(this.maildataarrayobj, 'Materialgroup', 'Price'));
+      groupedData = JSON.stringify(groupedData);
+      groupedData = groupedData.replaceAll('","Price":', ' - ')
+      groupedData = groupedData.replaceAll('{"Materialgroup":"', '')
+      groupedData = groupedData.replaceAll('}', ' Rs \n')
+      groupedData = groupedData.replaceAll(',', '')
+      groupedData = groupedData.replaceAll('[', '').replaceAll(']', '')
+
+      if (groupedData.trim() == '') {
+        groupedData = `No Expense Added`
+      }
+      groupedData = `MaterialGroup Expense from 
+      ${this.startdate.getFullYear()}-${(this.startdate.getMonth() + 1).toString().padStart(2, '0')}-${this.startdate.getDate().toString().padStart(2, '0')} To ${this.enddate.getFullYear()}-${(this.enddate.getMonth() + 1).toString().padStart(2, '0')}-${this.enddate.getDate().toString().padStart(2, '0')}\n\n` + groupedData
+      console.log(groupedData)
+      const currentDate = new Date();
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const year = currentDate.getFullYear();
+      const hours = String(currentDate.getHours()).padStart(2, '0');
+      const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+      const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+      let formattedDate = `${day}|${month}|${year} ${hours}:${minutes}:${seconds}`;
+      formattedDate = formattedDate.toString()
+      console.log(formattedDate);
+      this.spinner.show()
+      emailjs.init('yBLaVEdX0cbV52M97')
+      emailjs.send("service_j58sl87", "template_wv8l4rj", {
+        // to_name: "dhineshrevathi2210@gmail.com",
+        to_name: "gokulram2303@gmail.com",
+        message: groupedData,
+        currentdate: formattedDate,
+      });
+      setTimeout(() => {
+        this.spinner.hide()
+      }, 2000);
+    }
+    else {
+      alert('fill user')
+    }
+
+  }
+
 }
