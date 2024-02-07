@@ -207,7 +207,7 @@ export class GridComponent {
       emailjs.init('yBLaVEdX0cbV52M97')
       emailjs.send("service_j58sl87", "template_wv8l4rj", {
         // to_name: "dhineshrevathi2210@gmail.com",
-        to_name: "gokulram2303@gmail.com",
+        to_name: this.mailmsg.Mailid,
         message: groupedData,
         currentdate: formattedDate,
       });
