@@ -1,16 +1,16 @@
 <div class="d-flex justify-content-center">
 <!-- <input class="border border-5 mb-3 me-4" type="text" name="" id="" [(ngModel)]="msg"> -->
-<mat-form-field class="inputbox">
+<mat-form-field class="inputbox" *ngIf="isadmin" >
 	<mat-label>User Group</mat-label>
 	<mat-select  required [(ngModel)]="mailmsg">
 		<mat-option *ngFor="let user of usergroup" [value]="user">{{user.Name}}</mat-option>
 	</mat-select>
 </mat-form-field>
-<button class="border border-5 mt-2 mb-3 mx-4"matRippleDisabled mat-button color="primary" (click)="mail()">Mail</button>
+<button *ngIf="isadmin"  class="border border-5 mt-2 mb-3 mx-4"matRippleDisabled mat-button color="primary" (click)="mail()">Mail</button>
 <button class="border border-5  mt-2 mb-3 me-4"matRippleDisabled mat-button color="primary" (click)="refreshgrid()">Refresh</button>
 
 </div>
-<div class="d-flex justify-content-center">
+<div *ngIf="isadmin" class="d-flex justify-content-center">
 	<mat-form-field class="me-2 inputbox">
         <mat-label>Start date</mat-label>
         <input matInput [matDatepicker]="picker" [(ngModel)]="startdate">
@@ -27,7 +27,7 @@
         <mat-hint>MM/DD/YYYY</mat-hint>
     </mat-form-field>
 </div>
-<p *ngIf="mailmsg!='' && mailmsg!=undefined" class=" custompara mb-2">Mail To: {{mailmsg.Mailid}}</p>
+<p *ngIf="mailmsg!='' && mailmsg!=undefined"  class=" custompara mb-2">Mail To: {{mailmsg.Mailid}}</p>
 <ag-grid-angular 
 	style="width: 100%; height: 500px;" 
 	class="ag-theme-quartz"

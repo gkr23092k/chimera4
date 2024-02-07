@@ -23,9 +23,14 @@ export class GridComponent {
   maildataarrayobj: any;
   startdate: any;
   enddate: any;
+  admin: any = '';
+  isadmin: boolean=false;
   constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService) { }
   ngOnInit() {
-
+    this.admin = localStorage.getItem('g0r@usern@mechimera')
+    if(this.admin=='gora@2303'){
+      this.isadmin=true
+    }
     this.startdate = new Date()
     this.startdate = new Date(this.startdate.getTime() - 86400000);
     this.enddate = new Date()
