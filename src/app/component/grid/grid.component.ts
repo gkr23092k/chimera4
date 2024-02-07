@@ -204,13 +204,13 @@ export class GridComponent {
       formattedDate = formattedDate.toString()
       console.log(formattedDate);
       this.spinner.show()
-      emailjs.init('yBLaVEdX0cbV52M97')
-      emailjs.send("service_j58sl87", "template_wv8l4rj", {
-        // to_name: "dhineshrevathi2210@gmail.com",
-        to_name: this.mailmsg.Mailid,
-        message: groupedData,
-        currentdate: formattedDate,
-      });
+      // emailjs.init('yBLaVEdX0cbV52M97')
+      // emailjs.send("service_j58sl87", "template_wv8l4rj", {
+      //   // to_name: "dhineshrevathi2210@gmail.com",
+      //   to_name: this.mailmsg.Mailid,
+      //   message: groupedData,
+      //   currentdate: formattedDate,
+      // });
       setTimeout(() => {
         this.spinner.hide()
       }, 2000);
