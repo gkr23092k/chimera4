@@ -15,6 +15,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class ExpenseentryComponent implements OnInit {
   content: string = '';
   user: any = '';
+  email:any='';
   material: any = '';
   materialgroup: any = '';
   price: any = '';
@@ -73,6 +74,8 @@ export class ExpenseentryComponent implements OnInit {
   ngOnInit() {
     this.spinner.show();
     this.user = localStorage.getItem('g0r@usern@mechimera');
+    this.email = localStorage.getItem('g0r@usern@mechimeramail');
+
     this.searchusername=this.user
     console.log(this.user, 'thislocalstorage')
     setTimeout(() => {
@@ -516,7 +519,7 @@ export class ExpenseentryComponent implements OnInit {
 
   appendincall(result: any) {
 
-    if (this.user.trim() != '' && this.material != '' && this.materialgroup.trim() != '' &&
+    if (this.user.trim() != '' &&this.email.trim()!=''&& this.material != '' && this.materialgroup.trim() != '' &&
       this.price.trim() != '' && this.accbalance.toString().trim() != '' && this.inhandbalance.toString().trim() != '' && this.offer.trim() != '' &&
       this.planned.trim() != '' && this.dateentry != '') {
       this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
@@ -537,7 +540,7 @@ export class ExpenseentryComponent implements OnInit {
 
           const formattedentryDateTime = `${this.dateentry.toDateString()}`;
           // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
-          const newData = this.content + `Name:${this.user},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
+          const newData = this.content + `Name:${this.user},Mailid:${this.email},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
           this.githubService.fetchDataFromGitHub().subscribe(
             (response: any) => {
               const sha = response.sha;
@@ -642,5 +645,7 @@ export class ExpenseentryComponent implements OnInit {
   }
   saveDataToLocal() {
     localStorage.setItem('g0r@usern@mechimera', (this.user));
+    localStorage.setItem('g0r@usern@mechimeramail',(this.email));
+
   }
 }
