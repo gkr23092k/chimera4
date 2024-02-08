@@ -7,8 +7,8 @@
 	</mat-select>
 </mat-form-field>
 <button *ngIf="isadmin"  class="border border-5 mt-2 mb-3 mx-4"matRippleDisabled mat-button color="primary" (click)="mail()">Mail</button>
-<button class="border border-5  mt-2 mb-3 me-4"matRippleDisabled mat-button color="primary" (click)="refreshgrid()">Refresh</button>
-
+<button *ngIf="!isadmin"class="border border-5  mt-2 mb-3 me-4 big"matRippleDisabled mat-button color="primary" (click)="refreshgrid()">Refresh</button>
+<button *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-4 small" color="primary" (click)="refreshgrid()"><img src='./assets/images/refresh.svg'/></button>
 </div>
 <div *ngIf="isadmin" class="d-flex justify-content-center">
 	<mat-form-field class="me-2 inputbox">
