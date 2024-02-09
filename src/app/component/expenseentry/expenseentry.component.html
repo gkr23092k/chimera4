@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center container mt-3 border border-5 rounded-5"
     style="background-color: #003153; color: aliceblue;">
-    <h1 class="text-center">GORA MONEY HELPER</h1>
+    <h1 class="text-center">GORA MONEY </h1>
 </div>
 
 <div class="container mt-3">
@@ -11,11 +11,11 @@
     </mat-form-field>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>Mail</mat-label>
-        <input matInput placeholder="Email"  type="email" [(ngModel)]="email">
+        <input matInput placeholder="Email" type="email" [(ngModel)]="email">
     </mat-form-field>
-   <div class="d-flex justify-content-center mb-2">
-    <img src='./assets/images/info-circle.svg' style='width: 1rem; height: 1rem'class="me-2"/>
-    <span>Add user to auto fill next time</span>
+    <div class="d-flex justify-content-center mb-2">
+        <img src='./assets/images/info-circle.svg' style='width: 1rem; height: 1rem' class="me-2" />
+        <span>Add user to auto fill next time</span>
     </div>
     <div class="d-flex justify-content-center mb-2">
         <button class="border border-5" mat-button color="primary" (click)="saveDataToLocal()">Add user</button>
@@ -164,8 +164,6 @@
             <h2 class="text-center highcard">{{last7DaysData.Price}}</h2>
             <h3 class="text-center highcard">{{last7DaysData.Material | uppercase }}</h3>
         </mat-card>
-
-
         <mat-card class="cardlength mb-1 ms-1">
             <h1 class="text-center cards">Maxof30Days</h1>
             <h2 class="text-center highcard">{{last30DaysData.Price}}</h2>
@@ -178,8 +176,31 @@
         </mat-card>
 
     </div>
-    <h1>Invest Margin</h1>
+    <h1>Total Spent Margin</h1>
 
+    <div class="d-flex flex-wrap my-4">
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center cards">TodayofTotal</h1>
+            <h2 class="text-center highcard">{{todaytotal}}</h2>
+            <h3 class="text-center highcard">OVERALL</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center cards">Totalof7Days</h1>
+            <h2 class="text-center highcard">{{last7DaysDatatotal}}</h2>
+            <h3 class="text-center highcard">OVERALL</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center cards">Totalof30Days</h1>
+            <h2 class="text-center highcard">{{last30DaysDatatotal}}</h2>
+            <h3 class="text-center highcard">OVERALL</h3>
+        </mat-card>
+        <mat-card class="cardlength mb-1 ms-1">
+            <h1 class="text-center cards">TotalSpent</h1>
+            <h2 class="text-center highcard">{{totalspent}}</h2>
+            <h3 class="text-center highcard">OVERALL</h3>
+        </mat-card>
+    </div>
+    <h1>Invest Margin</h1>
     <div class="d-flex flex-wrap my-4">
 
         <mat-card class="cardlength mb-1 ms-1">
@@ -188,12 +209,12 @@
             <h3 class="text-center highcard">{{last1Daysinv.Material | uppercase }}</h3>
         </mat-card>
         <mat-card class="cardlength mb-1 ms-1">
-            <h1 class="text-center cards">Max7Days</h1>
+            <h1 class="text-center cards">Maxof7Days</h1>
             <h2 class="text-center highcard">{{last7Daysinv.Price}}</h2>
             <h3 class="text-center highcard">{{last7Daysinv.Material | uppercase }}</h3>
         </mat-card>
         <mat-card class="cardlength mb-1 ms-1">
-            <h1 class="text-center cards">Max30Days</h1>
+            <h1 class="text-center cards">Maxof30Days</h1>
             <h2 class="text-center highcard">{{last30Daysinv.Price}}</h2>
             <h3 class="text-center highcard">{{last30Daysinv.Material | uppercase }}</h3>
         </mat-card>
@@ -226,12 +247,19 @@
         </mat-card>
         <mat-card class="cardlength mb-1 ms-1">
             <h1 class="text-center cards">Liabilities</h1>
-            <h2 class="text-center highcard">{{liablegetval}}/{{liablegiveval}}</h2>
+            <h2 class="text-center highcard"> {{getsumcount}}/{{givesumcount}} </h2>
             <h3 class="text-center highcard"> Get/Give</h3>
         </mat-card>
 
     </div>
-
+    <h1>OverAll Liability Margin</h1>
+    <div class="d-flex flex-wrap my-4">
+        <mat-card class="cardlengthtotal mb-1 ms-1">
+            <h1 class="text-center cards">Liabilities</h1>
+            <h2 class="text-center highcard">{{liablegetval}}   / {{liablegiveval}}</h2>
+            <h3 class="text-center highcard"> OverAll Get / OverlAll Give</h3>
+        </mat-card>
+    </div>
 
 </div>
 
@@ -249,7 +277,7 @@
     <!-- <div *ngIf="user=='pillow80Fragaria85@23'"> -->
     <h1 class="ms-4">Money Flow</h1>
     <app-downfall-chart></app-downfall-chart>
-    <h1 class="ms-4">Data Grid</h1> 
+    <h1 class="ms-4">Data Grid</h1>
     <app-grid></app-grid>
     <!-- </div> -->
 </div>

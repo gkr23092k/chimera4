@@ -72,13 +72,13 @@ export class LiabilityChartComponent implements OnInit {
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
             }
           });
           this.dataarrayobj = tempstoreuser
-          console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
+          // console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
         }
         this.liableget = []
         this.liablegive = []
@@ -99,10 +99,10 @@ export class LiabilityChartComponent implements OnInit {
           ...resultObjectgive,
           value: _.sum(Object.values(resultObjectgive)),
           category: 'Give'
-        };
+        }; 
 
         this.secondchart = [resultObjectValueget, resultObjectValuegive]
-        console.log('resultObjectValueget', this.secondchart, resultObjectValueget)
+        // console.log('resultObjectValueget', this.secondchart, resultObjectValueget)
         this.finallibiliity = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] == 'Liability');
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
         this.dataarrayobj.filter((el: any) => {
@@ -158,7 +158,7 @@ export class LiabilityChartComponent implements OnInit {
           overall.category = overall.status
           overall.value = overall.Price
         })
-        console.log(['c jhkjfd', this.finallibiliity])
+        // console.log(['c jhkjfd', this.finallibiliity])
         this.endpiechartliable = _.uniqBy(_.reverse(_.cloneDeep(this.finallibiliity)), 'material');
         _.remove(this.endpiechartliable, (obj: any) => obj['final'] == 0);
         this.endpiechartliable.forEach((el: any) => {
@@ -172,7 +172,7 @@ export class LiabilityChartComponent implements OnInit {
         } else {
           this.intialwidth = 250
         }
-        console.log(this.window, 'scrreee')
+        // console.log(this.window, 'scrreee')
 
         if (this.intialwidth != 0) {
           this.columnDefs = [
@@ -195,7 +195,7 @@ export class LiabilityChartComponent implements OnInit {
 
 
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
-        console.log(this.groupedData);
+        // console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {
           el.category = el.Materialgroup
           el.value = el.Price
@@ -315,7 +315,7 @@ export class LiabilityChartComponent implements OnInit {
 
   private setLabelRadius(series: any) {
     const screenWidth = window.innerWidth;
-    console.log(screenWidth, 'screenWidth')
+    // console.log(screenWidth, 'screenWidth')
     // Adjust the radius based on the screen size
     let radiusPercent = 0
     if (screenWidth < 950) {

@@ -43,7 +43,7 @@ export class GridComponent {
 
 
     this.githubService.currentvalue.subscribe((msg: any) => {
-      console.log('msg', msg)
+      // console.log('msg', msg)
       this.msg = msg
       if (msg != '') this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
         console.log('line chart component')
@@ -94,7 +94,7 @@ export class GridComponent {
         this.usergroup = _.uniqBy(this.dataarrayobj, 'Name');
 
 
-        console.log(this.usergroup)
+        // console.log(this.usergroup)
         this.rowData = this.dataarrayobj
 
       },
@@ -108,7 +108,7 @@ export class GridComponent {
     } else {
       this.intialwidth = 250
     }
-    console.log(this.window, 'scrreee')
+    // console.log(this.window, 'scrreee')
 
     if (this.intialwidth != 0) {
       this.columnDefs = [
@@ -154,7 +154,7 @@ export class GridComponent {
     let temprefresh = this.columnDefs
     this.columnDefs = []
     setTimeout(() => {
-      console.log(this.msg)
+      // console.log(this.msg)
       let localpin = localStorage.getItem('g0r@usern@mechimera');
       if ('gora@2303' == localpin && temprefresh[0].headerName != 'Name') {
         temprefresh = [{ headerName: 'Name', field: 'Name', filter: true, initialWidth: 120, maxWidth: 300 }, ...temprefresh]
@@ -166,7 +166,7 @@ export class GridComponent {
   }
   codeaccess() {
     this.userverified = true
-    console.log(this.userverified)
+    // console.log(this.userverified)
 
   }
   mail() {
@@ -177,7 +177,7 @@ export class GridComponent {
           this.maildataarrayobj.push(el)
         }
       })
-      console.log(this.maildataarrayobj,this.startdate,this.enddate)
+      // console.log(this.maildataarrayobj,this.startdate,this.enddate)
 
       let groupedData: any = Object.values(this.groupAndSum(this.maildataarrayobj, 'Materialgroup', 'Price'));
       groupedData = JSON.stringify(groupedData);
@@ -192,7 +192,7 @@ export class GridComponent {
       }
       groupedData = `MaterialGroup Expense from 
       ${this.startdate.getFullYear()}-${(this.startdate.getMonth() + 1).toString().padStart(2, '0')}-${this.startdate.getDate().toString().padStart(2, '0')} To ${this.enddate.getFullYear()}-${(this.enddate.getMonth() + 1).toString().padStart(2, '0')}-${this.enddate.getDate().toString().padStart(2, '0')}\n\n` + groupedData
-      console.log(groupedData)
+      // console.log(groupedData)
       const currentDate = new Date();
       const day = String(currentDate.getDate()).padStart(2, '0');
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -202,7 +202,7 @@ export class GridComponent {
       const seconds = String(currentDate.getSeconds()).padStart(2, '0');
       let formattedDate = `${day}|${month}|${year} ${hours}:${minutes}:${seconds}`;
       formattedDate = formattedDate.toString()
-      console.log(formattedDate);
+      // console.log(formattedDate);
       this.spinner.show()
       emailjs.init('yBLaVEdX0cbV52M97')
       emailjs.send("service_j58sl87", "template_wv8l4rj", {

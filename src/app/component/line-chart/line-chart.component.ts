@@ -59,7 +59,7 @@ export class LineChartComponent implements OnInit {
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
             }
@@ -85,11 +85,12 @@ export class LineChartComponent implements OnInit {
             })
 
 
-          } console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
+          }
+          //  console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
         }
         this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'Investment');
         this.dataarrayobj= Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'Price'));
-        console.log(this.dataarrayobj);
+        // console.log(this.dataarrayobj);
         this.dataarrayobj.forEach((el: any) => {
           el.value = el.Price
           el.date = new Date(el.Date)

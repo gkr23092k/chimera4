@@ -83,11 +83,12 @@ export class InvestmentChartComponent implements OnInit {
             })
 
 
-          } console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
+          } 
+          // console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
         }
         this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] === 'Investment');
         this.dataarrayobj= Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'Price'));
-        console.log(this.dataarrayobj);
+        // console.log(this.dataarrayobj);
         this.dataarrayobj.forEach((el: any) => {
           el.value = el.Price
           el.date = new Date(el.Date)

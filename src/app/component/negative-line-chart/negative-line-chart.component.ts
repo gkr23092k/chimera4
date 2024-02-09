@@ -76,7 +76,7 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
         }
         this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'Investment');
         this.groupedData = Object.values(this.groupAndSumByMonthYear(this.dataarrayobj, 'Date', 'Price'));
-        console.log(this.groupedData);
+        // console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {
           el.date = el.monthYear
           el.value = el.Price
@@ -135,7 +135,7 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
 
     // Add processed data to the chart
     this.chart.data = processedData;
-    console.log(processedData)
+    // console.log(processedData)
     // Create date axis
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.minGridDistance = 0; // or set it to a smaller value like 30

@@ -63,6 +63,16 @@ export class ExpenseentryComponent implements OnInit {
   dropdownList: any = [];
   selectedItems: any = [];
   dropdownSettings: any = {};
+  todaytotal: number=0;
+  last7DaysDatatotal: number=0;
+  last30DaysDatatotal: number=0;
+  investlast: any=[];
+  secondchart: any=[];
+  finallibiliity: any=[];
+  endpiechartliable: any=[]
+  dataarrayobjliability: any;
+  getsumcount: number=0;
+  givesumcount: number=0;
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService) {
 
   }
@@ -77,7 +87,7 @@ export class ExpenseentryComponent implements OnInit {
     this.email = localStorage.getItem('g0r@usern@mechimeramail');
 
     this.searchusername=this.user
-    console.log(this.user, 'thislocalstorage')
+    // console.log(this.user, 'thislocalstorage')
     setTimeout(() => {
       this.spinner.hide();
     }, 1000);
@@ -145,7 +155,7 @@ export class ExpenseentryComponent implements OnInit {
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
               this.materialdropdown.push(el.Material.toUpperCase())
@@ -188,6 +198,7 @@ export class ExpenseentryComponent implements OnInit {
             this.materialdropdown.push(el.Material.toUpperCase())
           }
         })
+        this.dataarrayobjliability=this.dataarrayobj
         this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liableget.push(el) })
         this.liablegetval = _.sumBy(this.liableget, 'Price');
         this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegive.push(el) })
@@ -229,10 +240,15 @@ export class ExpenseentryComponent implements OnInit {
 
 
         this.dataarrayobjholder = this.dataarrayobj
-        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'Investment');
+        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'Investment'
+        && expense['Materialgroup'] !== 'Get'&& expense['Materialgroup'] !== 'Give');
         if (this.dataarrayobj.length == 0) {
           this.dataarrayobj = [{ "Price": "Nil" }]
         }
+        // this.dataarrayobj.filter((expense: any) =>{
+          // console.log(expense.Materialgroup,expense.Price)
+        // })
+
         this.totalspent = _.sumBy(this.dataarrayobj, 'Price');
         this.highestofalltime = _.maxBy(this.dataarrayobj, 'Price')
 
@@ -242,6 +258,7 @@ export class ExpenseentryComponent implements OnInit {
           this.resultArray = [{ "Price": "Nil" }]
         }
         this.todayData = _.maxBy(this.resultArray, 'Price')
+        this.todaytotal = _.sumBy(this.resultArray, 'Price')
 
 
         this.filterDataByDate(this.dataarrayobj, 7, this.resultArray7);
@@ -249,6 +266,7 @@ export class ExpenseentryComponent implements OnInit {
           this.resultArray7 = [{ "Price": "Nil" }]
         }
         this.last7DaysData = _.maxBy(this.resultArray7, 'Price')
+        this.last7DaysDatatotal = _.sumBy(this.resultArray7, 'Price')
 
 
         this.filterDataByDate(this.dataarrayobj, 30, this.resultArray30);
@@ -256,6 +274,8 @@ export class ExpenseentryComponent implements OnInit {
           this.resultArray30 = [{ "Price": "Nil" }]
         }
         this.last30DaysData = _.maxBy(this.resultArray30, 'Price')
+        this.last30DaysDatatotal = _.sumBy(this.resultArray30, 'Price')
+
 
 
 
@@ -266,6 +286,7 @@ export class ExpenseentryComponent implements OnInit {
           )
         });
         this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
+        this.liability()
 
       },
       error => {
@@ -289,14 +310,14 @@ export class ExpenseentryComponent implements OnInit {
 
 
   calcbalance(val: any) {
-    console.log('called', val, this.price, this.user)
+    // console.log('called', val, this.price, this.user)
     if (this.price != 0 && this.price.trim() != '' && this.price.replaceAll('0', '') != ''
       && this.user != undefined && this.user.trim() != '') {
-      console.log('called', val, this.price, this.user)
+      // console.log('called', val, this.price, this.user)
 
       this.dataarrayobjholder.filter((bal: any) => {
         if (bal.Name == this.user) {
-          console.log(bal, this.user)
+          // console.log(bal, this.user)
           this.userfiltered.push(bal)
           this.calcaccbalance = bal.AccountBalance
           this.calcinhandbalance = bal.InhandBalance
@@ -384,7 +405,7 @@ export class ExpenseentryComponent implements OnInit {
     return containsSymbols && containsNumbersCharacters && containsNumbersCharacterslength;
   }
   onInputChange() {
-    console.log(this.materialgroup)
+    // console.log(this.materialgroup)
     this.materialdropdown = []
     this.dataarrayobjholder.forEach((el: any) => {
       if (this.materialgroup != 'Liability') {
@@ -407,14 +428,14 @@ export class ExpenseentryComponent implements OnInit {
 
      this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
 
-    console.log(this.materialdropdown, this.dataarrayobj)
+    // console.log(this.materialdropdown, this.dataarrayobj)
 
   }
 
 
   appendData() {
     const result = this.containsSymbolsNumbersCharacters(this.user);
-    console.log(result);
+    // console.log(result);
     if (result) {
       if (this.materialgroup == 'Liability') {
         if (this.liabilitystatus != 'No') {
@@ -523,7 +544,7 @@ export class ExpenseentryComponent implements OnInit {
       this.price.trim() != '' && this.accbalance.toString().trim() != '' && this.inhandbalance.toString().trim() != '' && this.offer.trim() != '' &&
       this.planned.trim() != '' && this.dateentry != '') {
       this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
-      console.log(this.material, 'material')
+      // console.log(this.material, 'material')
       if (typeof this.material == 'object')
         this.material = this.material[0].item_text.replaceAll(",", "_").replaceAll("'", '_')
       else {
@@ -647,5 +668,112 @@ export class ExpenseentryComponent implements OnInit {
     localStorage.setItem('g0r@usern@mechimera', (this.user));
     localStorage.setItem('g0r@usern@mechimeramail',(this.email));
 
+  }
+
+  liability(){
+    this.liableget = []
+        this.liablegive = []
+        this.investlast = []
+        this.dataarrayobjliability.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegive.push(el) })
+        const groupedByKeysliableget = _.groupBy(this.liableget, 'Name');
+        const groupedByKeysliablegive = _.groupBy(this.liablegive, 'Name');
+        let resultObjectget: any = _.mapValues(groupedByKeysliableget, group => _.last(group).Price);
+        const resultObjectValueget: any = {
+          ...resultObjectget,
+          value: _.sum(Object.values(resultObjectget)),
+          category: 'Get'
+
+        };
+
+        let resultObjectgive: any = _.mapValues(groupedByKeysliablegive, group => _.last(group).Price);
+        const resultObjectValuegive: any = {
+          ...resultObjectgive,
+          value: _.sum(Object.values(resultObjectgive)),
+          category: 'Give'
+        }; 
+
+        this.secondchart = [resultObjectValueget, resultObjectValuegive]
+        // console.log('expenseliability', this.secondchart, resultObjectValueget)
+        this.finallibiliity = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Liability');
+        this.dataarrayobjliability = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
+        this.dataarrayobjliability.filter((el: any) => {
+          if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Give') {
+            el.Materialgroup = 'Give'
+            el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
+          }
+          else if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Get') {
+            el.Materialgroup = 'Get'
+            el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
+
+          }
+        })
+
+        this.finallibiliity = Object.values(this.groupAndSum(this.finallibiliity, 'Materialendname', 'Price'))
+        this.finallibiliity.forEach((l: any) => {
+          if (l.Materialendname != undefined) {
+            let splitter = l.Materialendname.split('*|*')
+            l.name = splitter[0]
+            l.material = splitter[1]
+            l.materialnames = splitter[0] + splitter[1]
+            l.materialstatus = splitter[2]
+            l.Materialgroup = 'Liabillity ' + splitter[2]
+          }
+        })
+
+
+        this.finallibiliity.forEach((overall: any) => {
+          this.finallibiliity.forEach((give: any) => {
+            if (give.materialnames == overall.materialnames && give.materialstatus != overall.materialstatus) {
+              if (give.Price > overall.Price) {
+                overall.final = give.Price - overall.Price
+                overall.status = give.materialstatus
+
+              }
+              else if (give.Price < overall.Price && give.materialstatus != overall.materialstatus) {
+                overall.final = overall.Price - give.Price
+                overall.status = overall.materialstatus
+              }
+              else if (give.Price == overall.Price && give.materialstatus != overall.materialstatus) {
+                overall.final = overall.Price - give.Price
+                overall.status = 'Over'
+              }
+            }
+          });
+        });
+        this.finallibiliity.forEach((overall: any) => {
+          if (overall.status == undefined) {
+            overall.status = overall.materialstatus 
+            overall.final = overall.Price
+
+          }
+          overall.category = overall.status
+          overall.value = overall.Price
+        })
+        
+        const uniqueData = _.uniqBy(_.reverse(this.finallibiliity), 'materialnames');
+        let givedata = uniqueData.filter((expense: any) => expense['status'] == 'Give');
+        let getdata = uniqueData.filter((expense: any) => expense['status'] == 'Get');
+        // console.log(['c jhkjfd', givedata,uniqueData])
+        this.getsumcount = _.sumBy(getdata, 'final')
+        this.givesumcount = _.sumBy(givedata, 'final')
+
+
+
+
+  }
+
+  groupAndSum(array: any, groupByKey: any, sumByKey: any) {
+    return array.reduce((result: any, item: any) => {
+      const key = item[groupByKey];
+      const value = item[sumByKey];
+
+      if (!result[key]) {
+        result[key] = { [groupByKey]: key, [sumByKey]: 0 };
+      }
+
+      result[key][sumByKey] += value;
+
+      return result;
+    }, {});
   }
 }

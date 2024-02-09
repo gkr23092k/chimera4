@@ -60,18 +60,18 @@ export class DonutChartComponent implements OnInit {
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
             }
           });
           this.dataarrayobj = tempstoreuser
-          console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
+          // console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
         }
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment' && expense['Materialgroup'] != 'Liability');
 
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
-        console.log(this.groupedData);
+        // console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {
           el.category = el.Materialgroup
           el.value = el.Price

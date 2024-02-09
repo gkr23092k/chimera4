@@ -115,7 +115,7 @@ export class DownfallChartComponent implements OnInit {
         });
         lastEnteredDataForEachUser = _.flattenDeep(lastEnteredDataForEachUser)
         lastEnteredDataForEachUser = Object.values(this.groupAndSum(lastEnteredDataForEachUser, 'Date', 'AccountBalance', 'InhandBalance', 'Price', 'Name'));
-        console.log(lastEnteredDataForEachUser);
+        // console.log(lastEnteredDataForEachUser);
 
         this.dataarrayobj = Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'AccountBalance', 'InhandBalance', 'Price', 'Name'));
         // console.log(this.dataarrayobj);
@@ -131,7 +131,7 @@ export class DownfallChartComponent implements OnInit {
           el.value3 = el.Price
         });
         this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
-        console.log([this.dataarrayobj, 'afterdown'])
+        // console.log([this.dataarrayobj, 'afterdown'])
         this.createChart()
       },
       error => {
