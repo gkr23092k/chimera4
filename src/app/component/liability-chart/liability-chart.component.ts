@@ -31,6 +31,7 @@ export class LiabilityChartComponent implements OnInit {
   intialwidth: number = 0;
   columnDefs: any = []
   endpiechartliable: any = [];
+  liabilitydonut: any = 0;
   constructor(private githubService: GithubServiceService) { }
 
   ngOnInit() {
@@ -99,7 +100,7 @@ export class LiabilityChartComponent implements OnInit {
           ...resultObjectgive,
           value: _.sum(Object.values(resultObjectgive)),
           category: 'Give'
-        }; 
+        };
 
         this.secondchart = [resultObjectValueget, resultObjectValuegive]
         // console.log('resultObjectValueget', this.secondchart, resultObjectValueget)
@@ -165,6 +166,8 @@ export class LiabilityChartComponent implements OnInit {
           el.category = el.material
           el.value = el.final
         })
+        this.liabilitydonut = (this.endpiechartliable.length < 5) ? 6 : this.endpiechartliable.length
+        console.log(this.endpiechartliable.length,this.liabilitydonut)
         this.window = window.innerWidth;
         this.rowData = this.finallibiliity
         if (this.window < 767) {

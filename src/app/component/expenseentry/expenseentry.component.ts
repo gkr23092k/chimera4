@@ -73,6 +73,8 @@ export class ExpenseentryComponent implements OnInit {
   dataarrayobjliability: any;
   getsumcount: number=0;
   givesumcount: number=0;
+  liablegettemp: any=[];
+  liablegivetemp: any=[];
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService) {
 
   }
@@ -143,9 +145,9 @@ export class ExpenseentryComponent implements OnInit {
           // let data = el.substring(indexcut, datecrindexcut)
           let objdata: any = el.trim().split(',');
           this.showcontent += `\n${el}`
-
+          
           const dataObject: any = {};
-
+          
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
             dataObject[key] = isNaN(value) ? value.trim() : parseFloat(value);
@@ -159,11 +161,12 @@ export class ExpenseentryComponent implements OnInit {
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
               this.materialdropdown.push(el.Material.toUpperCase())
-
+              
             }
           });
           this.dataarrayobj = tempstoreuser
         }
+        console.log(this.dataarrayobj)
         this.highestofalltime = []
         this.last7DaysData = [];
         this.todayData = [];
@@ -179,8 +182,8 @@ export class ExpenseentryComponent implements OnInit {
         this.last1DaysDatainv = []
         this.last1Daysinv = []
         this.totalspent = 0
-        this.liableget = []
-        this.liablegive = []
+        this.liablegettemp = []
+        this.liablegivetemp = []
         this.dataarrayobjholder = []
         const groupedByKeys = _.groupBy(this.dataarrayobj, 'Name');
         let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
@@ -192,17 +195,16 @@ export class ExpenseentryComponent implements OnInit {
 
 
         this.networth = accbalance + ihbbalance
-
         this.dataarrayobj.forEach((el: any) => {
           if (el.Materialgroup != 'Liability') {
             this.materialdropdown.push(el.Material.toUpperCase())
           }
         })
         this.dataarrayobjliability=this.dataarrayobj
-        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liableget.push(el) })
-        this.liablegetval = _.sumBy(this.liableget, 'Price');
-        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegive.push(el) })
-        this.liablegiveval = _.sumBy(this.liablegive, 'Price');
+        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liablegettemp.push(el) })
+        this.liablegetval = _.sumBy(this.liablegettemp, 'Price');
+        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegivetemp.push(el) })
+        this.liablegiveval = _.sumBy(this.liablegivetemp, 'Price');
 
         this.dataarrayobjinvest = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] === 'Investment');
         if (this.dataarrayobjinvest.length == 0) {
@@ -286,7 +288,7 @@ export class ExpenseentryComponent implements OnInit {
           )
         });
         this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
-        this.liability()
+        // this.liability()
 
       },
       error => {

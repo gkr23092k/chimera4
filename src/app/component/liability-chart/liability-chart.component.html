@@ -4,8 +4,11 @@
 
 
 
-    <div class="d-flex justify-content-end" id="liability-chartdiv"  style="width: 100%; height: 750px; margin-bottom: 10px;">
-    </div>
+    <div class="d-flex justify-content-end" id="liability-chartdiv" style="width: 100%; margin-bottom: 10px;"
+    [ngStyle]="{ 'height': liabilitydonut*4.5 + 'rem' }">
+</div>
+
+
 
 <ag-grid-angular  class="ag-theme-quartz aggridcss" [rowData]="rowData"
     [columnDefs]="columnDefs">

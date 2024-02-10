@@ -25,7 +25,7 @@ export class InvestmentChartComponent implements OnInit {
     });
 
     this.githubService.currentvalue.subscribe((msg: any) => {
-      console.log('msg', msg)
+      // console.log('msg', msg)
       this.msg = msg
       this.disposeChart()
       if (msg != '') this.fetchData('YES')
@@ -57,7 +57,7 @@ export class InvestmentChartComponent implements OnInit {
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
             }
@@ -154,7 +154,7 @@ export class InvestmentChartComponent implements OnInit {
     // Add legend
     this.chart.legend = new am4charts.Legend();
     const screenWidth = window.innerWidth;
-    console.log(screenWidth,'screenWidth')
+    // console.log(screenWidth,'screenWidth')
     if( screenWidth < 767 ){
       this.chart.events.on('ready', () => {
         const currentDate = new Date();
