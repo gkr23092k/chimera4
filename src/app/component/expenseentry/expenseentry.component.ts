@@ -15,7 +15,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class ExpenseentryComponent implements OnInit {
   content: string = '';
   user: any = '';
-  email:any='';
+  email: any = '';
   material: any = '';
   materialgroup: any = '';
   price: any = '';
@@ -63,18 +63,19 @@ export class ExpenseentryComponent implements OnInit {
   dropdownList: any = [];
   selectedItems: any = [];
   dropdownSettings: any = {};
-  todaytotal: number=0;
-  last7DaysDatatotal: number=0;
-  last30DaysDatatotal: number=0;
-  investlast: any=[];
-  secondchart: any=[];
-  finallibiliity: any=[];
-  endpiechartliable: any=[]
+  todaytotal: number = 0;
+  last7DaysDatatotal: number = 0;
+  last30DaysDatatotal: number = 0;
+  investlast: any = [];
+  secondchart: any = [];
+  finallibiliity: any = [];
+  endpiechartliable: any = []
   dataarrayobjliability: any;
-  getsumcount: number=0;
-  givesumcount: number=0;
-  liablegettemp: any=[];
-  liablegivetemp: any=[];
+  getsumcount: number = 0;
+  givesumcount: number = 0;
+  liablegettemp: any = [];
+  liablegivetemp: any = [];
+  dataarrayobjdropdown: any;
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService) {
 
   }
@@ -88,7 +89,7 @@ export class ExpenseentryComponent implements OnInit {
     this.user = localStorage.getItem('g0r@usern@mechimera');
     this.email = localStorage.getItem('g0r@usern@mechimeramail');
 
-    this.searchusername=this.user
+    this.searchusername = this.user
     // console.log(this.user, 'thislocalstorage')
     setTimeout(() => {
       this.spinner.hide();
@@ -132,7 +133,7 @@ export class ExpenseentryComponent implements OnInit {
   fetchData(checkcase: any) {
     this.showcontent = ''
     this.materialdropdown = []
-    this.dataarrayobj=[]
+    this.dataarrayobj = []
     this.githubService.fetchDataFromGitHub().subscribe(
       (response: any) => {
         this.content = atob(response.content); // Decode content from base64
@@ -145,9 +146,9 @@ export class ExpenseentryComponent implements OnInit {
           // let data = el.substring(indexcut, datecrindexcut)
           let objdata: any = el.trim().split(',');
           this.showcontent += `\n${el}`
-          
+
           const dataObject: any = {};
-          
+
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
             dataObject[key] = isNaN(value) ? value.trim() : parseFloat(value);
@@ -156,17 +157,17 @@ export class ExpenseentryComponent implements OnInit {
         })
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
-          this.dataarrayobj.filter((el: any) => {
+          this.dataarrayobjholder.filter((el: any) => {
             // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
-              this.materialdropdown.push(el.Material.toUpperCase())
-              
+              // this.materialdropdown.push(el.Material.toUpperCase())
+
             }
           });
           this.dataarrayobj = tempstoreuser
         }
-        console.log(this.dataarrayobj)
+        // console.log(this.dataarrayobj)
         this.highestofalltime = []
         this.last7DaysData = [];
         this.todayData = [];
@@ -193,14 +194,14 @@ export class ExpenseentryComponent implements OnInit {
         let accbalance = _.sum(resultObjectAcc);
         let ihbbalance = _.sum(resultObjectIhb);
 
-
+        // console.log(this.dataarrayobj)
         this.networth = accbalance + ihbbalance
         this.dataarrayobj.forEach((el: any) => {
-          if (el.Materialgroup != 'Liability') {
+          if (el.Materialgroup != 'Liability' && el.Materialgroup != 'Give' && el.Materialgroup != 'Get') {
             this.materialdropdown.push(el.Material.toUpperCase())
           }
         })
-        this.dataarrayobjliability=this.dataarrayobj
+        this.dataarrayobjliability = this.dataarrayobj
         this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liablegettemp.push(el) })
         this.liablegetval = _.sumBy(this.liablegettemp, 'Price');
         this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegivetemp.push(el) })
@@ -243,12 +244,12 @@ export class ExpenseentryComponent implements OnInit {
 
         this.dataarrayobjholder = this.dataarrayobj
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'Investment'
-        && expense['Materialgroup'] !== 'Get'&& expense['Materialgroup'] !== 'Give');
+          && expense['Materialgroup'] !== 'Get' && expense['Materialgroup'] !== 'Give');
         if (this.dataarrayobj.length == 0) {
           this.dataarrayobj = [{ "Price": "Nil" }]
         }
         // this.dataarrayobj.filter((expense: any) =>{
-          // console.log(expense.Materialgroup,expense.Price)
+        // console.log(expense.Materialgroup,expense.Price)
         // })
 
         this.totalspent = _.sumBy(this.dataarrayobj, 'Price');
@@ -410,13 +411,13 @@ export class ExpenseentryComponent implements OnInit {
     // console.log(this.materialgroup)
     this.materialdropdown = []
     this.dataarrayobjholder.forEach((el: any) => {
-      if (this.materialgroup != 'Liability') {
+      if (this.materialgroup != 'Liability' && el.Materialgroup != 'Get' && el.Materialgroup != 'Give') {
         if (el.Materialgroup != 'Liability') {
           this.materialdropdown.push(el.Material.toUpperCase())
         }
       }
       else if (this.materialgroup == 'Liability') {
-        if (el.Materialgroup == 'Liability') {
+        if (el.Materialgroup == 'Liability' || el.Materialgroup == 'Get' || el.Materialgroup == 'Give') {
           this.materialdropdown.push(el.Material.toUpperCase())
         }
       }
@@ -428,7 +429,7 @@ export class ExpenseentryComponent implements OnInit {
       )
     });
 
-     this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
+    this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
 
     // console.log(this.materialdropdown, this.dataarrayobj)
 
@@ -542,7 +543,7 @@ export class ExpenseentryComponent implements OnInit {
 
   appendincall(result: any) {
 
-    if (this.user.trim() != '' &&this.email.trim()!=''&& this.material != '' && this.materialgroup.trim() != '' &&
+    if (this.user.trim() != '' && this.email.trim() != '' && this.material != '' && this.materialgroup.trim() != '' &&
       this.price.trim() != '' && this.accbalance.toString().trim() != '' && this.inhandbalance.toString().trim() != '' && this.offer.trim() != '' &&
       this.planned.trim() != '' && this.dateentry != '') {
       this.user = this.user.replaceAll("'", '_').replaceAll(",", "_")
@@ -668,97 +669,97 @@ export class ExpenseentryComponent implements OnInit {
   }
   saveDataToLocal() {
     localStorage.setItem('g0r@usern@mechimera', (this.user));
-    localStorage.setItem('g0r@usern@mechimeramail',(this.email));
+    localStorage.setItem('g0r@usern@mechimeramail', (this.email));
 
   }
 
-  liability(){
+  liability() {
     this.liableget = []
-        this.liablegive = []
-        this.investlast = []
-        this.dataarrayobjliability.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegive.push(el) })
-        const groupedByKeysliableget = _.groupBy(this.liableget, 'Name');
-        const groupedByKeysliablegive = _.groupBy(this.liablegive, 'Name');
-        let resultObjectget: any = _.mapValues(groupedByKeysliableget, group => _.last(group).Price);
-        const resultObjectValueget: any = {
-          ...resultObjectget,
-          value: _.sum(Object.values(resultObjectget)),
-          category: 'Get'
-          
-        };
-        
-        let resultObjectgive: any = _.mapValues(groupedByKeysliablegive, group => _.last(group).Price);
-        const resultObjectValuegive: any = {
-          ...resultObjectgive,
-          value: _.sum(Object.values(resultObjectgive)),
-          category: 'Give'
-        }; 
-        // console.log(resultObjectValueget,resultObjectValuegive)
+    this.liablegive = []
+    this.investlast = []
+    this.dataarrayobjliability.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegive.push(el) })
+    const groupedByKeysliableget = _.groupBy(this.liableget, 'Name');
+    const groupedByKeysliablegive = _.groupBy(this.liablegive, 'Name');
+    let resultObjectget: any = _.mapValues(groupedByKeysliableget, group => _.last(group).Price);
+    const resultObjectValueget: any = {
+      ...resultObjectget,
+      value: _.sum(Object.values(resultObjectget)),
+      category: 'Get'
 
-        this.secondchart = [resultObjectValueget, resultObjectValuegive]
-        // console.log('expenseliability', this.secondchart, resultObjectValueget)
-        this.finallibiliity = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Liability');
-        this.dataarrayobjliability = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
-        this.dataarrayobjliability.filter((el: any) => {
-          if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Give') {
-            el.Materialgroup = 'Give'
-            el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
-          }
-          else if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Get') {
-            el.Materialgroup = 'Get'
-            el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
+    };
 
-          }
-        })
+    let resultObjectgive: any = _.mapValues(groupedByKeysliablegive, group => _.last(group).Price);
+    const resultObjectValuegive: any = {
+      ...resultObjectgive,
+      value: _.sum(Object.values(resultObjectgive)),
+      category: 'Give'
+    };
+    // console.log(resultObjectValueget,resultObjectValuegive)
 
-        this.finallibiliity = Object.values(this.groupAndSum(this.finallibiliity, 'Materialendname', 'Price'))
-        this.finallibiliity.forEach((l: any) => {
-          if (l.Materialendname != undefined) {
-            let splitter = l.Materialendname.split('*|*')
-            l.name = splitter[0]
-            l.material = splitter[1]
-            l.materialnames = splitter[0] + splitter[1]
-            l.materialstatus = splitter[2]
-            l.Materialgroup = 'Liabillity ' + splitter[2]
-          }
-        })
+    this.secondchart = [resultObjectValueget, resultObjectValuegive]
+    // console.log('expenseliability', this.secondchart, resultObjectValueget)
+    this.finallibiliity = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Liability');
+    this.dataarrayobjliability = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
+    this.dataarrayobjliability.filter((el: any) => {
+      if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Give') {
+        el.Materialgroup = 'Give'
+        el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
+      }
+      else if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Get') {
+        el.Materialgroup = 'Get'
+        el.Materialendname = el.Name + '*|*' + el.Material.toUpperCase() + '*|*' + el.Liabilitystatus
+
+      }
+    })
+
+    this.finallibiliity = Object.values(this.groupAndSum(this.finallibiliity, 'Materialendname', 'Price'))
+    this.finallibiliity.forEach((l: any) => {
+      if (l.Materialendname != undefined) {
+        let splitter = l.Materialendname.split('*|*')
+        l.name = splitter[0]
+        l.material = splitter[1]
+        l.materialnames = splitter[0] + splitter[1]
+        l.materialstatus = splitter[2]
+        l.Materialgroup = 'Liabillity ' + splitter[2]
+      }
+    })
 
 
-        this.finallibiliity.forEach((overall: any) => {
-          this.finallibiliity.forEach((give: any) => {
-            if (give.materialnames == overall.materialnames && give.materialstatus != overall.materialstatus) {
-              if (give.Price > overall.Price) {
-                overall.final = give.Price - overall.Price
-                overall.status = give.materialstatus
-
-              }
-              else if (give.Price < overall.Price && give.materialstatus != overall.materialstatus) {
-                overall.final = overall.Price - give.Price
-                overall.status = overall.materialstatus
-              }
-              else if (give.Price == overall.Price && give.materialstatus != overall.materialstatus) {
-                overall.final = overall.Price - give.Price
-                overall.status = 'Over'
-              }
-            }
-          });
-        });
-        this.finallibiliity.forEach((overall: any) => {
-          if (overall.status == undefined) {
-            overall.status = overall.materialstatus 
-            overall.final = overall.Price
+    this.finallibiliity.forEach((overall: any) => {
+      this.finallibiliity.forEach((give: any) => {
+        if (give.materialnames == overall.materialnames && give.materialstatus != overall.materialstatus) {
+          if (give.Price > overall.Price) {
+            overall.final = give.Price - overall.Price
+            overall.status = give.materialstatus
 
           }
-          overall.category = overall.status
-          overall.value = overall.Price
-        })
-        
-        const uniqueData = _.uniqBy(_.reverse(this.finallibiliity), 'materialnames');
-        let givedata = uniqueData.filter((expense: any) => expense['status'] == 'Give');
-        let getdata = uniqueData.filter((expense: any) => expense['status'] == 'Get');
-        // console.log(['c jhkjfd', givedata,uniqueData])
-        this.getsumcount = _.sumBy(getdata, 'final')
-        this.givesumcount = _.sumBy(givedata, 'final')
+          else if (give.Price < overall.Price && give.materialstatus != overall.materialstatus) {
+            overall.final = overall.Price - give.Price
+            overall.status = overall.materialstatus
+          }
+          else if (give.Price == overall.Price && give.materialstatus != overall.materialstatus) {
+            overall.final = overall.Price - give.Price
+            overall.status = 'Over'
+          }
+        }
+      });
+    });
+    this.finallibiliity.forEach((overall: any) => {
+      if (overall.status == undefined) {
+        overall.status = overall.materialstatus
+        overall.final = overall.Price
+
+      }
+      overall.category = overall.status
+      overall.value = overall.Price
+    })
+
+    const uniqueData = _.uniqBy(_.reverse(this.finallibiliity), 'materialnames');
+    let givedata = uniqueData.filter((expense: any) => expense['status'] == 'Give');
+    let getdata = uniqueData.filter((expense: any) => expense['status'] == 'Get');
+    // console.log(['c jhkjfd', givedata,uniqueData])
+    this.getsumcount = _.sumBy(getdata, 'final')
+    this.givesumcount = _.sumBy(givedata, 'final')
 
 
 

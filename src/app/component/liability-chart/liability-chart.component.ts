@@ -167,7 +167,7 @@ export class LiabilityChartComponent implements OnInit {
           el.value = el.final
         })
         this.liabilitydonut = (this.endpiechartliable.length < 5) ? 6 : this.endpiechartliable.length
-        console.log(this.endpiechartliable.length,this.liabilitydonut)
+        // console.log(this.endpiechartliable.length,this.liabilitydonut)
         this.window = window.innerWidth;
         this.rowData = this.finallibiliity
         if (this.window < 767) {

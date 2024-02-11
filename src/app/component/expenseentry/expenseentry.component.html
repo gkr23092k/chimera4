@@ -44,7 +44,7 @@
     </mat-form-field>
 
     <mat-chip-listbox aria-label="Material selection">
-        <mat-chip-option [selected]="selectedChip === 'New Material'"
+        <mat-chip-option [selected]="selectedChip == 'New Material'"
             (selectionChange)="chipSelectionChange($event)">New Material</mat-chip-option>
         <mat-chip-option [selected]="selectedChip === 'Existing Material'"
             (selectionChange)="chipSelectionChange($event)">Existing Material</mat-chip-option>

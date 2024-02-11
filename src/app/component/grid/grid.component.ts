@@ -171,9 +171,20 @@ export class GridComponent {
   }
   mail() {
     this.maildataarrayobj = []
+    let accbalancemail=0
+    let inhbalancemail=0
+
     if (this.mailmsg != '' && this.mailmsg != undefined) {
       this.dataarrayobj.filter((el: any) => {
         if (el.Name == this.mailmsg.Name && new Date(el.Date) >= this.startdate && new Date(el.Date) <= this.enddate) {
+          accbalancemail=el.AccountBalance
+          inhbalancemail=el.InhandBalance
+          if(el.Liabilitystatus=='Give'){
+            el.Materialgroup= 'Liability Give'
+          }
+          else if(el.Liabilitystatus=='Get'){
+            el.Materialgroup= 'Liability Get'
+          }
           this.maildataarrayobj.push(el)
         }
       })
@@ -192,6 +203,8 @@ export class GridComponent {
       }
       groupedData = `MaterialGroup Expense from 
       ${this.startdate.getFullYear()}-${(this.startdate.getMonth() + 1).toString().padStart(2, '0')}-${this.startdate.getDate().toString().padStart(2, '0')} To ${this.enddate.getFullYear()}-${(this.enddate.getMonth() + 1).toString().padStart(2, '0')}-${this.enddate.getDate().toString().padStart(2, '0')}\n\n` + groupedData
+      
+      groupedData=groupedData+`\nAccount Balance: ${accbalancemail}\nInhand Balance: ${inhbalancemail} \n NOTE: If Balance not matches please update your money flow details.`
       // console.log(groupedData)
       const currentDate = new Date();
       const day = String(currentDate.getDate()).padStart(2, '0');
@@ -204,13 +217,13 @@ export class GridComponent {
       formattedDate = formattedDate.toString()
       // console.log(formattedDate);
       this.spinner.show()
-      emailjs.init('yBLaVEdX0cbV52M97')
-      emailjs.send("service_j58sl87", "template_wv8l4rj", {
-        // to_name: "dhineshrevathi2210@gmail.com",
-        to_name: this.mailmsg.Mailid,
-        message: groupedData,
-        currentdate: formattedDate,
-      });
+      // emailjs.init('yBLaVEdX0cbV52M97')
+      // emailjs.send("service_j58sl87", "template_wv8l4rj", {
+      //   // to_name: "dhineshrevathi2210@gmail.com",
+      //   to_name: this.mailmsg.Mailid,
+      //   message: groupedData,
+      //   currentdate: formattedDate,
+      // });
       setTimeout(() => {
         this.spinner.hide()
       }, 2000);
