@@ -288,7 +288,7 @@ export class ExpenseentryComponent implements OnInit {
           )
         });
         this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
-        // this.liability()
+        this.liability()
 
       },
       error => {
@@ -684,15 +684,16 @@ export class ExpenseentryComponent implements OnInit {
           ...resultObjectget,
           value: _.sum(Object.values(resultObjectget)),
           category: 'Get'
-
+          
         };
-
+        
         let resultObjectgive: any = _.mapValues(groupedByKeysliablegive, group => _.last(group).Price);
         const resultObjectValuegive: any = {
           ...resultObjectgive,
           value: _.sum(Object.values(resultObjectgive)),
           category: 'Give'
         }; 
+        // console.log(resultObjectValueget,resultObjectValuegive)
 
         this.secondchart = [resultObjectValueget, resultObjectValuegive]
         // console.log('expenseliability', this.secondchart, resultObjectValueget)

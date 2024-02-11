@@ -35,7 +35,7 @@ h1 {
 }
 
 .cardlengthtotal {
-  width: 82rem;
+  width: 100%;
 }
 
 @media (max-width: 650px) {
@@ -44,7 +44,7 @@ h1 {
   }
 
   .cardlengthtotal {
-    width: 20rem;
+    width: 100%;
   }
 
   .h1 {
