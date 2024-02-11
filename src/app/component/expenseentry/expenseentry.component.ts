@@ -698,7 +698,7 @@ export class ExpenseentryComponent implements OnInit {
 
     this.secondchart = [resultObjectValueget, resultObjectValuegive]
     // console.log('expenseliability', this.secondchart, resultObjectValueget)
-    this.finallibiliity = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Liability');
+    this.finallibiliity = this.dataarrayobjliability.filter((expense: any) => expense['Liabilitystatus'] == 'Give'||expense['Liabilitystatus'] == 'Get');
     this.dataarrayobjliability = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
     this.dataarrayobjliability.filter((el: any) => {
       if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Give') {
