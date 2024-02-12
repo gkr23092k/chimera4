@@ -118,8 +118,10 @@ export class ExpenseentryComponent implements OnInit {
       if (msg != '') this.fetchData('YES')
     })
     if (this.searchusername != 'gora@2303') {
-      if(this.user==null)this.searchusername = 'no'
-      this.networth=0
+      if (this.user == null) {
+        this.searchusername = 'no'
+        this.networth = 0
+      }
       this.searchuser()
     }
 
