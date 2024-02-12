@@ -25,6 +25,7 @@ import { InvestmentChartComponent } from './component/investment-chart/investmen
 import { NgxSpinnerModule } from "ngx-spinner";
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { BubbleComponent } from './component/bubble/bubble.component';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     GridComponent,
     LiabilityChartComponent,
     InvestmentChartComponent,
+    BubbleComponent,
     
   ],
   imports: [

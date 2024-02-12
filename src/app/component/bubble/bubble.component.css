@@ -1,0 +1,10 @@
+div {
+    /* background-color: rgb(197, 186, 186); */
+    height: 700px;
+}
+
+@media screen and (max-width: 400px) {
+    .customcss {
+        height: 1000px;
+    }
+}
