@@ -90,7 +90,7 @@ export class ExpenseentryComponent implements OnInit {
     this.email = localStorage.getItem('g0r@usern@mechimeramail');
 
     this.searchusername = this.user
-    // console.log(this.user, 'thislocalstorage')
+    console.log(this.user, 'thislocalstorage')
     setTimeout(() => {
       this.spinner.hide();
     }, 1000);
@@ -118,7 +118,7 @@ export class ExpenseentryComponent implements OnInit {
       if (msg != '') this.fetchData('YES')
     })
     if (this.searchusername != 'gora@2303') {
-      this.searchusername = 'no'
+      if(this.user==null)this.searchusername = 'no'
       this.networth=0
       this.searchuser()
     }
