@@ -117,6 +117,7 @@ export class ExpenseentryComponent implements OnInit {
       this.msg = msg
       if (msg != '') this.fetchData('YES')
     })
+this.searchuser()
 
   }
 
