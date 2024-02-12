@@ -110,7 +110,7 @@ export class BubbleComponent implements OnInit, OnDestroy {
         });
 
 
-        console.log(this.groupedData, this.dataarrayobj, tempholderdataarrobj, total)
+        // console.log(this.groupedData, this.dataarrayobj, tempholderdataarrobj, total)
 
         this.bubblechart(this.groupedData)
         const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');

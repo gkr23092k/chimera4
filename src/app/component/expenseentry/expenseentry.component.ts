@@ -117,7 +117,11 @@ export class ExpenseentryComponent implements OnInit {
       this.msg = msg
       if (msg != '') this.fetchData('YES')
     })
-this.searchuser()
+    if (this.searchusername != 'gora@2303') {
+      this.searchusername = 'no'
+      this.networth=0
+      this.searchuser()
+    }
 
   }
 
@@ -148,12 +152,12 @@ this.searchuser()
           // let data = el.substring(indexcut, datecrindexcut)
           let objdata: any = el.trim().split(',');
           this.showcontent += `\n${el}`
-          
+
           const dataObject: any = {};
-          
+
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
+            dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
           });
           this.dataarrayobj.push(dataObject)
         })
@@ -161,7 +165,7 @@ this.searchuser()
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobjholder.filter((el: any) => {
-            console.log(el)
+            // console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
               // this.materialdropdown.push(el.Material.toUpperCase())
