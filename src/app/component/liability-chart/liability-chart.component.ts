@@ -66,7 +66,7 @@ export class LiabilityChartComponent implements OnInit {
 
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? value.trim() : parseFloat(value);
+            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
           });
           this.dataarrayobj.push(dataObject)
         })

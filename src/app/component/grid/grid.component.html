@@ -6,13 +6,17 @@
             <mat-option *ngFor="let user of usergroup" [value]="user">{{user.Name}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <button *ngIf="isadmin" class="border border-5 mt-2 mb-3 mx-4" matRippleDisabled mat-button color="primary"
+    <button *ngIf="isadmin" class="border border-5 mt-2 mb-3 mx-2" matRippleDisabled mat-button color="primary"
         (click)="mail()">Mail</button>
     <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-4 big" matRippleDisabled mat-button color="primary"
         (click)="refreshgrid()">Refresh</button>
-
-    <div><button *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-4 small" color="primary" (click)="refreshgrid()"><img
-                src='./assets/images/refresh.svg' /></button>
+    <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-4 big" matRippleDisabled mat-button color="primary"
+        (click)="xlsxwriter()">Download</button>
+    <div><button *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 small" color="primary"
+            (click)="refreshgrid()"><img src='./assets/images/refresh.svg' /></button>
+    </div>
+    <div><button *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 small" color="primary"
+            (click)="xlsxwriter()"><img src='./assets/images/arrowdown.svg' /></button>
     </div>
 </div>
 <div *ngIf="isadmin" class="d-flex justify-content-center">

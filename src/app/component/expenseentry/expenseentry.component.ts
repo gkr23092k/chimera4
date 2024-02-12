@@ -136,6 +136,7 @@ export class ExpenseentryComponent implements OnInit {
     this.dataarrayobj = []
     this.githubService.fetchDataFromGitHub().subscribe(
       (response: any) => {
+        // console.log(this.content)
         this.content = atob(response.content); // Decode content from base64
         let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
         contentfake.pop()
@@ -146,19 +147,20 @@ export class ExpenseentryComponent implements OnInit {
           // let data = el.substring(indexcut, datecrindexcut)
           let objdata: any = el.trim().split(',');
           this.showcontent += `\n${el}`
-
+          
           const dataObject: any = {};
-
+          
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? value.trim() : parseFloat(value);
+            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
           });
           this.dataarrayobj.push(dataObject)
         })
+        // console.log(this.dataarrayobj)
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobjholder.filter((el: any) => {
-            // console.log(el)
+            console.log(el)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
               // this.materialdropdown.push(el.Material.toUpperCase())
@@ -512,6 +514,7 @@ export class ExpenseentryComponent implements OnInit {
     }
     else {
       this.spinner.show()
+      this.fetchData('NO')
       this.githubService.changemessage(this.searchusername.replaceAll(',', '_').replaceAll(':', '_'))
       this.githubService.onFirstComponentButtonClick()
       this.spinner.hide()
@@ -698,7 +701,7 @@ export class ExpenseentryComponent implements OnInit {
 
     this.secondchart = [resultObjectValueget, resultObjectValuegive]
     // console.log('expenseliability', this.secondchart, resultObjectValueget)
-    this.finallibiliity = this.dataarrayobjliability.filter((expense: any) => expense['Liabilitystatus'] == 'Give'||expense['Liabilitystatus'] == 'Get');
+    this.finallibiliity = this.dataarrayobjliability.filter((expense: any) => expense['Liabilitystatus'] == 'Give' || expense['Liabilitystatus'] == 'Get');
     this.dataarrayobjliability = this.dataarrayobjliability.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
     this.dataarrayobjliability.filter((el: any) => {
       if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Give') {

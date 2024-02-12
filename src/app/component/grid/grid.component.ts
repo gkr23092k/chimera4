@@ -3,7 +3,8 @@ import { GithubServiceService } from 'src/app/service/github-service.service';
 import * as _ from 'lodash';
 import emailjs from '@emailjs/browser';
 import { NgxSpinnerService } from 'ngx-spinner';
-
+import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
@@ -24,12 +25,13 @@ export class GridComponent {
   startdate: any;
   enddate: any;
   admin: any = '';
-  isadmin: boolean=false;
+  isadmin: boolean = true;
+  xlsxdataarrayobj: any = [];
   constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService) { }
   ngOnInit() {
     this.admin = localStorage.getItem('g0r@usern@mechimera')
-    if(this.admin=='gora@2303'){
-      this.isadmin=true
+    if (this.admin == 'gora@2303') {
+      this.isadmin = true
     }
     this.startdate = new Date()
     this.startdate = new Date(this.startdate.getTime() - 86400000);
@@ -73,7 +75,7 @@ export class GridComponent {
           const dataObject: any = {};
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? value.trim() : parseFloat(value);
+            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
           });
           this.dataarrayobj.push(dataObject)
         })
@@ -171,19 +173,19 @@ export class GridComponent {
   }
   mail() {
     this.maildataarrayobj = []
-    let accbalancemail=0
-    let inhbalancemail=0
+    let accbalancemail = 0
+    let inhbalancemail = 0
 
     if (this.mailmsg != '' && this.mailmsg != undefined) {
       this.dataarrayobj.filter((el: any) => {
         if (el.Name == this.mailmsg.Name && new Date(el.Date) >= this.startdate && new Date(el.Date) <= this.enddate) {
-          accbalancemail=el.AccountBalance
-          inhbalancemail=el.InhandBalance
-          if(el.Liabilitystatus=='Give'){
-            el.Materialgroup= 'Liability Give'
+          accbalancemail = el.AccountBalance
+          inhbalancemail = el.InhandBalance
+          if (el.Liabilitystatus == 'Give') {
+            el.Materialgroup = 'Liability Give'
           }
-          else if(el.Liabilitystatus=='Get'){
-            el.Materialgroup= 'Liability Get'
+          else if (el.Liabilitystatus == 'Get') {
+            el.Materialgroup = 'Liability Get'
           }
           this.maildataarrayobj.push(el)
         }
@@ -203,8 +205,8 @@ export class GridComponent {
       }
       groupedData = `MaterialGroup Expense from 
       ${this.startdate.getFullYear()}-${(this.startdate.getMonth() + 1).toString().padStart(2, '0')}-${this.startdate.getDate().toString().padStart(2, '0')} To ${this.enddate.getFullYear()}-${(this.enddate.getMonth() + 1).toString().padStart(2, '0')}-${this.enddate.getDate().toString().padStart(2, '0')}\n\n` + groupedData
-      
-      groupedData=groupedData+`\nAccount Balance: ${accbalancemail}\nInhand Balance: ${inhbalancemail} \n NOTE: If Balance not matches please update your money flow details.`
+
+      groupedData = groupedData + `\nAccount Balance: ${accbalancemail}\nInhand Balance: ${inhbalancemail} \n\n NOTE: If Balance not matches please update your money flow details.`
       // console.log(groupedData)
       const currentDate = new Date();
       const day = String(currentDate.getDate()).padStart(2, '0');
@@ -230,6 +232,62 @@ export class GridComponent {
     }
     else {
       alert('fill user')
+    }
+
+  }
+  xlsxwriter() {
+    this.xlsxdataarrayobj = []
+    let accbalancemail = 0
+    let inhbalancemail = 0
+    const currentDate = new Date();
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = currentDate.getFullYear();
+    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+    let formattedDate = `${day}|${month}|${year} ${hours}:${minutes}:${seconds}`;
+    formattedDate = formattedDate.toString()
+    if (this.mailmsg != '' && this.mailmsg != undefined) {
+      console.log(this.mailmsg)
+      this.dataarrayobj.filter((el: any) => {
+        if (el.Name == this.mailmsg.Name && new Date(el.Date) >= this.startdate && new Date(el.Date) <= this.enddate) {
+          accbalancemail = el.AccountBalance
+          inhbalancemail = el.InhandBalance
+          if (el.Liabilitystatus == 'Give') {
+            el.Materialgroup = 'Liability Give'
+          }
+          else if (el.Liabilitystatus == 'Get') {
+            el.Materialgroup = 'Liability Get'
+          }
+          this.xlsxdataarrayobj.push(el)
+        }
+      })
+      console.log(this.xlsxdataarrayobj)
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.xlsxdataarrayobj);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+      XLSX.writeFile(workbook, 'data' + formattedDate + '.xlsx');
+
+    }
+    else {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 13000,
+        showCloseButton: true,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      Toast.fire({
+        icon: 'info',
+        title: 'Select the User '
+      })
     }
 
   }
