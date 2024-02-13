@@ -25,7 +25,7 @@ export class GridComponent {
   startdate: any;
   enddate: any;
   admin: any = '';
-  isadmin: boolean = true;
+  isadmin: boolean = false;
   xlsxdataarrayobj: any = [];
   constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService) { }
   ngOnInit() {

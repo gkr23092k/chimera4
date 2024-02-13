@@ -18,6 +18,7 @@ export class DonutChartComponent implements OnInit {
   content: string = '';
   groupedData: any = [];
   msg: any = '';
+  grpcount: any = 0;
 
   constructor(private githubService: GithubServiceService) { }
 
@@ -53,7 +54,7 @@ export class DonutChartComponent implements OnInit {
 
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
+            dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
           });
           this.dataarrayobj.push(dataObject)
         })
@@ -76,11 +77,19 @@ export class DonutChartComponent implements OnInit {
           el.category = el.Materialgroup
           el.value = el.Price
         })
-        
+
         const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');
         this.groupedData = sortedObject
         this.disposeChart()
-        this.initializeChart(); 
+        this.initializeChart();
+        const screenWidth = window.innerWidth;
+        if (screenWidth > 370) {
+          this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
+        }
+        else{
+          this.grpcount = (this.groupedData.length < 12) ? 15 : 22
+
+        }
       },
       error => {
         console.error('Error fetching data from GitHub:', error);

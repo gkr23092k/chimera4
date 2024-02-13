@@ -76,6 +76,7 @@ export class ExpenseentryComponent implements OnInit {
   liablegettemp: any = [];
   liablegivetemp: any = [];
   dataarrayobjdropdown: any;
+  materialdropdownliabillity: any;
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService) {
 
   }
@@ -110,7 +111,7 @@ export class ExpenseentryComponent implements OnInit {
     this.fetchData('NO');
     this.dateentry = new Date();
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
-      console.log('expense component')
+      // console.log('expense component')
     });
     this.githubService.currentvalue.subscribe((msg: any) => {
       console.log('msg', msg, 'expense')
@@ -153,7 +154,7 @@ export class ExpenseentryComponent implements OnInit {
           // let datecrindexcut = el.indexOf('Datecr:') - 1
           // let data = el.substring(indexcut, datecrindexcut)
           let objdata: any = el.trim().split(',');
-          this.showcontent += `\n${el}`
+          // this.showcontent += `\n${el}`
 
           const dataObject: any = {};
 
@@ -168,15 +169,24 @@ export class ExpenseentryComponent implements OnInit {
           let tempstoreuser: any = []
           this.dataarrayobjholder.filter((el: any) => {
             // console.log(el)
+            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
+              this.materialdropdown.push(el.Material.toUpperCase())
+            }
+            
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
-              // this.materialdropdown.push(el.Material.toUpperCase())
 
             }
           });
-          this.dataarrayobj = tempstoreuser
+          if(tempstoreuser.length<1){
+            this.dataarrayobj=[{Name:this.msg,Mailid:'',Material:'',Materialgroup:'',Price:0,Planned:'Yes',Offer:'No',AccountBalance:0,InhandBalance:0,Liabilitystatus:'No',Date:'Mon Jan 01 2024',Comment:'No comments'            }]
+          }
+          else{
+            this.dataarrayobj = tempstoreuser
+            
+          }
         }
-        // console.log(this.dataarrayobj)
+        console.log(this.dataarrayobj)
         this.highestofalltime = []
         this.last7DaysData = [];
         this.todayData = [];
@@ -195,6 +205,7 @@ export class ExpenseentryComponent implements OnInit {
         this.liablegettemp = []
         this.liablegivetemp = []
         this.dataarrayobjholder = []
+        this.networth = 0
         const groupedByKeys = _.groupBy(this.dataarrayobj, 'Name');
         let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
         resultObjectAcc = _.values(resultObjectAcc);
@@ -203,13 +214,14 @@ export class ExpenseentryComponent implements OnInit {
         let accbalance = _.sum(resultObjectAcc);
         let ihbbalance = _.sum(resultObjectIhb);
 
-        // console.log(this.dataarrayobj)
         this.networth = accbalance + ihbbalance
-        this.dataarrayobj.forEach((el: any) => {
-          if (el.Materialgroup != 'Liability' && el.Materialgroup != 'Give' && el.Materialgroup != 'Get') {
-            this.materialdropdown.push(el.Material.toUpperCase())
-          }
-        })
+        if (this.materialdropdown.length < 1) {
+          this.dataarrayobj.forEach((el: any) => {
+            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
+              this.materialdropdown.push(el.Material.toUpperCase())
+            }
+          })
+        }
         this.dataarrayobjliability = this.dataarrayobj
         this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liablegettemp.push(el) })
         this.liablegetval = _.sumBy(this.liablegettemp, 'Price');
@@ -253,12 +265,12 @@ export class ExpenseentryComponent implements OnInit {
 
         this.dataarrayobjholder = this.dataarrayobj
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'Investment'
-          && expense['Materialgroup'] !== 'Get' && expense['Materialgroup'] !== 'Give');
+          && expense['Liabilitystatus'] !== 'Get' && expense['Liabilitystatus'] !== 'Give');
         if (this.dataarrayobj.length == 0) {
           this.dataarrayobj = [{ "Price": "Nil" }]
         }
         // this.dataarrayobj.filter((expense: any) =>{
-        // console.log(expense.Materialgroup,expense.Price)
+        // console.log(this.dataarrayobj)
         // })
 
         this.totalspent = _.sumBy(this.dataarrayobj, 'Price');
@@ -289,13 +301,12 @@ export class ExpenseentryComponent implements OnInit {
         this.last30DaysDatatotal = _.sumBy(this.resultArray30, 'Price')
 
 
-
+        // console.log(this.materialdropdown)
 
         let arraymateraildropdown = [...new Set(this.materialdropdown)];
         this.materialdropdown = []
         arraymateraildropdown.forEach((element: any, index: number) => {
-          this.materialdropdown.push({ item_id: index, item_text: element },
-          )
+          this.materialdropdown.push({ item_id: index, item_text: element })
         });
         this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
         this.liability()
@@ -521,7 +532,7 @@ export class ExpenseentryComponent implements OnInit {
     }
     else {
       this.spinner.show()
-      this.fetchData('NO')
+      // this.fetchData('NO')
       this.githubService.changemessage(this.searchusername.replaceAll(',', '_').replaceAll(':', '_'))
       this.githubService.onFirstComponentButtonClick()
       this.spinner.hide()
@@ -678,8 +689,28 @@ export class ExpenseentryComponent implements OnInit {
     }
   }
   saveDataToLocal() {
+    this.spinner.show()
     localStorage.setItem('g0r@usern@mechimera', (this.user));
     localStorage.setItem('g0r@usern@mechimeramail', (this.email));
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 5000,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+
+    Toast.fire({
+      icon: 'info',
+      title: 'User Added Successfully'
+    })
+
+    this.spinner.hide()
 
   }
 
@@ -767,7 +798,7 @@ export class ExpenseentryComponent implements OnInit {
     const uniqueData = _.uniqBy(_.reverse(this.finallibiliity), 'materialnames');
     let givedata = uniqueData.filter((expense: any) => expense['status'] == 'Give');
     let getdata = uniqueData.filter((expense: any) => expense['status'] == 'Get');
-    // console.log(['c jhkjfd', givedata,uniqueData])
+    // console.log(['c jhkjfd', givedata, uniqueData])
     this.getsumcount = _.sumBy(getdata, 'final')
     this.givesumcount = _.sumBy(givedata, 'final')
 

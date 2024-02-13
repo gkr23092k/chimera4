@@ -3,6 +3,7 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected';
 import _ from 'lodash';
 import { GithubServiceService } from 'src/app/service/github-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-bubble',
@@ -17,8 +18,11 @@ export class BubbleComponent implements OnInit, OnDestroy {
   content: string = '';
   groupedData: any = [];
   msg: any = '';
+  bubblebuttontoggle: string='Expand';
+  height: number=700;
+  width: number=100;
 
-  constructor(private githubService: GithubServiceService) { }
+  constructor(private githubService: GithubServiceService,private router:Router) { }
 
   ngOnInit() {
     this.fetchData('NO');
@@ -64,10 +68,14 @@ export class BubbleComponent implements OnInit, OnDestroy {
             }
           });
           this.dataarrayobj = tempstoreuser
-          // console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
         }
+        this.dataarrayobj.forEach((el: any) => {
+          el.Material = el.Material.replaceAll(' ', '_').toUpperCase()
+          el.materialendaname = el.Materialgroup + '|' + el.Material
+        });
+        // console.log([this.dataarrayobj,'ddg'])
         let tempgrooupdatarraobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Liability');
-        let tempholderdataarrobj = Object.values(this.groupAndSum(this.dataarrayobj, 'Material', 'Price'));
+        let tempholderdataarrobj = Object.values(this.groupAndSum(this.dataarrayobj, 'materialendaname', 'Price'));
         this.groupedData = Object.values(this.groupAndSum(tempgrooupdatarraobj, 'Materialgroup', 'Price'));
         let total = 0
         let tempgroupname: any = []
@@ -78,15 +86,23 @@ export class BubbleComponent implements OnInit, OnDestroy {
           total += el.Price
           tempgroupname.push(el.Materialgroup)
         })
+        // console.log([tempholderdataarrobj, 'afterdonut'])
 
         tempholderdataarrobj.forEach((temp: any) => {
+
           this.dataarrayobj.forEach((el: any) => {
-            if (temp.Material == el.Material) {
-              temp.Materialgroup = el.Materialgroup
+            if (temp.materialendaname != undefined) {
+              // console.log(temp.materialendaname, 'jgj')
+              let materialendsplit = temp.materialendaname.split('|')
+              temp.Material = materialendsplit[1]
+              if (materialendsplit[1] == el.Material) {
+                temp.Materialgroup = materialendsplit[0]
+              }
             }
           })
         })
 
+        // console.log(tempholderdataarrobj,'tempholderdataarrobj')
         this.groupedData.forEach((grp: any, index: number) => {
           tempholderdataarrobj.forEach((mat: any) => {
             if (grp.Materialgroup == mat.Materialgroup) {
@@ -96,17 +112,20 @@ export class BubbleComponent implements OnInit, OnDestroy {
             }
           });
         });
+        // console.log([this.groupedData, 'afterdonutthanditen', tempholderdataarrobj])
 
 
 
         this.groupedData.forEach((item: any) => {
           item.value = (item.value / total) * 100;
           item.value = item.value * 100
-          item.children.forEach((chel: any) => {
-            chel.percentage = (chel.value / item.Price) * 100;
-            chel.Price = chel.value
-            chel.value = chel.percentage*5
-          });
+          if (item.children != undefined) {
+            item.children.forEach((chel: any) => {
+              chel.percentage = (chel.value / item.Price) * 100;
+              chel.Price = chel.value
+              chel.value = chel.percentage * 5
+            });
+          }
         });
 
 
@@ -136,6 +155,22 @@ export class BubbleComponent implements OnInit, OnDestroy {
       return result;
     }, {});
   }
+  expand() { 
+   
+    if(this.bubblebuttontoggle!='Back'){
+      this.bubblebuttontoggle='Back'
+      this.height=1000
+      this.width=200
+
+      this.router.navigate(['b']);
+    }else{
+      this.height=700
+      this.width=100
+      this.bubblebuttontoggle='Expand'
+      this.router.navigate(['new']);
+    }
+  }
+
   bubblechart(chartdata: any) {
     // Create chart instance
     this.chart = am4core.create('bubble', am4plugins_forceDirected.ForceDirectedTree);
