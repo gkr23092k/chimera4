@@ -75,7 +75,7 @@ export class GridComponent {
           const dataObject: any = {};
           objdata.forEach((pair: any) => {
             const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
+            dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
           });
           this.dataarrayobj.push(dataObject)
         })
@@ -85,8 +85,9 @@ export class GridComponent {
           this.dataarrayobj.filter((el: any) => {
             // console.log(el)
             if (el.Name === this.msg) {
-              tempstoreuser.push(el)
-            }
+              tempstoreuser.push(el)          
+              this.mailmsg = { Name: this.msg ,Mailid:el.Mailid }
+            }   
           });
           this.dataarrayobj = tempstoreuser
         }
@@ -175,7 +176,7 @@ export class GridComponent {
     this.maildataarrayobj = []
     let accbalancemail = 0
     let inhbalancemail = 0
-
+    console.log(this.mailmsg)
     if (this.mailmsg != '' && this.mailmsg != undefined) {
       this.dataarrayobj.filter((el: any) => {
         if (el.Name == this.mailmsg.Name && new Date(el.Date) >= this.startdate && new Date(el.Date) <= this.enddate) {

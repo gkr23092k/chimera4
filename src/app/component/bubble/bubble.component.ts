@@ -169,7 +169,7 @@ export class BubbleComponent implements OnInit, OnDestroy {
       this.bubblebuttontoggle='Expand'
       this.router.navigate(['new']);
     }
-  }
+  } 
 
   bubblechart(chartdata: any) {
     // Create chart instance
