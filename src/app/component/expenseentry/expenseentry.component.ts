@@ -5,6 +5,9 @@ import { GithubServiceService } from 'src/app/service/github-service.service';
 import Swal from 'sweetalert2';
 import * as _ from 'lodash';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { DialogComponent } from '../dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -77,7 +80,10 @@ export class ExpenseentryComponent implements OnInit {
   liablegivetemp: any = [];
   dataarrayobjdropdown: any;
   materialdropdownliabillity: any;
-  constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService) {
+  animal: any;
+  addbalance: any;
+  constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService
+    , public dialog: MatDialog) {
 
   }
 
@@ -172,21 +178,21 @@ export class ExpenseentryComponent implements OnInit {
             if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
               this.materialdropdown.push(el.Material.toUpperCase())
             }
-            
+
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
 
             }
           });
-          if(tempstoreuser.length<1){
-            this.dataarrayobj=[{Name:this.msg,Mailid:'',Material:'',Materialgroup:'',Price:0,Planned:'Yes',Offer:'No',AccountBalance:0,InhandBalance:0,Liabilitystatus:'No',Date:'Mon Jan 01 2024',Comment:'No comments'            }]
+          if (tempstoreuser.length < 1) {
+            this.dataarrayobj = [{ Name: this.msg, Mailid: '', Material: '', Materialgroup: '', Price: 0, Planned: 'Yes', Offer: 'No', AccountBalance: 0, InhandBalance: 0, Liabilitystatus: 'No', Date: 'Mon Jan 01 2024', Comment: 'No comments' }]
           }
-          else{
+          else {
             this.dataarrayobj = tempstoreuser
-            
+
           }
         }
-        console.log(this.dataarrayobj)
+        // console.log(this.dataarrayobj)
         this.highestofalltime = []
         this.last7DaysData = [];
         this.todayData = [];
@@ -217,7 +223,7 @@ export class ExpenseentryComponent implements OnInit {
         this.networth = accbalance + ihbbalance
         if (this.materialdropdown.length < 1) {
           this.dataarrayobj.forEach((el: any) => {
-            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
+            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get' ) {
               this.materialdropdown.push(el.Material.toUpperCase())
             }
           })
@@ -431,7 +437,7 @@ export class ExpenseentryComponent implements OnInit {
     // console.log(this.materialgroup)
     this.materialdropdown = []
     this.dataarrayobjholder.forEach((el: any) => {
-      if (this.materialgroup != 'Liability' && el.Materialgroup != 'Get' && el.Materialgroup != 'Give') {
+      if (this.materialgroup != 'Liability' && el.Materialgroup != 'Get' && el.Materialgroup != 'Give' && el.Materialgroup != 'Credit') {
         if (el.Materialgroup != 'Liability') {
           this.materialdropdown.push(el.Material.toUpperCase())
         }
@@ -585,12 +591,14 @@ export class ExpenseentryComponent implements OnInit {
 
           const formattedentryDateTime = `${this.dateentry.toDateString()}`;
           // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
-          const newData = this.content + `Name:${this.user},Mailid:${this.email},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
+          let newdata = `Name:${this.user},Mailid:${this.email},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
+
+          const newData = this.content + newdata
           this.githubService.fetchDataFromGitHub().subscribe(
             (response: any) => {
               const sha = response.sha;
               this.spinner.hide();
-
+              // console.log(newdata)
               this.githubService.appendDataToGitHub(newData, sha).pipe(take(1)).subscribe(
                 () => {
                   this.code = true
@@ -688,6 +696,46 @@ export class ExpenseentryComponent implements OnInit {
       })
     }
   }
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: { name: this.addbalance },
+      height: '250px',
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      if (result !== undefined) {
+        if (result.newaccbalance != undefined || result.newihbbalance != undefined) {
+          if (parseInt(result.newaccbalance) > 0 || parseInt(result.newihbbalance) > 0) {
+            if (result.newaccbalance == undefined) result.newaccbalance = '0'
+            if (result.newihbbalance == undefined) result.newihbbalance = '0'
+            this.addbalance = result;
+            this.materialgroup = 'Liability'
+            this.material = 'Credit'
+            this.price = '0'
+            console.log(this.dataarrayobjholder)
+            this.dataarrayobjholder.forEach((bal: any) => {
+              if (this.user == bal.Name) {
+                this.accbalance = bal.AccountBalance
+                this.inhandbalance = bal.InhandBalance
+              }
+            });
+            this.accbalance = parseInt(this.accbalance) + parseInt(result.newaccbalance)
+            this.inhandbalance = parseInt(this.inhandbalance) + parseInt(result.newihbbalance)
+
+            this.liabilitystatus = 'Credit'
+            console.log(this.user.trim(), this.email.trim(), this.material, this.materialgroup.trim(),
+              this.price.trim(), this.accbalance.toString().trim(), this.inhandbalance.toString().trim(), this.offer.trim(),
+              this.planned.trim(), this.dateentry)
+            this.appendincall('')
+          }
+        }
+      }
+    });
+  }
+
+
   saveDataToLocal() {
     this.spinner.show()
     localStorage.setItem('g0r@usern@mechimera', (this.user));

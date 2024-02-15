@@ -26,8 +26,9 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { BubbleComponent } from './component/bubble/bubble.component';
-
-
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import { DialogComponent } from './component/dialog/dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,12 +41,13 @@ import { BubbleComponent } from './component/bubble/bubble.component';
     LiabilityChartComponent,
     InvestmentChartComponent,
     BubbleComponent,
+    DialogComponent
     
   ],
   imports: [
     BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,MatCardModule,
-    AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,AgGridModule,
-    MatChipsModule,NgxSpinnerModule,NgxMatSelectSearchModule,NgMultiSelectDropDownModule.forRoot()
+    AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,AgGridModule,DragDropModule,
+    MatChipsModule,NgxSpinnerModule,NgxMatSelectSearchModule,NgMultiSelectDropDownModule.forRoot(),MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

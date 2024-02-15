@@ -44,7 +44,7 @@ export class LiabilityChartComponent implements OnInit {
     this.githubService.currentvalue.subscribe(async (msg: any) => {
       console.log('msg', msg)
       this.msg = msg
-      this.disposeChart()
+      // this.disposeChart()
       if (msg != '') await this.fetchData('YES')
     })
 
@@ -104,7 +104,7 @@ export class LiabilityChartComponent implements OnInit {
 
         this.secondchart = [resultObjectValueget, resultObjectValuegive]
         // console.log('resultObjectValueget', this.secondchart, resultObjectValueget)
-        this.finallibiliity = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] == 'Liability');
+        this.finallibiliity = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] == 'Liability' && expense['Liabilitystatus']!='Credit');
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] == 'Investment' || expense['Materialgroup'] == 'Liability');
         this.dataarrayobj.filter((el: any) => {
           if (el.Materialgroup == 'Liability' && el.Liabilitystatus == 'Give') {
@@ -141,7 +141,7 @@ export class LiabilityChartComponent implements OnInit {
               }
               else if (give.Price < overall.Price && give.materialstatus != overall.materialstatus) {
                 overall.final = overall.Price - give.Price
-                overall.status = overall.materialstatus + ' Crossed'
+                overall.status = overall.materialstatus 
               }
               else if (give.Price == overall.Price && give.materialstatus != overall.materialstatus) {
                 overall.final = overall.Price - give.Price
@@ -159,7 +159,7 @@ export class LiabilityChartComponent implements OnInit {
           overall.category = overall.status
           overall.value = overall.Price
         })
-        // console.log(['c jhkjfd', this.finallibiliity])
+        // console.log(['cjhkjfd', this.finallibiliity])
         this.endpiechartliable = _.uniqBy(_.reverse(_.cloneDeep(this.finallibiliity)), 'material');
         _.remove(this.endpiechartliable, (obj: any) => obj['final'] == 0);
         this.endpiechartliable.forEach((el: any) => {
@@ -167,7 +167,7 @@ export class LiabilityChartComponent implements OnInit {
           el.value = el.final
         })
         this.liabilitydonut = (this.endpiechartliable.length < 5) ? 6 : this.endpiechartliable.length
-        // console.log(this.endpiechartliable.length,this.liabilitydonut)
+        // console.log(this.endpiechartliable,'tbhjgj')
         this.window = window.innerWidth;
         this.rowData = this.finallibiliity
         if (this.window < 767) {
@@ -175,8 +175,11 @@ export class LiabilityChartComponent implements OnInit {
         } else {
           this.intialwidth = 250
         }
-        // console.log(this.window, 'scrreee')
-
+        // let resultObject:any=[]
+        // this.endpiechartliable.forEach((obj:any) => {
+        //   resultObject[obj.material] = obj.value;
+        // });
+        // console.log(resultObject)
         if (this.intialwidth != 0) {
           this.columnDefs = [
             { headerName: 'Amount', field: 'final', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 },
@@ -198,7 +201,7 @@ export class LiabilityChartComponent implements OnInit {
 
 
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
-        // console.log(this.groupedData);
+        // console.log(this.groupedData),'groupedData';
         this.groupedData.forEach((el: any) => {
           el.category = el.Materialgroup
           el.value = el.Price
@@ -286,38 +289,38 @@ export class LiabilityChartComponent implements OnInit {
     this.chart.legend = new am4charts.Legend();
 
   }
-  // private initializeChart1() {
-  //   // Check if the chart is already initialized
-  //   this.chart1 = am4core.create('liability-chartdiv1', am4charts.PieChart3D); // Unique container ID
-  //   this.chart1.innerRadius = am4core.percent(55);
+  private initializeChart1() {
+    // Check if the chart is already initialized
+    this.chart1 = am4core.create('liability-chartdiv1', am4charts.PieChart3D); // Unique container ID
+    this.chart1.innerRadius = am4core.percent(55);
 
-  //   // Add data (replace this with your actual data)
-  //   this.chart1.data = this.secondchart
+    // Add data (replace this with your actual data)
+    this.chart1.data = this.secondchart
 
-  //   // Add series
-  //   const series1 = this.chart1.series.push(new am4charts.PieSeries3D());
-  //   series1.dataFields.value = 'value';
-  //   series1.dataFields.category = 'category';
+    // Add series
+    const series1 = this.chart1.series.push(new am4charts.PieSeries3D());
+    series1.dataFields.value = 'value';
+    series1.dataFields.category = 'category';
 
-  //   // Add labels
-  //   series1.labels.template.text = '{category}:{value.value}';
+    // Add labels
+    series1.labels.template.text = '{category}:{value.value}';
 
-  //   series1.labels.template.fill = am4core.color('Black');
-  //   this.setLabelRadius1(series1);
-  //   series1.colors.list = [
+    series1.labels.template.fill = am4core.color('Black');
+    this.setLabelRadius1(series1);
+    series1.colors.list = [
 
-  //     am4core.color("#97C465"),
-  //     am4core.color("#D32F2F"),
-  //     am4core.color("#FFC75F"),
-  //     am4core.color("#F9F871"),
-  //     am4core.color("#81D4FA"),
-  //     am4core.color("#AZE278"),
+      am4core.color("#97C465"),
+      am4core.color("#D32F2F"),
+      am4core.color("#FFC75F"),
+      am4core.color("#F9F871"),
+      am4core.color("#81D4FA"),
+      am4core.color("#AZE278"),
 
-  //   ];
+    ];
 
-  //   this.chart1.legend = new am4charts.Legend();
+    this.chart1.legend = new am4charts.Legend();
 
-  // }
+  }
 
   private setLabelRadius(series: any) {
     const screenWidth = window.innerWidth;
@@ -338,21 +341,21 @@ export class LiabilityChartComponent implements OnInit {
       series.labels.template.radius = am4core.percent(radiusPercent);
     }
   }
-  // private setLabelRadius1(series1: any) {
-  //   const screenWidth = window.innerWidth;
-  //   console.log(screenWidth, 'screenWidth')
-  //   let radiusPercent=0
-  //   if(screenWidth < 950){
-  //     radiusPercent = -75 ;
-  //     series1.labels.template.disabled = true;   }
-  //  else{
-  //     radiusPercent = -25
-  //  }
-  //   series1 = this.chart1.series.getIndex(0) as am4charts.PieSeries3D;
-  //   if (series1) {
-  //     series1.labels.template.radius = am4core.percent(radiusPercent);
-  //   }
-  // }
+  private setLabelRadius1(series1: any) {
+    const screenWidth = window.innerWidth;
+    console.log(screenWidth, 'screenWidth')
+    let radiusPercent=0
+    if(screenWidth < 950){
+      radiusPercent = -75 ;
+      series1.labels.template.disabled = true;   }
+   else{
+      radiusPercent = -25
+   }
+    series1 = this.chart1.series.getIndex(0) as am4charts.PieSeries3D;
+    if (series1) {
+      series1.labels.template.radius = am4core.percent(radiusPercent);
+    }
+  }
   disposeChart() {
     if (this.chart1) {
       this.chart.dispose();
@@ -361,5 +364,7 @@ export class LiabilityChartComponent implements OnInit {
       console.warn('Chart was not initialized before disposal.');
     }
   }
+
+  
 }
 

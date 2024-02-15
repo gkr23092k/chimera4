@@ -52,7 +52,8 @@ export class GithubServiceService {
     });
 
     const content = btoa(data + '\n'); // Encode content to base64
-    const message = 'Append data';
+    let date= new Date()
+    const message = 'Append data'+date;
     const body = { message, content, sha };
 
     return this.fetchDataFromGitHub().pipe(
