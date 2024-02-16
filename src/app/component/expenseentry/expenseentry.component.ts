@@ -743,6 +743,11 @@ export class ExpenseentryComponent implements OnInit {
     this.spinner.show()
     localStorage.setItem('g0r@usern@mechimera', (this.user));
     localStorage.setItem('g0r@usern@mechimeramail', (this.email));
+    this.router.navigate(['wait'])
+    setTimeout(() => {
+      this.router.navigate(['chhk'])
+
+    }, 1);
     const Toast = Swal.mixin({
       toast: true,
       position: 'center',

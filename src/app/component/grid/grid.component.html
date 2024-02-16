@@ -1,17 +1,20 @@
+<!-- <input class="border border-5 mb-3 me-4" type="text" name="" id="" [(ngModel)]="msg"> -->
 <div class="d-flex justify-content-center">
-    <!-- <input class="border border-5 mb-3 me-4" type="text" name="" id="" [(ngModel)]="msg"> -->
-    <mat-form-field class="inputbox" *ngIf="isadmin">
-        <mat-label>User Group</mat-label>
-        <mat-select required [(ngModel)]="mailmsg">
-            <mat-option *ngFor="let user of usergroup" [value]="user">{{user.Name}}</mat-option>
-        </mat-select>
-    </mat-form-field>
+
+<mat-form-field class="inputbox" *ngIf="isadmin">
+    <mat-label>User Group</mat-label>
+    <mat-select required [(ngModel)]="mailmsg">
+        <mat-option *ngFor="let user of usergroup" [value]="user">{{user.Name}}</mat-option>
+    </mat-select>
+</mat-form-field>
+</div>
+<div class="d-flex justify-content-center">
     
     <button *ngIf="isadmin" class="border border-5 mt-2 mb-3 mx-2" matRippleDisabled mat-button color="primary"
         (click)="mail()">Mail</button>
         <button  class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
         (click)="route()"><img style="height: 25px;" src='./assets/images/th.jpg' /></button>
-    <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-4 big" matRippleDisabled mat-button color="primary"
+    <button *ngIf="!isadmin" class="border border-5 ms-2 mt-2 mb-3 me-3 big" matRippleDisabled mat-button color="primary"
         (click)="refreshgrid()">Refresh</button>
     <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-4 big" matRippleDisabled mat-button color="primary"
         (click)="xlsxwriter()">Download</button>
