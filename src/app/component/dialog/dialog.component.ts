@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export interface DialogData {
   newaccbalance: string;
   newihbbalance: string;
+  comment:string
 }
 @Component({
   selector: 'app-dialog',
@@ -22,7 +23,8 @@ export class DialogComponent implements OnInit {
 
     this.data = {
       newaccbalance: '0',
-      newihbbalance: '0'
+      newihbbalance: '0',
+      comment:''
     }
   }
   onNoClick(): void {

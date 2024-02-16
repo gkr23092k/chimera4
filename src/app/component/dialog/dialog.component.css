@@ -1,0 +1,12 @@
+.okbutton{
+    background-color: #BFD8AF;
+    color: black;
+}
+.nobutton{
+    background-color: #DC8686;
+    color: black;
+}
+.example-full-width {
+    height: 450px !important;
+    width: 100%;
+  }

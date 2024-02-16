@@ -5,6 +5,9 @@ import emailjs from '@emailjs/browser';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
+import { TicketComponent } from '../ticket/ticket.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
@@ -27,7 +30,9 @@ export class GridComponent {
   admin: any = '';
   isadmin: boolean = false;
   xlsxdataarrayobj: any = [];
-  constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService) { }
+  description: any;
+  constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService, public dialog: MatDialog,
+    private router: Router) { }
   ngOnInit() {
     this.admin = localStorage.getItem('g0r@usern@mechimera')
     if (this.admin == 'gora@2303') {
@@ -85,9 +90,9 @@ export class GridComponent {
           this.dataarrayobj.filter((el: any) => {
             // console.log(el)
             if (el.Name === this.msg) {
-              tempstoreuser.push(el)          
-              this.mailmsg = { Name: this.msg ,Mailid:el.Mailid }
-            }   
+              tempstoreuser.push(el)
+              this.mailmsg = { Name: this.msg, Mailid: el.Mailid }
+            }
           });
           this.dataarrayobj = tempstoreuser
         }
@@ -293,4 +298,32 @@ export class GridComponent {
 
   }
 
+
+  route() {
+    if (this.admin) {
+      this.router.navigate(['issues'])
+    }
+    else{
+      this.swaltoast('Please Add user & Refresh')
+    }
+  }
+swaltoast(swaltitle:any){
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'center',
+    showConfirmButton: false,
+    timer: 10000,
+    showCloseButton: true,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
+
+  Toast.fire({
+    icon: 'info',
+    title: swaltitle
+  })
+}
 }

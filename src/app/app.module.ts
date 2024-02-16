@@ -29,6 +29,9 @@ import { BubbleComponent } from './component/bubble/bubble.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { DialogComponent } from './component/dialog/dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { TicketComponent } from './component/ticket/ticket.component';
+import { DummyComponent } from './component/dummy/dummy.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +44,9 @@ import {MatDialogModule} from '@angular/material/dialog';
     LiabilityChartComponent,
     InvestmentChartComponent,
     BubbleComponent,
-    DialogComponent
+    DialogComponent,
+    TicketComponent,
+    DummyComponent
     
   ],
   imports: [

@@ -19,6 +19,7 @@ export class GithubServiceService {
   subsVar!: Subscription;
   public messagesource: any = new BehaviorSubject('');
   currentvalue = this.messagesource.asObservable();
+  private ticketfilePath: string='Ticket.txt';
   
 
   changemessage(message: any) {
@@ -63,6 +64,41 @@ export class GithubServiceService {
             return throwError('Error appending data to GitHub: ' + error.message);
           })
         );
+      })
+    );
+  }
+
+  appendDataToGitHubTicket(data: string, sha: string): Observable<any> {
+    const url = `${this.apiUrl}/repos/${this.owner}/${this.repo}/contents/${this.ticketfilePath}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token}`
+    });
+
+    const content = btoa(data + '\n'); // Encode content to base64
+    let date= new Date()
+    const message = 'Append data'+date;
+    const body = { message, content, sha };
+
+    return this.fetchDataFromGitHub().pipe(
+      switchMap(response => {
+        return this.http.put(url, body, { headers }).pipe(
+          catchError(error => {
+            return throwError('Error appending data to GitHub: ' + error.message);
+          })
+        );
+      })
+    );
+  }
+
+  fetchDataFromGitHubTicket(): Observable<any> {
+    const url = `${this.apiUrl}/repos/${this.owner}/${this.repo}/contents/${this.ticketfilePath}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token}`
+    });
+
+    return this.http.get(url, { headers }).pipe(
+      catchError(error => {
+        return throwError('Error fetching data from GitHub: ' + error.message);
       })
     );
   }

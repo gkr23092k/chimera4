@@ -3,11 +3,17 @@ import { RouterModule, Routes } from '@angular/router';
 import { ExpenseentryComponent } from './component/expenseentry/expenseentry.component';
 import { DonutChartComponent } from './component/donut-chart/donut-chart.component';
 import { BubbleComponent } from './component/bubble/bubble.component';
+import { TicketComponent } from './component/ticket/ticket.component';
+import { DummyComponent } from './component/dummy/dummy.component';
 
 const routes: Routes = [
   { path: 'entry', component: ExpenseentryComponent },
   { path: 'ch', component: DonutChartComponent },
   { path: 'b', component: BubbleComponent },
+  { path: 'issues', component: TicketComponent },
+  { path: 'wait', component: DummyComponent },
+
+
 
 
   { path: '**', component: ExpenseentryComponent },

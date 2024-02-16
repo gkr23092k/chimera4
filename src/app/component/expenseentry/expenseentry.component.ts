@@ -624,7 +624,7 @@ export class ExpenseentryComponent implements OnInit {
                     icon: 'info',
                     title: 'Material Added Successfully'
                   })
-                  this.router.navigate(['ch']);
+                  this.router.navigate(['wait']);
                   this.msg = ''
                   setTimeout(() => {
                     this.router.navigate(['entry']);
@@ -697,9 +697,11 @@ export class ExpenseentryComponent implements OnInit {
     }
   }
   openDialog(): void {
+    const dynamicheight=((window.innerWidth<768)?390:350)
+    console.log(dynamicheight,'dynamicheight',window.innerWidth,(window.innerWidth<768)?390:350)
     const dialogRef = this.dialog.open(DialogComponent, {
       data: { name: this.addbalance },
-      height: '250px',
+      height: dynamicheight+'px',
       width: '400px'
     });
 
@@ -714,6 +716,7 @@ export class ExpenseentryComponent implements OnInit {
             this.materialgroup = 'Liability'
             this.material = 'Credit'
             this.price = '0'
+            this.comment=((result.comment=='')?'No Comments':result.comment)
             console.log(this.dataarrayobjholder)
             this.dataarrayobjholder.forEach((bal: any) => {
               if (this.user == bal.Name) {

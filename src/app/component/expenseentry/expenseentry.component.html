@@ -75,12 +75,11 @@
         <mat-select required [(ngModel)]="liabilitystatus">
             <mat-option [value]="'Give'">Give</mat-option>
             <mat-option [value]="'Get'">Get</mat-option>
-            <mat-option [value]="'Credit'">Credit</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>Price</mat-label>
-        <input [type]="'number'" [(ngModel)]="price" matInput placeholder="price in rupees">
+        <input [type]="'number'"  [(ngModel)]="price" matInput placeholder="price in rupees">
     </mat-form-field>
 
 
@@ -92,7 +91,7 @@
     </div>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>Account Balance</mat-label>
-        <input [type]="'number'" [(ngModel)]="accbalance" matInput placeholder="balance in rupees">
+        <input [type]="'number'" [disabled]="true" [(ngModel)]="accbalance" matInput placeholder="balance in rupees">
     </mat-form-field>
     <div class="d-flex justify-content-center mb-2">
         <button class="border border-5" mat-button color="primary" (click)="calcbalance('IHB')">Calculate Ihb
@@ -100,7 +99,7 @@
     </div>
     <mat-form-field class="example-full-width inputbox">
         <mat-label>In Hand Balance</mat-label>
-        <input [type]="'number'" [(ngModel)]="inhandbalance" matInput placeholder="balance in rupees">
+        <input [type]="'number'" [disabled]="true" [(ngModel)]="inhandbalance" matInput placeholder="balance in rupees">
     </mat-form-field>
 
 
