@@ -159,6 +159,7 @@ export class TicketComponent {
         console.log(this.dataarrayobj)
 
         this.dataarrayobj.forEach((element: any) => {
+          element.Description=element.Description.toLowerCase()
           if (element.Status == 'Active' && element.Type == 'Fix') {
             this.todo.push(element.Description)
           } else if (element.Status == 'Done' && element.Type == 'Fix') {
