@@ -1,7 +1,9 @@
-import { CdkDragDrop, moveItemInArray,
+import {
+  CdkDragDrop, moveItemInArray,
   transferArrayItem,
   CdkDrag,
-  CdkDropList,} from '@angular/cdk/drag-drop';
+  CdkDropList,
+} from '@angular/cdk/drag-drop';
 import { Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -17,6 +19,7 @@ import Swal from 'sweetalert2';
 export class TicketComponent {
   data: any = ''
   description: string = '';
+  descriptionfeature: string = ''
   dataarrayobj: any = [];
   content: string = '';
   user: any;
@@ -29,21 +32,24 @@ export class TicketComponent {
     this.email = localStorage.getItem('g0r@usern@mechimeramail');
     this.fetchData('NO')
   }
-  onOKClick() {
-    this.appendData()
+  onOKClick(type: any) {
+    this.appendData(type)
   }
-  appendData() {
+  appendData(type: any) {
     console.log(this.user);
-    
-    if (this.description != '' && this.user) {
-      this.description=this.description.replaceAll(',','_')
+    let temp = this.description
+    if (type == 'Feature') {
+      temp = this.descriptionfeature
+    }
+    if (temp != '' && this.user) {
+      this.description = this.description.replaceAll(',', '_')
       const currentDate = new Date();
       const formattedDateTime = `${currentDate.toDateString()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
 
       try {
         this.spinner.show();
 
-        let newdata = `Name:${this.user},Description:${this.description},Status:ActiveGORAR@WS#P@R@TOR`
+        let newdata = `Name:${this.user},Description:${temp},Type:${type},Status:ActiveGORAR@WS#P@R@TOR`
         const newData = this.content + newdata
         this.githubService.fetchDataFromGitHubTicket().subscribe(
           (response: any) => {
@@ -108,7 +114,7 @@ export class TicketComponent {
         })
       }
 
-    }else{
+    } else {
       this.swaltoast('Fill the Description!')
     }
   }
@@ -152,17 +158,26 @@ export class TicketComponent {
         })
         console.log(this.dataarrayobj)
 
-        this.dataarrayobj.forEach((element:any) => {
-          if(element.Status=='Active'){
-          this.todo.push(element.Description)
-          }else if(element.Status=='Done'){
+        this.dataarrayobj.forEach((element: any) => {
+          if (element.Status == 'Active' && element.Type == 'Fix') {
+            this.todo.push(element.Description)
+          } else if (element.Status == 'Done' && element.Type == 'Fix') {
             this.done.push(element.Description)
 
-          }else if(element.Status=='Progress'){
+          } else if (element.Status == 'Progress' && element.Type == 'Fix') {
             this.progress.push(element.Description)
 
           }
-          
+          else if (element.Status == 'Active' && element.Type == 'Feature') {
+            this.todofeature.push(element.Description)
+          } else if (element.Status == 'Done' && element.Type == 'Feature') {
+            this.donefeature.push(element.Description)
+
+          } else if (element.Status == 'Progress' && element.Type == 'Feature') {
+            this.progressfeature.push(element.Description)
+
+          }
+
         });
 
 
@@ -173,44 +188,60 @@ export class TicketComponent {
     );
   }
 
-swaltoast(swaltitle:any){
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'center',
-    showConfirmButton: false,
-    timer: 10000,
-    showCloseButton: true,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  })
+  swaltoast(swaltitle: any) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 10000,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
 
-  Toast.fire({
-    icon: 'info',
-    title: swaltitle
-  })
-}
-
-
-public todo:any = [];
-public progress:any = [];
-
-public done:any = [];
-
-
-drop(event: CdkDragDrop<string[]>) {
-  if (event.previousContainer === event.container) {
-    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-  } else {
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex,
-    );
+    Toast.fire({
+      icon: 'info',
+      title: swaltitle
+    })
   }
-}
+
+
+  public todo: any = [];
+  public progress: any = [];
+  public done: any = [];
+  public todofeature: any = [];
+  public progressfeature: any = [];
+  public donefeature: any = [];
+
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
+
+
+  dropfeature(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
 
 }

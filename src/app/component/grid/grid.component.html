@@ -12,12 +12,14 @@
     
     <button *ngIf="isadmin" class="border border-5 mt-2 mb-3 mx-2" matRippleDisabled mat-button color="primary"
         (click)="mail()">Mail</button>
-        <button  class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
+        <button  *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
         (click)="route()"><img style="height: 25px;" src='./assets/images/th.jpg' /></button>
-    <button *ngIf="!isadmin" class="border border-5 ms-2 mt-2 mb-3 me-3 big" matRippleDisabled mat-button color="primary"
+    <button *ngIf="!isadmin" class="border border-5 ms-2 mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
         (click)="refreshgrid()">Refresh</button>
-    <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-4 big" matRippleDisabled mat-button color="primary"
+    <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
         (click)="xlsxwriter()">Download</button>
+        <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-3 big" matRippleDisabled mat-button color="primary"
+        (click)="route()">Issue</button>
     
     <div><button *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 small" color="primary"
             (click)="refreshgrid()"><img src='./assets/images/refresh.svg' /></button>
