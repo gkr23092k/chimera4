@@ -11,16 +11,16 @@ export class GithubServiceService {
   private owner = 'gkr23092k';
   private repo = 'report';
   private filePath = 'edataanal.txt';
-  
+
   private newkey = 'ghp_'
   private newkey2 = '4yjyFNxLGY'
-  private token = this.newkey+ this.newkey2 + '2bA3dqQcxH9xf28pfKB21rNNFi' ;
+  private token = this.newkey + this.newkey2 + '2bA3dqQcxH9xf28pfKB21rNNFi';
   invokeFirstComponentFunction = new EventEmitter();
   subsVar!: Subscription;
   public messagesource: any = new BehaviorSubject('');
   currentvalue = this.messagesource.asObservable();
-  private ticketfilePath: string='Ticket.txt';
-  
+  private ticketfilePath: string = 'Ticket.txt';
+
 
   changemessage(message: any) {
     this.messagesource.next(message)
@@ -28,8 +28,11 @@ export class GithubServiceService {
 
   constructor(private http: HttpClient) { }
   onFirstComponentButtonClick() {
-    this.invokeFirstComponentFunction.emit();
-    this.subsVar == undefined
+    return new Promise<void>((resolve, reject) => {
+      this.invokeFirstComponentFunction.emit();
+      this.subsVar == undefined
+      resolve();
+    })
 
   }
 
@@ -53,8 +56,8 @@ export class GithubServiceService {
     });
 
     const content = btoa(data + '\n'); // Encode content to base64
-    let date= new Date()
-    const message = 'Append data'+date;
+    let date = new Date()
+    const message = 'Append data' + date;
     const body = { message, content, sha };
 
     return this.fetchDataFromGitHub().pipe(
@@ -75,8 +78,8 @@ export class GithubServiceService {
     });
 
     const content = btoa(data + '\n'); // Encode content to base64
-    let date= new Date()
-    const message = 'Append data'+date;
+    let date = new Date()
+    const message = 'Append data' + date;
     const body = { message, content, sha };
 
     return this.fetchDataFromGitHub().pipe(

@@ -170,3 +170,23 @@ img {
   width: 24px;
   height: 24px;
 }
+
+.repeatedpayments{
+  background-color: #DCBFFF;
+}
+
+.item {
+  flex: 1 0 220px; /* Flex-grow, flex-shrink, flex-basis */
+  margin: 5px; /* Add some margin between items */
+}
+
+.selected {
+  border-width: 5px;
+  border-style:outset;
+  border-color: rgb(23, 227, 203);
+}
+
+.favourties{
+  height: 200px;
+  overflow: auto;
+}

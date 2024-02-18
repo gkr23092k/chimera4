@@ -82,9 +82,25 @@ export class ExpenseentryComponent implements OnInit {
   materialdropdownliabillity: any;
   animal: any;
   addbalance: any;
+  selectedData: any = null;
+  favourities: any=[];
+  isfavour: boolean=false;
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService
     , public dialog: MatDialog) {
 
+  }
+
+  isselected(price: number): boolean {
+    return this.selectedData && this.selectedData.Price === price;
+  }
+
+  selectData(refill: any,type :any) {
+    this.selectedData = refill;
+    console.log('Selected data:', this.selectedData);
+    this.materialgroup=refill.Materialgroup
+    this.material=refill.Material
+    this.price=refill.Price.toString()
+    this.calcbalance(type)
   }
 
 
@@ -141,7 +157,9 @@ export class ExpenseentryComponent implements OnInit {
   onSelectAll(items: any) {
     console.log(items);
   }
-
+  // notify(){
+  //   Notification.
+  // }
 
 
   fetchData(checkcase: any) {
@@ -171,6 +189,13 @@ export class ExpenseentryComponent implements OnInit {
           this.dataarrayobj.push(dataObject)
         })
         // console.log(this.dataarrayobj)
+
+        this.favourities=[]
+        this.dataarrayobj.filter((el: any) => {
+          if(el.Favourities=='Yes'){
+            this.favourities.push(el)
+          }
+        })
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobjholder.filter((el: any) => {
@@ -223,7 +248,7 @@ export class ExpenseentryComponent implements OnInit {
         this.networth = accbalance + ihbbalance
         if (this.materialdropdown.length < 1) {
           this.dataarrayobj.forEach((el: any) => {
-            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get' ) {
+            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
               this.materialdropdown.push(el.Material.toUpperCase())
             }
           })
@@ -337,6 +362,10 @@ export class ExpenseentryComponent implements OnInit {
     });
   }
 
+
+  favo(){
+    this.isfavour=!this.isfavour
+  }
 
   calcbalance(val: any) {
     // console.log('called', val, this.price, this.user)
@@ -540,8 +569,9 @@ export class ExpenseentryComponent implements OnInit {
       this.spinner.show()
       // this.fetchData('NO')
       this.githubService.changemessage(this.searchusername.replaceAll(',', '_').replaceAll(':', '_'))
-      this.githubService.onFirstComponentButtonClick()
-      this.spinner.hide()
+      this.githubService.onFirstComponentButtonClick().then(() => {
+        this.spinner.hide()
+      })
     }
   }
 
@@ -591,7 +621,7 @@ export class ExpenseentryComponent implements OnInit {
 
           const formattedentryDateTime = `${this.dateentry.toDateString()}`;
           // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
-          let newdata = `Name:${this.user},Mailid:${this.email},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Planned:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
+          let newdata = `Name:${this.user},Mailid:${this.email},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Favourities:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
 
           const newData = this.content + newdata
           this.githubService.fetchDataFromGitHub().subscribe(
@@ -697,11 +727,11 @@ export class ExpenseentryComponent implements OnInit {
     }
   }
   openDialog(): void {
-    const dynamicheight=((window.innerWidth<768)?390:350)
-    console.log(dynamicheight,'dynamicheight',window.innerWidth,(window.innerWidth<768)?390:350)
+    const dynamicheight = ((window.innerWidth < 768) ? 390 : 350)
+    console.log(dynamicheight, 'dynamicheight', window.innerWidth, (window.innerWidth < 768) ? 390 : 350)
     const dialogRef = this.dialog.open(DialogComponent, {
       data: { name: this.addbalance },
-      height: dynamicheight+'px',
+      height: dynamicheight + 'px',
       width: '400px'
     });
 
@@ -716,7 +746,7 @@ export class ExpenseentryComponent implements OnInit {
             this.materialgroup = 'Liability'
             this.material = 'Credit'
             this.price = '0'
-            this.comment=((result.comment=='')?'No Comments':result.comment)
+            this.comment = ((result.comment == '') ? 'No Comments' : result.comment)
             console.log(this.dataarrayobjholder)
             this.dataarrayobjholder.forEach((bal: any) => {
               if (this.user == bal.Name) {
