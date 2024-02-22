@@ -18,9 +18,19 @@ export class GithubServiceService {
   invokeFirstComponentFunction = new EventEmitter();
   subsVar!: Subscription;
   public messagesource: any = new BehaviorSubject('');
-  currentvalue = this.messagesource.asObservable();
-  private ticketfilePath: string = 'Ticket.txt';
+  public authsource: any = new BehaviorSubject(false);
 
+  currentvalue = this.messagesource.asObservable();
+  currentauth = this.authsource.asObservable();
+
+  private ticketfilePath: string = 'Ticket.txt';
+  private userfilePath: string = 'users.txt';
+
+
+
+  authmessage(message: any) {
+    this.authsource.next(message)
+  }
 
   changemessage(message: any) {
     this.messagesource.next(message)
@@ -95,6 +105,20 @@ export class GithubServiceService {
 
   fetchDataFromGitHubTicket(): Observable<any> {
     const url = `${this.apiUrl}/repos/${this.owner}/${this.repo}/contents/${this.ticketfilePath}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token}`
+    });
+
+    return this.http.get(url, { headers }).pipe(
+      catchError(error => {
+        return throwError('Error fetching data from GitHub: ' + error.message);
+      })
+    );
+  }
+
+
+  fetchDataFromGitHubuser(): Observable<any> {
+    const url = `${this.apiUrl}/repos/${this.owner}/${this.repo}/contents/${this.userfilePath}`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.token}`
     });

@@ -31,6 +31,9 @@ import { DialogComponent } from './component/dialog/dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { TicketComponent } from './component/ticket/ticket.component';
 import { DummyComponent } from './component/dummy/dummy.component';
+import { StackedcolummnComponent } from './component/stackedcolummn/stackedcolummn.component';
+import { LoginComponent } from './component/login/login.component';
+import { AuthGuardService } from './guard/auth.guard';
 
 @NgModule({
   declarations: [
@@ -46,7 +49,9 @@ import { DummyComponent } from './component/dummy/dummy.component';
     BubbleComponent,
     DialogComponent,
     TicketComponent,
-    DummyComponent
+    DummyComponent,
+    StackedcolummnComponent,
+    LoginComponent
     
   ],
   imports: [
@@ -54,7 +59,7 @@ import { DummyComponent } from './component/dummy/dummy.component';
     AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,AgGridModule,DragDropModule,
     MatChipsModule,NgxSpinnerModule,NgxMatSelectSearchModule,NgMultiSelectDropDownModule.forRoot(),MatDialogModule
   ],
-  providers: [],
+  providers: [AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

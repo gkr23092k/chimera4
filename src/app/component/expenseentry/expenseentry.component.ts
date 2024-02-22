@@ -83,8 +83,8 @@ export class ExpenseentryComponent implements OnInit {
   animal: any;
   addbalance: any;
   selectedData: any = null;
-  favourities: any=[];
-  isfavour: boolean=false;
+  favourities: any = [];
+  isfavour: boolean = false;
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService
     , public dialog: MatDialog) {
 
@@ -94,12 +94,12 @@ export class ExpenseentryComponent implements OnInit {
     return this.selectedData && this.selectedData.Price === price;
   }
 
-  selectData(refill: any,type :any) {
+  selectData(refill: any, type: any) {
     this.selectedData = refill;
     console.log('Selected data:', this.selectedData);
-    this.materialgroup=refill.Materialgroup
-    this.material=refill.Material
-    this.price=refill.Price.toString()
+    this.materialgroup = refill.Materialgroup
+    this.material = refill.Material
+    this.price = refill.Price.toString()
     this.calcbalance(type)
   }
 
@@ -190,9 +190,9 @@ export class ExpenseentryComponent implements OnInit {
         })
         // console.log(this.dataarrayobj)
 
-        this.favourities=[]
+        this.favourities = []
         this.dataarrayobj.filter((el: any) => {
-          if(el.Favourities=='Yes'){
+          if (el.Favourities == 'Yes') {
             this.favourities.push(el)
           }
         })
@@ -363,8 +363,8 @@ export class ExpenseentryComponent implements OnInit {
   }
 
 
-  favo(){
-    this.isfavour=!this.isfavour
+  favo() {
+    this.isfavour = !this.isfavour
   }
 
   calcbalance(val: any) {
@@ -906,5 +906,12 @@ export class ExpenseentryComponent implements OnInit {
 
       return result;
     }, {});
+  }
+
+  logout() {
+    this.githubService.authmessage(false)
+    setTimeout(() => {
+      this.router.navigate(['/login'])
+    }, 100);
   }
 }
