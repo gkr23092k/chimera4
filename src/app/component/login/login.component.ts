@@ -8,13 +8,19 @@ import { GithubServiceService } from 'src/app/service/github-service.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  email: any = 'test@gmail.com'
-  password: any = 'Gora@2303'
+  email: any = ''
+  password: any = ''
   msg: any = ''
   dataarrayobj: any=[];
+  ismallscreen:boolean=false
   constructor(private router: Router, private api: GithubServiceService) { }
   response: any = []
   ngOnInit(): void {
+ let size=window.innerWidth
+ if(size<1000){
+  this.ismallscreen=true
+ }
+
     this.api.fetchDataFromGitHubuser().subscribe((res: any) => {
       console.log(res)
       let content = atob(res.content); // Decode content from base64

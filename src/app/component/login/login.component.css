@@ -21,6 +21,15 @@
     background: linear-gradient(to bottom, #dddedf, #0985ab); /* Blue gradient */
 
   }
+  .form-container-small {
+    height: 100vh;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #dddedf, #0985ab); /* Blue gradient */
+
+  }
   
   .mat-card {
     width: 300px;

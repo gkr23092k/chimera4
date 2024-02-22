@@ -1,5 +1,6 @@
 <!-- login-page.component.html -->
 
+<div *ngIf="!ismallscreen">
 <div class="split-screen-container">
     <div class="image-container">
         <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
@@ -43,6 +44,33 @@
 
                 <button mat-button color="accent" class="buttton">Create New User</button>
             </div>
+        </div>
+    </div>
+</div>
+</div>
+<div *ngIf="ismallscreen" class="form-container-small">
+    <div>
+        <div  class="d-flex justify-content-center mb-2">
+            <h1 class="heading">GORA LOGIN</h1>
+        </div>
+        <!-- Stacked inputs -->
+        <mat-form-field class="full-width mb-4">
+            <mat-label>User</mat-label>
+            <input matInput  [(ngModel)]="email" type="text">
+        </mat-form-field>
+        <mat-form-field class="full-width mb-4">
+            <mat-label>Password</mat-label>
+
+            <input matInput [(ngModel)]="password" placeholder="Password" type="password">
+        </mat-form-field>
+
+        <p class="text-center msg"*ngIf="msg!=''">{{msg}}</p>
+        <div class="d-flex justify-content-center mb-2">
+            <button mat-raised-button color="primary"class="buttton" (click)="login()">Login</button>
+        </div>
+        <div class="d-flex justify-content-center mb-2">
+
+            <button mat-button color="accent" class="buttton">Create New User</button>
         </div>
     </div>
 </div>
