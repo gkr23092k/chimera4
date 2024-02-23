@@ -20,6 +20,8 @@ export class LoginComponent implements OnInit {
  if(size<1000){
   this.ismallscreen=true
  }
+ this.email=localStorage.getItem('g0r@usern@mechimeramail')
+ this.password=localStorage.getItem('g0r@usern@mechimera')
 
     this.api.fetchDataFromGitHubuser().subscribe((res: any) => {
       console.log(res)
