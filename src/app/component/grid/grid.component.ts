@@ -102,8 +102,9 @@ export class GridComponent {
         this.usergroup = _.uniqBy(this.dataarrayobj, 'Name');
 
 
-        // console.log(this.usergroup)
-        this.rowData = this.dataarrayobj
+        // console.log(this.dataarrayobj)
+        this.rowData = this.dataarrayobj.reverse()
+
 
       },
       error => {

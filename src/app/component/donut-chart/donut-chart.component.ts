@@ -19,7 +19,7 @@ export class DonutChartComponent implements OnInit {
   groupedData: any = [];
   msg: any = '';
   grpcount: any = 0;
-
+  dataforfilter: any = []
   constructor(private githubService: GithubServiceService) { }
 
   ngOnInit() {
@@ -67,12 +67,11 @@ export class DonutChartComponent implements OnInit {
             }
           });
           this.dataarrayobj = tempstoreuser
-          // console.log([this.dataarrayobj, tempstoreuser, 'afterdonut', this.msg])
         }
         this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment' && expense['Materialgroup'] != 'Liability');
+        this.dataforfilter = this.dataarrayobj
 
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
-        // console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {
           el.category = el.Materialgroup
           el.value = el.Price
@@ -86,7 +85,7 @@ export class DonutChartComponent implements OnInit {
         if (screenWidth > 370) {
           this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
         }
-        else{
+        else {
           this.grpcount = (this.groupedData.length < 12) ? 15 : 22
 
         }
@@ -111,7 +110,34 @@ export class DonutChartComponent implements OnInit {
     }, {});
   }
 
+  filterbydate(startdate: any, enddate: any) {
+    console.log('filter applied', startdate, enddate)
 
+
+    const filteredArray = this.dataforfilter.filter((obj: any) => {
+      const objDate = new Date(obj.Date);
+      return objDate >= new Date(startdate) && objDate <= new Date(enddate);
+    });
+
+    this.groupedData = Object.values(this.groupAndSum(filteredArray, 'Materialgroup', 'Price'));
+    this.groupedData.forEach((el: any) => {
+      el.category = el.Materialgroup
+      el.value = el.Price
+    })
+
+    const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');
+    this.groupedData = sortedObject
+    this.disposeChart()
+    this.initializeChart();
+    const screenWidth = window.innerWidth;
+    if (screenWidth > 370) {
+      this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
+    }
+    else {
+      this.grpcount = (this.groupedData.length < 12) ? 15 : 22
+
+    }
+  }
 
   private initializeChart() {
     // Check if the chart is already initialized

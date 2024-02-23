@@ -909,9 +909,28 @@ export class ExpenseentryComponent implements OnInit {
   }
 
   logout() {
-    this.githubService.authmessage(false)
-    setTimeout(() => {
-      this.router.navigate(['/login'])
-    }, 100);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Log out!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Logout"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Logout!",
+          text: "Logged out Successfully",
+          icon: "success"
+        });
+        this.githubService.authmessage(false)
+        localStorage.removeItem('g0r@usern@mechimera');
+        localStorage.removeItem('g0r@usern@mechimeramail');
+        setTimeout(() => {
+          this.router.navigate(['/login'])
+        }, 100);
+      }
+    });
   }
 }

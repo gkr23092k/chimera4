@@ -1,74 +1,87 @@
 <!-- login-page.component.html -->
 
 <div *ngIf="!ismallscreen">
-<div class="split-screen-container">
-    <div class="image-container">
-        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="./assets/images/c7.gif" style="height: 100vh ;width: 100%;" class="d-block w-100"
-                        alt="Slide 1">
+    <div class="split-screen-container">
+        <div class="image-container">
+            <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="./assets/images/c7.gif" style="height: 100vh ;width: 100%;" class="d-block w-100"
+                            alt="Slide 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="./assets/images/c6.gif" style="height: 100vh ;width: 100%;" class="d-block w-100"
+                            alt="Slide 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="./assets/images/c0.gif" style="height: 100vh ;width: 100%;" class="d-block w-100"
+                            alt="Slide 3">
+                    </div>
                 </div>
-                <div class="carousel-item">
-                    <img src="./assets/images/c6.gif" style="height: 100vh ;width: 100%;" class="d-block w-100"
-                        alt="Slide 2">
+            </div>
+        </div>
+        <div class="form-container">
+            <div class="cardbackground">
+                <div class="d-flex justify-content-center mb-2">
+                    <h1 class="heading">GORA LOGIN</h1>
                 </div>
-                <div class="carousel-item">
-                    <img src="./assets/images/c0.gif" style="height: 100vh ;width: 100%;" class="d-block w-100"
-                        alt="Slide 3">
+                <form [formGroup]="userform" (ngSubmit)="login('flow')">
+                    <mat-form-field class="full-width mb-4">
+                        <mat-label>User</mat-label>
+                        <input matInput formControlName="email" type="email">
+                        <mat-error *ngIf="userform.controls.email.invalid && userform.controls.email.touched">
+                            Invalid Email
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="full-width mb-4">
+                        <mat-label>Password</mat-label>
+                        <input matInput formControlName="password" type="password">
+                        
+                    </mat-form-field>
+
+                    <p class="text-center msg" *ngIf="msg!=''">{{msg}}</p>
+                    <div class="d-flex justify-content-center mb-2">
+                        <button type="submit" mat-raised-button color="primary">Login</button>
+                    </div>
+
+                </form>
+                <div class="d-flex justify-content-center mb-2">
+
+                    <!-- <button mat-button color="accent" class="buttton">Create New User</button> -->
                 </div>
             </div>
         </div>
     </div>
-    <div class="form-container">
-        <div>
-            <div  class="d-flex justify-content-center mb-2">
-                <h1 class="heading">GORA LOGIN</h1>
-            </div>
-            <!-- Stacked inputs -->
-            <mat-form-field class="full-width mb-4">
+</div>
+<div *ngIf="ismallscreen" class="form-container-small">
+    
+    <div class="full-width-small">
+        <div class="cardbackground">
+        <div class="d-flex justify-content-center mb-2">
+            <h1 class="heading">GORA LOGIN</h1>
+        </div>
+        <form [formGroup]="userform" (ngSubmit)="login('flow')">
+            <mat-form-field class="full-width mb-3">
                 <mat-label>User</mat-label>
-                <input matInput  [(ngModel)]="email" type="text">
+                <input matInput formControlName="email" type="email">
+                <mat-error *ngIf="userform.controls.email.invalid && userform.controls.email.touched">
+                    Invalid Email
+                </mat-error>
             </mat-form-field>
             <mat-form-field class="full-width mb-4">
                 <mat-label>Password</mat-label>
-
-                <input matInput [(ngModel)]="password" placeholder="Password" type="password">
+                <input matInput formControlName="password" type="password">
+                
             </mat-form-field>
 
-            <p class="text-center msg"*ngIf="msg!=''">{{msg}}</p>
+            <p class="text-center msg" *ngIf="msg!=''">{{msg}}</p>
             <div class="d-flex justify-content-center mb-2">
-                <button mat-raised-button color="primary"class="buttton" (click)="login()">Login</button>
+                <button type="submit" mat-raised-button color="primary">Login</button>
             </div>
-            <div class="d-flex justify-content-center mb-2">
 
-                <button mat-button color="accent" class="buttton">Create New User</button>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-<div *ngIf="ismallscreen" class="form-container-small">
-    <div class="full-width-small">
-        <div  class="d-flex justify-content-center mb-2">
-            <h1 class="heading">GORA LOGIN</h1>
-        </div>
-        <!-- Stacked inputs -->
-        <mat-form-field class="full-width mb-4">
-            <mat-label>User</mat-label>
-            <input matInput  [(ngModel)]="email" type="text">
-        </mat-form-field>
-        <mat-form-field class="full-width mb-4">
-            <mat-label>Password</mat-label>
-
-            <input matInput [(ngModel)]="password" placeholder="Password" type="password">
-        </mat-form-field>
-
-        <p class="text-center msg"*ngIf="msg!=''">{{msg}}</p>
-        <div class="d-flex justify-content-center mb-2">
-            <button mat-raised-button color="primary"class="buttton" (click)="login()">Login</button>
-        </div>
-        <div class="d-flex justify-content-center mb-2">
+        </form>
+        
+        <!-- <div class="d-flex justify-content-center mb-2"> -->
 
             <!-- <button mat-button color="accent" class="buttton">Create New User</button> -->
         </div>

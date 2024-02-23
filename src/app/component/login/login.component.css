@@ -1,68 +1,105 @@
 /* login-page.component.scss */
 
 .split-screen-container {
-    display: flex;
-    height: 100vh;
-  }
-  
-  .image-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f5f5f5; /* Optional background color */
-  }
-  
-  .form-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(to bottom, #dddedf, #0985ab); /* Blue gradient */
+  display: flex;
+  height: 100vh;
+}
 
-  }
-  .form-container-small {
-    height: 100vh;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(to bottom, #dddedf, #0985ab); /* Blue gradient */
+.image-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  /* Optional background color */
+}
 
-  }
-  
-  .mat-card {
-    width: 300px;
-    height: 500px;
-    background-color: #ffffff; /* Set background color */
-    border-radius: 10px; /* Add border radius */
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add box shadow */
-  }
-  
-  .full-width {
-    width: 100%;
-  }
+.form-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, #dddedf, #0985ab);
+  /* Blue gradient */
 
-  .full-width-small {
-    width: 80%;
-  }
-  
-  
-  .image{
-    height: 500px;
-  }
-  .cardlength{
-    height: 400px !important;
-  }
-  .buttton{
-    width: 150px;
-  }
-  .heading{
-    /* font-weight: 700 !important;
+}
+
+.form-container-small {
+  height: 100vh;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, #dddedf, #0985ab);
+  /* Blue gradient */
+
+}
+
+.mat-card {
+  width: 300px;
+  height: 500px;
+  background-color: #ffffff;
+  /* Set background color */
+  border-radius: 10px;
+  /* Add border radius */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  /* Add box shadow */
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-width-small {
+  width: 80%;
+}
+
+
+.image {
+  height: 500px;
+}
+
+.cardlength {
+  height: 400px !important;
+}
+
+.buttton {
+  width: 150px;
+}
+
+.heading {
+  /* font-weight: 700 !important;
     font-size: larger !important; */
-    font-style: italic;
-    text-shadow: #f5f5f5;
+  font-style: bold;
+  text-shadow: #f5f5f5;
+}
+
+.msg {
+  color: red;
+}
+
+.cardbackground {
+  background-color: #f5f5f5;
+  padding: 20px;
+  opacity: 0.5;
+  border-radius: 20px;
+
+}
+  .cardbackground:hover {
+    opacity: 0.8;
   }
-  .msg{
-    color: red;
+
+  .example-container mat-form-field + mat-form-field {
+    margin-left: 8px;
+  }
+  
+  h1 {
+    font-family: 'Fantasy';
+    font-size: 2em;
+    color: #d2b8b8;
+    margin: auto;
+    margin-bottom: 0.3em;
+    margin-top: 0.3em;
+  
+  
   }
