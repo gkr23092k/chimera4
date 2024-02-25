@@ -85,6 +85,7 @@ export class ExpenseentryComponent implements OnInit {
   selectedData: any = null;
   favourities: any = [];
   isfavour: boolean = false;
+  isswitch: boolean = false;
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService
     , public dialog: MatDialog) {
 
@@ -102,10 +103,38 @@ export class ExpenseentryComponent implements OnInit {
     this.price = refill.Price.toString()
     this.calcbalance(type)
   }
+  calcswitch(e: any) {
+    let acb: any = 0
+    let ihb: any = 0
+    this.dataarrayobjholder.filter((bal: any) => {
+      if (bal.Name == this.user) {
+        this.userfiltered.push(bal)
+        acb = bal.AccountBalance
+        ihb = bal.InhandBalance
+      }
+    })
+    console.log(e, this.offer, acb, ihb)
+    if (this.offer == 'ACB') {
+      ihb = parseInt(ihb) - parseInt(e)
+      acb = parseInt(acb) + parseInt(e)
+      this.accbalance = acb
+      this.inhandbalance = ihb
 
+    } else if (this.offer == 'IHB') {
+      ihb = parseInt(ihb) + parseInt(e)
+      acb = parseInt(acb) - parseInt(e)
+      this.accbalance = acb
+      this.inhandbalance = ihb
 
-
-
+    }
+  }
+  cswitch() {
+    this.materialgroup = 'switch'
+    this.material = 'switch'
+    this.price='0'
+    this.isswitch = !this.isswitch
+    this.offer = 'ACB'
+  }
 
   ngOnInit() {
     this.spinner.show();
@@ -113,7 +142,7 @@ export class ExpenseentryComponent implements OnInit {
     this.email = localStorage.getItem('g0r@usern@mechimeramail');
 
     this.searchusername = this.user
-    console.log(this.user, 'thislocalstorage')
+    // console.log(this.user, 'thislocalstorage')
     setTimeout(() => {
       this.spinner.hide();
     }, 1000);
@@ -129,24 +158,31 @@ export class ExpenseentryComponent implements OnInit {
     };
 
 
+    this.searchusername = localStorage.getItem('g0r@usern@mechimera')
+    this.msg = localStorage.getItem('g0r@usern@mechimera')
 
-    this.fetchData('NO');
+    this.fetchData('YES');
     this.dateentry = new Date();
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       // console.log('expense component')
     });
-    this.githubService.currentvalue.subscribe((msg: any) => {
-      console.log('msg', msg, 'expense')
-      this.msg = msg
-      if (msg != '') this.fetchData('YES')
+
+    this.githubService.changemessage(this.searchusername.replaceAll(',', '_').replaceAll(':', '_'))
+    this.githubService.onFirstComponentButtonClick().then(() => {
+      this.spinner.hide()
     })
-    if (this.searchusername != 'gora@2303') {
-      if (this.user == null) {
-        this.searchusername = 'no'
-        this.networth = 0
-      }
-      this.searchuser()
-    }
+    // this.githubService.currentvalue.subscribe((msg: any) => {
+    //   console.log('msg', msg, 'expense')
+    //   this.msg = msg
+    //   if (msg != '') this.fetchData('YES')
+    // })
+    // if (this.searchusername != 'gora@2303') {
+    //   if (this.user == null) {
+    //     this.searchusername = 'no'
+    //     this.networth = 0
+    //   }
+    //   this.searchuser()
+    // }
 
   }
 
@@ -198,7 +234,7 @@ export class ExpenseentryComponent implements OnInit {
         })
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
-          this.dataarrayobjholder.filter((el: any) => {
+          this.dataarrayobj.filter((el: any) => {
             // console.log(el)
             if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
               this.materialdropdown.push(el.Material.toUpperCase())
@@ -295,7 +331,7 @@ export class ExpenseentryComponent implements OnInit {
 
 
         this.dataarrayobjholder = this.dataarrayobj
-        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'Investment'
+        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'switch'&& expense['Materialgroup'] !== 'Investment'
           && expense['Liabilitystatus'] !== 'Get' && expense['Liabilitystatus'] !== 'Give');
         if (this.dataarrayobj.length == 0) {
           this.dataarrayobj = [{ "Price": "Nil" }]
@@ -635,7 +671,7 @@ export class ExpenseentryComponent implements OnInit {
 
                   console.log('Data appended successfully!');
 
-                  this.fetchData('NO');
+                  this.fetchData('YES');
 
                   const Toast = Swal.mixin({
                     toast: true,

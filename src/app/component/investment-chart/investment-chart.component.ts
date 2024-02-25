@@ -18,7 +18,7 @@ export class InvestmentChartComponent implements OnInit {
   msg: any = '';
   constructor(private githubService: GithubServiceService) { }
   ngOnInit() {
-    this.fetchData('NO');
+    // this.fetchData('NO');
 
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       console.log('line chart component')

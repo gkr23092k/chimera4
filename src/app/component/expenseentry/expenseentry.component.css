@@ -37,6 +37,13 @@ h1 {
 .cardlengthtotal {
   width: 100%;
 }
+.cardlength {
+  transition: transform 0.3s ease-in-out;
+}
+.cardlength:hover {
+  transform: scale(1.1);
+}
+
 
 @media (max-width: 650px) {
   .cardlength {

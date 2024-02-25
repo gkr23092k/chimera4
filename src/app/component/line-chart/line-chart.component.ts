@@ -20,18 +20,18 @@ export class LineChartComponent implements OnInit {
   msg: any = '';
   constructor(private githubService: GithubServiceService) { }
   ngOnInit() {
-    this.fetchData('NO');
-
+    
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       console.log('line chart component')
     });
-
-    this.githubService.currentvalue.subscribe((msg: any) => {
-      console.log('msg', msg)
-      this.msg = msg
-      this.disposeChart()
-      if (msg != '') this.fetchData('YES')
-    })
+    
+      this.githubService.currentvalue.subscribe((msg: any) => {
+          console.log('msg', msg)
+          this.msg = msg
+          this.disposeChart()
+          if (msg != '') this.fetchData('YES')
+        })
+      // this.fetchData('YES');
 
   }
 
@@ -88,7 +88,8 @@ export class LineChartComponent implements OnInit {
           }
           //  console.log([this.dataarrayobj, tempstoreuser, 'after', this.msg])
         }
-        this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'Investment');
+        this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability'
+        &&expense['Materialgroup'] !== 'switch' &&expense['Materialgroup'] !== 'Investment');
         this.dataarrayobj= Object.values(this.groupAndSum(this.dataarrayobj, 'Date', 'Price'));
         // console.log(this.dataarrayobj);
         this.dataarrayobj.forEach((el: any) => {

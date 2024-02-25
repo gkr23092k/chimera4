@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    console.log(this.email, this.password, 'oniti')
+    // console.log(this.email, this.password, 'oniti')
 
 
 
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
       this.ismallscreen = true
     }
     this.api.fetchDataFromGitHubuser().subscribe((res: any) => {
-      console.log(res)
+      // console.log(res)
       let content = atob(res.content); // Decode content from base64
       let contentfake = content.trim().split('GORAR@WS#P@R@TOR')
       contentfake.pop()
@@ -60,12 +60,12 @@ export class LoginComponent implements OnInit {
 
   login(key: string) {
     if (key != 'Start') {
-      console.log(this.email, this.password, this.response, this.msg, this.userform.value, this.email)
+      // console.log(this.email, this.password, this.response, this.msg, this.userform.value, this.email)
       this.email = this.userform.value.email
       this.password = this.userform.value.password
     }
     this.response.forEach((res: any) => {
-      console.log(this.email, this.password, 'u;g')
+      // console.log(this.email, this.password, 'u;g')
 
       if (res.Email.trim() == this.email && res.Password.trim() == this.password) {
         localStorage.setItem('g0r@usern@mechimeramail', this.email)

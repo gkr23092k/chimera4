@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -6,7 +6,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class GithubServiceService {
+export class GithubServiceService  {
   private apiUrl = 'https://api.github.com';
   private owner = 'gkr23092k';
   private repo = 'report';
@@ -25,8 +25,15 @@ export class GithubServiceService {
 
   private ticketfilePath: string = 'Ticket.txt';
   private userfilePath: string = 'users.txt';
+  private jsondata: any = []
 
 
+  constructor(private http: HttpClient) {
+    this.fetchDataFromGitHub().subscribe((res: any) => {
+      // console.log(res)
+      this.jsondata = res
+    })
+  }
 
   authmessage(message: any) {
     this.authsource.next(message)
@@ -36,7 +43,6 @@ export class GithubServiceService {
     this.messagesource.next(message)
   }
 
-  constructor(private http: HttpClient) { }
   onFirstComponentButtonClick() {
     return new Promise<void>((resolve, reject) => {
       this.invokeFirstComponentFunction.emit();

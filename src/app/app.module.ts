@@ -35,7 +35,8 @@ import { DummyComponent } from './component/dummy/dummy.component';
 import { StackedcolummnComponent } from './component/stackedcolummn/stackedcolummn.component';
 import { LoginComponent } from './component/login/login.component';
 import { AuthGuardService } from './guard/auth.guard';
-
+import {MatMenuModule} from '@angular/material/menu';
+import {MatIconModule} from '@angular/material/icon';
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,7 +60,7 @@ import { AuthGuardService } from './guard/auth.guard';
     BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,MatCardModule,
     AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,AgGridModule,DragDropModule,
     MatChipsModule,NgxSpinnerModule,NgxMatSelectSearchModule,NgMultiSelectDropDownModule.forRoot(),MatDialogModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,MatMenuModule,MatIconModule
   ],
   providers: [AuthGuardService],
   bootstrap: [AppComponent]

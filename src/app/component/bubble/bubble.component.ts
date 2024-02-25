@@ -25,7 +25,7 @@ export class BubbleComponent implements OnInit, OnDestroy {
   constructor(private githubService: GithubServiceService,private router:Router) { }
 
   ngOnInit() {
-    this.fetchData('NO');
+    // this.fetchData('NO');
 
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       console.log('line chart component')

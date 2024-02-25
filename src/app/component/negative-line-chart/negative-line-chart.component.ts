@@ -22,7 +22,7 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
   constructor(private githubService: GithubServiceService) { }
 
   ngOnInit() {
-    this.fetchData('NO');
+    // this.fetchData('NO');
 
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       console.log('line chart component')
@@ -74,7 +74,8 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
           this.dataarrayobj = tempstoreuser
           // console.log([this.dataarrayobj,tempstoreuser,'after',this.msg])
         }
-        this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'Investment');
+        this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' 
+        &&expense['Materialgroup'] !== 'Investment' &&expense['Materialgroup'] !== 'switch');
         this.groupedData = Object.values(this.groupAndSumByMonthYear(this.dataarrayobj, 'Date', 'Price'));
         // console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {

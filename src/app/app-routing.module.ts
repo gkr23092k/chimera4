@@ -15,10 +15,9 @@ const routes: Routes = [
   { path: 'b', component: BubbleComponent},
   { path: 'issues', component: TicketComponent },
   { path: 'wait', component: DummyComponent },
-  { path: 'w', component: StackedcolummnComponent },
   { path: 'login', component: LoginComponent },
-  { path: '**', component: LoginComponent },
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  { path: 'entry', component: LoginComponent },
+  { path: '', redirectTo: 'entry', pathMatch: 'full' }
 ];
 
 @NgModule({

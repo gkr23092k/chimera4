@@ -23,7 +23,7 @@ export class DonutChartComponent implements OnInit {
   constructor(private githubService: GithubServiceService) { }
 
   ngOnInit() {
-    this.fetchData('NO');
+    // this.fetchData('NO');
 
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       console.log('line chart component')
@@ -68,7 +68,8 @@ export class DonutChartComponent implements OnInit {
           });
           this.dataarrayobj = tempstoreuser
         }
-        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment' && expense['Materialgroup'] != 'Liability');
+        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment' 
+        &&expense['Materialgroup'] !== 'switch'&& expense['Materialgroup'] != 'Liability');
         this.dataforfilter = this.dataarrayobj
 
         this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));

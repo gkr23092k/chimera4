@@ -10,22 +10,22 @@
 </div>
 <div class="d-flex justify-content-center">
     
-    <button *ngIf="isadmin" class="border border-5 mt-2 mb-3 mx-2" matRippleDisabled mat-button color="primary"
-        (click)="mail()">Mail</button>
-        <button  *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
-        (click)="route()"><img style="height: 25px;" src='./assets/images/th.jpg' /></button>
-    <button *ngIf="!isadmin" class="border border-5 ms-2 mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
-        (click)="refreshgrid()">Refresh</button>
-    <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-button color="primary"
+    <button *ngIf="isadmin" class="border border-5 mt-2 mb-3 mx-2" matRippleDisabled mat-mini-fab color="primary"
+        (click)="mail()"><mat-icon> mail_outline</mat-icon></button>
+        <button  *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-mini-fab color="primary"
+        (click)="route()"><mat-icon>contact_support</mat-icon></button>
+    <button *ngIf="!isadmin" class="border border-5 ms-2 mt-2 mb-3 me-2 big" matRippleDisabled mat-mini-fab color="primary"
+        (click)="refreshgrid()"><mat-icon>refresh</mat-icon></button>
+    <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-2 big" matRippleDisabled mat-mini-fab color="primary"
         (click)="xlsxwriter()">Download</button>
         <button *ngIf="!isadmin" class="border border-5  mt-2 mb-3 me-3 big" matRippleDisabled mat-button color="primary"
-        (click)="route()">Issue</button>
+        (click)="route()"><mat-icon>contact_support</mat-icon></button>
     
-    <div><button *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 small" color="primary"
-            (click)="refreshgrid()"><img src='./assets/images/refresh.svg' /></button>
+    <div><button mat-mini-fab *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 small" color="primary"
+            (click)="refreshgrid()"><mat-icon>refresh</mat-icon></button>
     </div>
-    <div><button *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 small" color="primary"
-            (click)="xlsxwriter()"><img src='./assets/images/arrowdown.svg' /></button>
+    <div><button mat-mini-fab *ngIf="isadmin" class="border border-5  mt-2 mb-3 me-2 small" color="primary"
+            (click)="xlsxwriter()"><mat-icon>cloud_download</mat-icon></button>
     </div>
 </div>
 <div *ngIf="isadmin" class="d-flex justify-content-center">
@@ -48,6 +48,6 @@
 <div *ngIf="isadmin" class="d-flex justify-content-center">
     <p *ngIf="mailmsg!='' && mailmsg!=undefined" class=" custompara mb-2">Mail To: {{mailmsg.Mailid}}</p>
 </div>
-<ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-quartz" [rowData]="rowData"
+<ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-material" [rowData]="rowData"
     [columnDefs]="columnDefs">
 </ag-grid-angular>

@@ -7,20 +7,20 @@ export class AuthGuardService implements CanActivate {
     constructor(public githubService: GithubServiceService, public router: Router) { }
     canActivate(): boolean {
         this.githubService.currentauth.subscribe((msg: any) => {
-            console.log('msg', msg);
+            // console.log('msg', msg);
             if (msg) {
-                console.log('msg', msg);
+                // console.log('msg', msg);
                 this.decision = true;
 
             } else {
-                console.log('msfalseg', msg);
+                // console.log('msfalseg', msg);
                 this.decision = false;
                 this.router.navigate(['/login'])
             }
 
 
         });
-        console.log(this.decision, 'databj')
+        // console.log(this.decision, 'databj')
         return this.decision
 
     }

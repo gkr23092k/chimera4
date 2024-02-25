@@ -49,19 +49,19 @@ export class GridComponent {
     });
 
 
-    this.githubService.currentvalue.subscribe((msg: any) => {
-      // console.log('msg', msg)
-      this.msg = msg
-      if (msg != '') this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
-        console.log('line chart component')
-      });
+  //   this.githubService.currentvalue.subscribe((msg: any) => {
+  //     // console.log('msg', msg)
+  //     this.msg = msg
+  //     if (msg != '') this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
+  //       console.log('line chart component')
+  //     });
 
-      this.githubService.currentvalue.subscribe((msg: any) => {
-        console.log('msg', msg)
-        this.msg = msg
-        if (msg != '') this.fetchData('YES')
-      })
-    })
+  //     this.githubService.currentvalue.subscribe((msg: any) => {
+  //       console.log('msg', msg)
+  //       this.msg = msg
+  //       if (msg != '') this.fetchData('YES')
+  //     })
+  //   })
   }
 
   fetchData(checkcase: any) {
@@ -129,7 +129,7 @@ export class GridComponent {
         { headerName: 'IHBalance', field: 'InhandBalance', initialWidth: 150, filter: true, minWidth: 100, maxWidth: 300 },
         { headerName: 'Liablestatus', field: 'Liabilitystatus', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 },
         { headerName: 'Date', field: 'Date', filter: true, initialWidth: 200, minWidth: this.intialwidth - 30, maxWidth: 300 },
-        { headerName: 'Planned', field: 'Planned', filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300 },
+        { headerName: 'Favourities', field: 'Favourities', filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300 },
         { headerName: 'Offer', field: 'Offer', filter: true, initialWidth: 100, minWidth: 100, maxWidth: 300 },
         { headerName: 'Comment', field: 'Comment', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 }
       ];
