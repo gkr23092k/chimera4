@@ -42,6 +42,14 @@ h1 {
 }
 .cardlength:hover {
   transform: scale(1.1);
+  z-index: 1;
+  background-color: white;
+  border-style:inset;
+  border-width: 5px;
+  border-color: aquamarine;
+  .highcard{
+  color: black !important;
+  }
 }
 
 

@@ -245,4 +245,9 @@ export class TicketComponent {
     }
   }
 
+  backtohome(){
+    // console.log('back')
+    this.router.navigate(['entry'])
+  }
+
 }

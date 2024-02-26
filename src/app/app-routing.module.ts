@@ -5,7 +5,6 @@ import { DonutChartComponent } from './component/donut-chart/donut-chart.compone
 import { BubbleComponent } from './component/bubble/bubble.component';
 import { TicketComponent } from './component/ticket/ticket.component';
 import { DummyComponent } from './component/dummy/dummy.component';
-import { StackedcolummnComponent } from './component/stackedcolummn/stackedcolummn.component';
 import {AuthGuardService} from './guard/auth.guard';
 import { LoginComponent } from './component/login/login.component';
 
@@ -16,7 +15,6 @@ const routes: Routes = [
   { path: 'issues', component: TicketComponent },
   { path: 'wait', component: DummyComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'entry', component: LoginComponent },
   { path: '', redirectTo: 'entry', pathMatch: 'full' }
 ];
 

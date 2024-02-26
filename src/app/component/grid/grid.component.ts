@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { TicketComponent } from '../ticket/ticket.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { GridOptions } from 'ag-grid-community';
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
@@ -31,8 +32,16 @@ export class GridComponent {
   isadmin: boolean = false;
   xlsxdataarrayobj: any = [];
   description: any;
+  gridOptions: GridOptions;
   constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService, public dialog: MatDialog,
-    private router: Router) { }
+    private router: Router) {
+
+    this.gridOptions = <GridOptions>{};
+    this.gridOptions.rowClass = 'custom-row-class';
+
+
+  }
+
   ngOnInit() {
     this.admin = localStorage.getItem('g0r@usern@mechimera')
     if (this.admin == 'gora@2303') {
@@ -49,19 +58,19 @@ export class GridComponent {
     });
 
 
-  //   this.githubService.currentvalue.subscribe((msg: any) => {
-  //     // console.log('msg', msg)
-  //     this.msg = msg
-  //     if (msg != '') this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
-  //       console.log('line chart component')
-  //     });
+    //   this.githubService.currentvalue.subscribe((msg: any) => {
+    //     // console.log('msg', msg)
+    //     this.msg = msg
+    //     if (msg != '') this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
+    //       console.log('line chart component')
+    //     });
 
-  //     this.githubService.currentvalue.subscribe((msg: any) => {
-  //       console.log('msg', msg)
-  //       this.msg = msg
-  //       if (msg != '') this.fetchData('YES')
-  //     })
-  //   })
+    //     this.githubService.currentvalue.subscribe((msg: any) => {
+    //       console.log('msg', msg)
+    //       this.msg = msg
+    //       if (msg != '') this.fetchData('YES')
+    //     })
+    //   })
   }
 
   fetchData(checkcase: any) {
@@ -122,12 +131,56 @@ export class GridComponent {
     if (this.intialwidth != 0) {
       this.columnDefs = [
         { headerName: 'Id', field: 'Id', filter: true, initialWidth: 100, maxWidth: 300 },
-        { headerName: 'Material', field: 'Material', filter: true, initialWidth: this.intialwidth, minWidth: 100, maxWidth: 300 },
-        { headerName: 'Materialgroup', field: 'Materialgroup', filter: true, initialWidth: this.intialwidth - 30, minWidth: 100, maxWidth: 300 },
-        { headerName: 'Price', field: 'Price', filter: true, initialWidth: 150, minWidth: 50, maxWidth: 300 },
-        { headerName: 'AccBalance', field: 'AccountBalance', filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300 },
+        {
+          headerName: 'Material', cellStyle: (params: { value: string; }) => {
+            if (params.value == 'Credit') {
+              return { color: 'white', backgroundColor: 'green', fontWeight: 'bold' };
+            }
+            return null;
+          }, field: 'Material', filter: true, initialWidth: this.intialwidth, minWidth: 100, maxWidth: 300
+        },
+        {
+          headerName: 'Materialgroup', field: 'Materialgroup', cellStyle: (params: { value: string; }) => {
+            if (params.value === 'Liability') {
+              return { color: 'white', backgroundColor: 'red', fontWeight: 'bold' };
+            } else if (params.value === 'Investment') {
+              return { color: 'white', backgroundColor: 'green', fontWeight: 'bold' };
+            }
+            return null;
+          },
+          filter: true, initialWidth: this.intialwidth - 30, minWidth: 100, maxWidth: 300
+        },
+        {
+          headerName: 'Price', field: 'Price',
+          cellStyle: (params: { value: number; }) => {
+            if (params.value > 999) {
+              return { color: 'green', backgroundColor: 'yellow', fontWeight: 'bold' };
+            }
+            return null;
+          }, filter: true, initialWidth: 150, minWidth: 50, maxWidth: 300
+        },
+        {
+          headerName: 'AccBalance', field: 'AccountBalance', cellStyle: (params: { value: number; }) => {
+            if (params.value < 2499) {
+              return { color: 'white', backgroundColor: 'orange', fontWeight: 'bold' };
+            }
+            return null;
+          }, filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300
+        },
         { headerName: 'IHBalance', field: 'InhandBalance', initialWidth: 150, filter: true, minWidth: 100, maxWidth: 300 },
-        { headerName: 'Liablestatus', field: 'Liabilitystatus', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 },
+        {
+          headerName: 'Liablestatus'
+          , cellStyle: (params: { value: string; }) => {
+            if (params.value == 'Give') {
+              return { color: 'white', backgroundColor: 'lightgreen', fontWeight: 'bold' };
+            } else if (params.value == 'Get') {
+              return { color: 'white', backgroundColor: 'orange', fontWeight: 'bold' };
+            } else if (params.value == 'Credit') {
+              return { color: 'white', backgroundColor: 'green', fontWeight: 'bold' };
+            }
+            return null;
+          }, field: 'Liabilitystatus', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300
+        },
         { headerName: 'Date', field: 'Date', filter: true, initialWidth: 200, minWidth: this.intialwidth - 30, maxWidth: 300 },
         { headerName: 'Favourities', field: 'Favourities', filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300 },
         { headerName: 'Offer', field: 'Offer', filter: true, initialWidth: 100, minWidth: 100, maxWidth: 300 },
@@ -304,27 +357,27 @@ export class GridComponent {
     if (this.admin) {
       this.router.navigate(['issues'])
     }
-    else{
+    else {
       this.swaltoast('Please Add user & Refresh')
     }
   }
-swaltoast(swaltitle:any){
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'center',
-    showConfirmButton: false,
-    timer: 10000,
-    showCloseButton: true,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  })
+  swaltoast(swaltitle: any) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 10000,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
 
-  Toast.fire({
-    icon: 'info',
-    title: swaltitle
-  })
-}
+    Toast.fire({
+      icon: 'info',
+      title: swaltitle
+    })
+  }
 }

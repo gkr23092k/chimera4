@@ -48,6 +48,7 @@
 <div *ngIf="isadmin" class="d-flex justify-content-center">
     <p *ngIf="mailmsg!='' && mailmsg!=undefined" class=" custompara mb-2">Mail To: {{mailmsg.Mailid}}</p>
 </div>
+<hr>
 <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-material" [rowData]="rowData"
-    [columnDefs]="columnDefs">
+    [columnDefs]="columnDefs" [pagination]="true"  [gridOptions]="gridOptions">
 </ag-grid-angular>

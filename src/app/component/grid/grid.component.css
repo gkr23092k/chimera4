@@ -12,3 +12,11 @@
         display: none;
     }
 } */
+
+/* grid.component.css */
+.custom-row-class {
+    /* Custom row styling */
+    background-color: lightblue !important;
+  }
+  
+  
