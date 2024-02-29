@@ -46,13 +46,17 @@ export class GridComponent {
     this.admin = localStorage.getItem('g0r@usern@mechimera')
     if (this.admin == 'gora@2303') {
       this.isadmin = true
+      this.fetchData('NO');
+
+    }else{
+      this.fetchData('YES');
     }
     this.startdate = new Date()
     this.startdate = new Date(this.startdate.getTime() - 86400000);
     this.enddate = new Date()
 
     this.userverified = false
-    this.fetchData('NO');
+    
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       console.log('line chart component')
     });
