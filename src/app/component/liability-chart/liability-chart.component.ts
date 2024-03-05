@@ -32,6 +32,7 @@ export class LiabilityChartComponent implements OnInit {
   columnDefs: any = []
   endpiechartliable: any = [];
   liabilitydonut: any = 0;
+  chartsize:number=0
   constructor(private githubService: GithubServiceService) { }
 
   ngOnInit() {
@@ -239,7 +240,7 @@ export class LiabilityChartComponent implements OnInit {
 
     // Add data (replace this with your actual data)
     this.chart.data = this.endpiechartliable
-
+    this.chartsize=(this.endpiechartliable.length<4&&this.endpiechartliable.length>0)?4:this.endpiechartliable.length
     // Add series
     const series = this.chart.series.push(new am4charts.PieSeries3D());
     series.dataFields.value = 'value';
