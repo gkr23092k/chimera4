@@ -49,7 +49,7 @@ export class TicketComponent {
       try {
         this.spinner.show();
 
-        let newdata = `Name:${this.user},Description:${temp},Type:${type},Status:ActiveGORAR@WS#P@R@TOR`
+        let newdata = `Name:${this.user},Description:${temp.replaceAll(',','_')},Type:${type},Status:ActiveGORAR@WS#P@R@TOR`
         const newData = this.content + newdata
         this.githubService.fetchDataFromGitHubTicket().subscribe(
           (response: any) => {

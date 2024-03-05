@@ -44,6 +44,7 @@ export class GridComponent {
 
   ngOnInit() {
     this.admin = localStorage.getItem('g0r@usern@mechimera')
+    this.msg=this.admin
     if (this.admin == 'gora@2303') {
       this.isadmin = true
       this.fetchData('NO');
@@ -101,7 +102,7 @@ export class GridComponent {
           let tempstoreuser: any = []
           this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
           this.dataarrayobj.filter((el: any) => {
-            // console.log(el)
+            // console.log(el,this.msg)
             if (el.Name === this.msg) {
               tempstoreuser.push(el)
               this.mailmsg = { Name: this.msg, Mailid: el.Mailid }
