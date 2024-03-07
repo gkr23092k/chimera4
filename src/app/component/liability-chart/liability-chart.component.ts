@@ -240,18 +240,17 @@ export class LiabilityChartComponent implements OnInit {
 
     // Add data (replace this with your actual data)
     this.chart.data = this.endpiechartliable
-    this.chartsize=(this.endpiechartliable.length<4&&this.endpiechartliable.length>0)?4:this.endpiechartliable.length
     // Add series
     const series = this.chart.series.push(new am4charts.PieSeries3D());
     series.dataFields.value = 'value';
     series.dataFields.category = 'category';
-
+    
     // Add labels
     series.labels.template.text = '{category}:{value.value} {status}';
     series.labels.template.fill = am4core.color('Black');
     this.setLabelRadius(series);
     series.colors.list = [
-
+      
       
       am4core.color("#81D4FA"),
       am4core.color("#EAD7BB"),
@@ -286,9 +285,9 @@ export class LiabilityChartComponent implements OnInit {
       am4core.color("#E0AED9"),
       am4core.color("#EAD7BB"),
     ];
-
+    
     this.chart.legend = new am4charts.Legend();
-
+    
   }
   private initializeChart1() {
     // Check if the chart is already initialized
@@ -297,41 +296,42 @@ export class LiabilityChartComponent implements OnInit {
 
     // Add data (replace this with your actual data)
     this.chart1.data = this.secondchart
-
+    
     // Add series
     const series1 = this.chart1.series.push(new am4charts.PieSeries3D());
     series1.dataFields.value = 'value';
     series1.dataFields.category = 'category';
-
+    
     // Add labels
     series1.labels.template.text = '{category}:{value.value}';
-
+    
     series1.labels.template.fill = am4core.color('Black');
     this.setLabelRadius1(series1);
     series1.colors.list = [
-
+      
       am4core.color("#97C465"),
       am4core.color("#D32F2F"),
       am4core.color("#FFC75F"),
       am4core.color("#F9F871"),
       am4core.color("#81D4FA"),
       am4core.color("#AZE278"),
-
+      
     ];
-
+    
     this.chart1.legend = new am4charts.Legend();
-
+    
   }
-
+  
   private setLabelRadius(series: any) {
     const screenWidth = window.innerWidth;
     // console.log(screenWidth, 'screenWidth')
     // Adjust the radius based on the screen size
     let radiusPercent = 0
+    this.chartsize=(this.endpiechartliable.length<4&&this.endpiechartliable.length>0)?4:this.endpiechartliable.length
     if (screenWidth < 950) {
       radiusPercent = -75;
       series.labels.template.disabled = true; // Disable labels when window width is less than 950
-
+      
     }
     else {
       radiusPercent = -25

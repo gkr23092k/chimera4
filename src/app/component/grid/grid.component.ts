@@ -117,9 +117,26 @@ export class GridComponent {
 
 
         // console.log(this.dataarrayobj)
-        this.rowData = this.dataarrayobj.reverse()
-
-
+        // this.rowData = this.dataarrayobj.reverse()
+        this.rowData.sort((a: any, b: any) => {
+          const dateA = new Date(a.Date); 
+          const dateB = new Date(b.Date); 
+          
+          const yearDiff = dateB.getFullYear() - dateA.getFullYear();
+          if (yearDiff !== 0) {
+              return yearDiff;
+          }
+          
+          const monthDiff = dateB.getMonth() - dateA.getMonth();
+          if (monthDiff !== 0) {
+              return monthDiff;
+          }
+          
+          const dayDiff = dateB.getDate() - dateA.getDate();
+          return dayDiff;
+      });
+      
+      
       },
       error => {
         console.error('Error fetching data from GitHub:', error);

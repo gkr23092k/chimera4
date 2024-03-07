@@ -237,6 +237,7 @@ export class ExpenseentryComponent implements OnInit {
           this.dataarrayobj.filter((el: any) => {
             // console.log(el)
             if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
+              if(el.Material!=undefined)
               this.materialdropdown.push(el.Material.toUpperCase())
             }
 
@@ -504,11 +505,13 @@ export class ExpenseentryComponent implements OnInit {
     this.dataarrayobjholder.forEach((el: any) => {
       if (this.materialgroup != 'Liability' && el.Materialgroup != 'Get' && el.Materialgroup != 'Give' && el.Materialgroup != 'Credit') {
         if (el.Materialgroup != 'Liability') {
+          if(el.Material!=undefined)
           this.materialdropdown.push(el.Material.toUpperCase())
         }
       }
       else if (this.materialgroup == 'Liability') {
         if (el.Materialgroup == 'Liability' || el.Materialgroup == 'Get' || el.Materialgroup == 'Give') {
+          if(el.Material!=undefined)
           this.materialdropdown.push(el.Material.toUpperCase())
         }
       }

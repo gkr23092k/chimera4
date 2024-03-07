@@ -84,10 +84,10 @@ export class DonutChartComponent implements OnInit {
         this.initializeChart();
         const screenWidth = window.innerWidth;
         if (screenWidth > 370) {
-          this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
+          this.grpcount = (this.groupedData.length < 12) ? 9 : 11
         }
         else {
-          this.grpcount = (this.groupedData.length < 12) ? 15 : 22
+          this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
 
         }
       },
@@ -131,13 +131,7 @@ export class DonutChartComponent implements OnInit {
     this.disposeChart()
     this.initializeChart();
     const screenWidth = window.innerWidth;
-    if (screenWidth > 370) {
-      this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
-    }
-    else {
-      this.grpcount = (this.groupedData.length < 12) ? 15 : 22
-
-    }
+   
   }
 
   private initializeChart() {
