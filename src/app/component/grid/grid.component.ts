@@ -9,6 +9,7 @@ import { TicketComponent } from '../ticket/ticket.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { GridOptions } from 'ag-grid-community';
+import { FirebaseService } from 'src/app/service/firebase.service';
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
@@ -34,7 +35,7 @@ export class GridComponent {
   description: any;
   gridOptions: GridOptions;
   constructor(private githubService: GithubServiceService, private spinner: NgxSpinnerService, public dialog: MatDialog,
-    private router: Router) {
+    private router: Router,private dataService: FirebaseService) {
 
     this.gridOptions = <GridOptions>{};
     this.gridOptions.rowClass = 'custom-row-class';
@@ -47,10 +48,27 @@ export class GridComponent {
     this.msg=this.admin
     if (this.admin == 'gora@2303') {
       this.isadmin = true
-      this.fetchData('NO');
+      // this.fetchData('NO');
+      {
+        this.dataService.getAllItems().subscribe(async (res: any) => {
+          this.dataarrayobj = res.map((el: any) => {
+            let data = el.payload.doc.data()
+            return data
+          })
+          await this.fetchData('NO')
+        })
+        // this.fetchData('YES')
+      }
 
     }else{
-      this.fetchData('YES');
+      // this.fetchData('YES');
+      this.dataService.getAllItems().subscribe(async (res: any) => {
+        this.dataarrayobj = res.map((el: any) => {
+          let data = el.payload.doc.data()
+          return data
+        })
+        await this.fetchData('YES')
+      })
     }
     this.startdate = new Date()
     this.startdate = new Date(this.startdate.getTime() - 86400000);
@@ -78,26 +96,26 @@ export class GridComponent {
     //   })
   }
 
-  fetchData(checkcase: any) {
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        this.dataarrayobj = []
-        contentfake.pop()
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
+  async fetchData(checkcase: any) {
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    //   (response: any) => {
+    //     this.content = atob(response.content); // Decode content from base64
+    //     let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    //     this.dataarrayobj = []
+    //     contentfake.pop()
+    //     contentfake.forEach((el: any) => {
+    //       el.replace('Name:', '')
           // let indexcut = el.indexOf(',') + 1
           // let datecrindexcut = el.indexOf('Datecr:') - 1
           // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          const dataObject: any = {};
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
+        //   let objdata: any = el.trim().split(',');
+        //   const dataObject: any = {};
+        //   objdata.forEach((pair: any) => {
+        //     const [key, value] = pair.split(':');
+        //     dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
+        //   });
+        //   this.dataarrayobj.push(dataObject)
+        // })
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
@@ -137,11 +155,11 @@ export class GridComponent {
       });
       
       
-      },
-      error => {
-        console.error('Error fetching data from GitHub:', error);
-      }
-    );
+    // },
+    // error => {
+    //   console.error('Error fetching data from GitHub:', error);
+    // }
+    // );
     this.window = window.innerWidth;
     if (this.window < 767) {
       this.intialwidth = 150
@@ -152,7 +170,7 @@ export class GridComponent {
 
     if (this.intialwidth != 0) {
       this.columnDefs = [
-        { headerName: 'Id', field: 'Id', filter: true, initialWidth: 100, maxWidth: 300 },
+        // { headerName: 'Id', field: 'Id', filter: true, initialWidth: 100, maxWidth: 300 },
         {
           headerName: 'Material', cellStyle: (params: { value: string; }) => {
             if (params.value == 'Credit') {
