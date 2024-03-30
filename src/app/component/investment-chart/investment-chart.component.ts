@@ -5,6 +5,7 @@ import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import * as _ from 'lodash';
 import Swal from 'sweetalert2';
+import { FirebaseService } from 'src/app/service/firebase.service';
 am4core.useTheme(am4themes_animated);
 @Component({
   selector: 'app-investment-chart',
@@ -16,7 +17,7 @@ export class InvestmentChartComponent implements OnInit {
   content: string = '';
   dataarrayobj: any = [];
   msg: any = '';
-  constructor(private githubService: GithubServiceService) { }
+  constructor(private githubService: GithubServiceService,private dataService: FirebaseService) { }
   ngOnInit() {
     // this.fetchData('NO');
 
@@ -28,31 +29,41 @@ export class InvestmentChartComponent implements OnInit {
       // console.log('msg', msg)
       this.msg = msg
       this.disposeChart()
-      if (msg != '') this.fetchData('YES')
+      if (msg != '')
+      {
+        this.dataService.getAllItems().subscribe(async (res: any) => {
+          this.dataarrayobj = res.map((el: any) => {
+            let data = el.payload.doc.data()
+            return data
+          })
+          await this.fetchData('YES')
+        })
+        // this.fetchData('YES')
+      }
     })
 
   }
 
   fetchData(checkcase: any) {
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        contentfake.pop()
-        this.dataarrayobj = []
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
-          // let indexcut = el.indexOf(',') + 1
-          // let datecrindexcut = el.indexOf('Datecr:') - 1
-          // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          const dataObject: any = {};
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    //   (response: any) => {
+    //     this.content = atob(response.content); // Decode content from base64
+    //     let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    //     contentfake.pop()
+    //     this.dataarrayobj = []
+    //     contentfake.forEach((el: any) => {
+    //       el.replace('Name:', '')
+    //       // let indexcut = el.indexOf(',') + 1
+    //       // let datecrindexcut = el.indexOf('Datecr:') - 1
+    //       // let data = el.substring(indexcut, datecrindexcut)
+    //       let objdata: any = el.trim().split(',');
+    //       const dataObject: any = {};
+    //       objdata.forEach((pair: any) => {
+    //         const [key, value] = pair.split(':');
+    //         dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
+    //       });
+    //       this.dataarrayobj.push(dataObject)
+    //     })
         // console.log([this.dataarrayobj,checkcase])
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
@@ -96,11 +107,11 @@ export class InvestmentChartComponent implements OnInit {
         this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
         // console.log(this.dataarrayobj)
         this.dataloaded()
-      },
-      error => {
-        // console.error('Error fetching data from GitHub:', error);
-      }
-    );
+    //   },
+    //   error => {
+    //     // console.error('Error fetching data from GitHub:', error);
+    //   }
+    // );
   }
 
   groupAndSum(array: any, groupByKey: any, sumByKey: any) {

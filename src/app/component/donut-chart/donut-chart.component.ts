@@ -4,6 +4,7 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import _ from 'lodash';
+import { FirebaseService } from 'src/app/service/firebase.service';
 
 am4core.useTheme(am4themes_animated);
 
@@ -20,7 +21,7 @@ export class DonutChartComponent implements OnInit {
   msg: any = '';
   grpcount: any = 0;
   dataforfilter: any = []
-  constructor(private githubService: GithubServiceService) { }
+  constructor(private githubService: GithubServiceService, private dataService: FirebaseService) { }
 
   ngOnInit() {
     // this.fetchData('NO');
@@ -33,68 +34,78 @@ export class DonutChartComponent implements OnInit {
       console.log('msg', msg)
       this.msg = msg
       this.disposeChart()
-      if (msg != '') await this.fetchData('YES')
+      if (msg != '') {
+        this.dataService.getAllItems().subscribe(async (res: any) => {
+          this.dataarrayobj = res.map((el: any) => {
+            let data = el.payload.doc.data()
+            return data
+          })
+          await this.fetchData('YES')
+        })
+      }
+
     })
 
   }
   async fetchData(checkcase: any) {
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        contentfake.pop()
-        this.dataarrayobj = []
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
-          // let indexcut = el.indexOf(',') + 1
-          // let datecrindexcut = el.indexOf('Datecr:') - 1
-          // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          const dataObject: any = {};
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    //   (response: any) => {
+    //     this.content = atob(response.content); // Decode content from base64
+    //     let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    //     contentfake.pop()
+    //     this.dataarrayobj = []
+    //     contentfake.forEach((el: any) => {
+    //       el.replace('Name:', '')
+    // let indexcut = el.indexOf(',') + 1
+    // let datecrindexcut = el.indexOf('Datecr:') - 1
+    // let data = el.substring(indexcut, datecrindexcut)
+    //   let objdata: any = el.trim().split(',');
+    //   const dataObject: any = {};
 
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
-        if (checkcase === 'YES') {
-          let tempstoreuser: any = []
-          this.dataarrayobj.filter((el: any) => {
-            // console.log(el)
-            if (el.Name === this.msg) {
-              tempstoreuser.push(el)
-            }
-          });
-          this.dataarrayobj = tempstoreuser
+    //   objdata.forEach((pair: any) => {
+    //     const [key, value] = pair.split(':');
+    //     dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
+    //   });
+    //   this.dataarrayobj.push(dataObject)
+    // })
+
+    if (checkcase === 'YES') {
+      let tempstoreuser: any = []
+      this.dataarrayobj.filter((el: any) => {
+        // console.log(el)
+        if (el.Name === this.msg) {
+          tempstoreuser.push(el)
         }
-        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment' 
-        &&expense['Materialgroup'] !== 'switch'&& expense['Materialgroup'] != 'Liability');
-        this.dataforfilter = this.dataarrayobj
+      });
+      this.dataarrayobj = tempstoreuser
+    }
+    this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Investment'
+      && expense['Materialgroup'] !== 'switch' && expense['Materialgroup'] != 'Liability');
+    this.dataforfilter = this.dataarrayobj
 
-        this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
-        this.groupedData.forEach((el: any) => {
-          el.category = el.Materialgroup
-          el.value = el.Price
-        })
+    this.groupedData = Object.values(this.groupAndSum(this.dataarrayobj, 'Materialgroup', 'Price'));
+    this.groupedData.forEach((el: any) => {
+      el.category = el.Materialgroup
+      el.value = el.Price
+    })
 
-        const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');
-        this.groupedData = sortedObject
-        this.disposeChart()
-        this.initializeChart();
-        const screenWidth = window.innerWidth;
-        if (screenWidth > 370) {
-          this.grpcount = (this.groupedData.length < 12) ? 9 : 11
-        }
-        else {
-          this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
+    const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');
+    this.groupedData = sortedObject
+    this.disposeChart()
+    this.initializeChart();
+    const screenWidth = window.innerWidth;
+    if (screenWidth > 370) {
+      this.grpcount = (this.groupedData.length < 12) ? 9 : 11
+    }
+    else {
+      this.grpcount = (this.groupedData.length < 12) ? 12 : this.groupedData.length
 
-        }
-      },
-      error => {
-        console.error('Error fetching data from GitHub:', error);
-      }
-    );
+    }
+    // },
+    //   error => {
+    //     console.error('Error fetching data from GitHub:', error);
+    //   }
+    // );
   }
   groupAndSum(array: any, groupByKey: any, sumByKey: any) {
     return array.reduce((result: any, item: any) => {
@@ -131,7 +142,7 @@ export class DonutChartComponent implements OnInit {
     this.disposeChart()
     this.initializeChart();
     const screenWidth = window.innerWidth;
-   
+
   }
 
   private initializeChart() {

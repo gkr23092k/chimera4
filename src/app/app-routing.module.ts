@@ -10,7 +10,7 @@ import { LoginComponent } from './component/login/login.component';
 
 const routes: Routes = [
   { path: 'entry', component: ExpenseentryComponent ,canActivate:[AuthGuardService]},
-  { path: 'ch', component: DonutChartComponent },
+  { path: 'ch', component: DonutChartComponent},
   { path: 'b', component: BubbleComponent},
   { path: 'issues', component: TicketComponent },
   { path: 'wait', component: DummyComponent },

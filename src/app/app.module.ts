@@ -37,6 +37,15 @@ import { LoginComponent } from './component/login/login.component';
 import { AuthGuardService } from './guard/auth.guard';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatIconModule} from '@angular/material/icon';
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import {getStorage,provideStorage } from '@angular/fire/storage';
+import { AngularFireModule } from '@angular/fire/compat';
+
+
+import { firebaseConfig } from 'src/firebase.config';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,9 +69,15 @@ import {MatIconModule} from '@angular/material/icon';
     BrowserModule,FormsModule,MatInputModule,MatFormFieldModule,HttpClientModule,MatNativeDateModule,MatCardModule,
     AppRoutingModule,BrowserAnimationsModule,MatSelectModule,MatButtonModule,MatDatepickerModule,AgGridModule,DragDropModule,
     MatChipsModule,NgxSpinnerModule,NgxMatSelectSearchModule,NgMultiSelectDropDownModule.forRoot(),MatDialogModule,
-    ReactiveFormsModule,MatMenuModule,MatIconModule
+    ReactiveFormsModule,MatMenuModule,MatIconModule,
+    AngularFireModule.initializeApp(firebaseConfig),
+    provideFirestore(() => getFirestore()),
+    provideStorage(()=>getStorage()),
+    AngularFirestoreModule
+
   ],
-  providers: [AuthGuardService],
+  providers: [AuthGuardService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -6,6 +6,7 @@ import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import * as _ from 'lodash';
 import Swal from 'sweetalert2';
+import { FirebaseService } from 'src/app/service/firebase.service';
 
 am4core.useTheme(am4themes_animated);
 @Component({
@@ -33,7 +34,7 @@ export class LiabilityChartComponent implements OnInit {
   endpiechartliable: any = [];
   liabilitydonut: any = 0;
   chartsize:number=0
-  constructor(private githubService: GithubServiceService) { }
+  constructor(private githubService: GithubServiceService,private dataService: FirebaseService) { }
 
   ngOnInit() {
     // this.fetchData('NO');
@@ -46,31 +47,40 @@ export class LiabilityChartComponent implements OnInit {
       console.log('msg', msg)
       this.msg = msg
       // this.disposeChart()
-      if (msg != '') await this.fetchData('YES')
+      if (msg != '')  {
+        this.dataService.getAllItems().subscribe(async (res: any) => {
+          this.dataarrayobj = res.map((el: any) => {
+            let data = el.payload.doc.data()
+            return data
+          })
+          await this.fetchData('YES')
+        })
+        // this.fetchData('YES')
+      }
     })
 
   }
   async fetchData(checkcase: any) {
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        contentfake.pop()
-        this.dataarrayobj = []
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    //   (response: any) => {
+    //     this.content = atob(response.content); // Decode content from base64
+    //     let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    //     contentfake.pop()
+    //     this.dataarrayobj = []
+    //     contentfake.forEach((el: any) => {
+    //       el.replace('Name:', '')
           // let indexcut = el.indexOf(',') + 1
           // let datecrindexcut = el.indexOf('Datecr:') - 1
           // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          const dataObject: any = {};
+        //   let objdata: any = el.trim().split(',');
+        //   const dataObject: any = {};
 
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
+        //   objdata.forEach((pair: any) => {
+        //     const [key, value] = pair.split(':');
+        //     dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
+        //   });
+        //   this.dataarrayobj.push(dataObject)
+        // })
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
@@ -210,11 +220,11 @@ export class LiabilityChartComponent implements OnInit {
         this.disposeChart()
         this.initializeChart();
         // this.initializeChart1();
-      },
-      error => {
-        console.error('Error fetching data from GitHub:', error);
-      }
-    );
+    //   },
+    //   error => {
+    //     console.error('Error fetching data from GitHub:', error);
+    //   }
+    // );
   }
   groupAndSum(array: any, groupByKey: any, sumByKey: any) {
     return array.reduce((result: any, item: any) => {

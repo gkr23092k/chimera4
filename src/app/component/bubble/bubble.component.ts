@@ -4,6 +4,7 @@ import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDire
 import _ from 'lodash';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import { Router } from '@angular/router';
+import { FirebaseService } from 'src/app/service/firebase.service';
 
 @Component({
   selector: 'app-bubble',
@@ -18,11 +19,11 @@ export class BubbleComponent implements OnInit, OnDestroy {
   content: string = '';
   groupedData: any = [];
   msg: any = '';
-  bubblebuttontoggle: string='Expand';
-  height: number=700;
-  width: number=100;
+  bubblebuttontoggle: string = 'Expand';
+  height: number = 700;
+  width: number = 100;
 
-  constructor(private githubService: GithubServiceService,private router:Router) { }
+  constructor(private githubService: GithubServiceService, private router: Router, private dataService: FirebaseService) { }
 
   ngOnInit() {
     // this.fetchData('NO');
@@ -34,112 +35,121 @@ export class BubbleComponent implements OnInit, OnDestroy {
     this.githubService.currentvalue.subscribe(async (msg: any) => {
       console.log('msg', msg)
       this.msg = msg
-      if (msg != '') await this.fetchData('YES')
+      if (msg != '') {
+        this.dataService.getAllItems().subscribe(async (res: any) => {
+          this.dataarrayobj = res.map((el: any) => {
+            let data = el.payload.doc.data()
+            return data
+          })
+          // console.log(res, this.dataarrayobj)
+          await this.fetchData('YES')
+        })
+      }
     })
 
   }
   async fetchData(checkcase: any) {
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        contentfake.pop()
-        this.dataarrayobj = []
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
-          // let indexcut = el.indexOf(',') + 1
-          // let datecrindexcut = el.indexOf('Datecr:') - 1
-          // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          const dataObject: any = {};
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    //   (response: any) => {
+    //     this.content = atob(response.content); // Decode content from base64
+    //     let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    //     contentfake.pop()
+    //     this.dataarrayobj = []
+    //     contentfake.forEach((el: any) => {
+    //       el.replace('Name:', '')
+    // let indexcut = el.indexOf(',') + 1
+    // let datecrindexcut = el.indexOf('Datecr:') - 1
+    // let data = el.substring(indexcut, datecrindexcut)
+    // let objdata: any = el.trim().split(',');
+    // const dataObject: any = {};
 
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
-        if (checkcase === 'YES') {
-          let tempstoreuser: any = []
-          this.dataarrayobj.filter((el: any) => {
-            // console.log(el)
-            if (el.Name === this.msg) {
-              tempstoreuser.push(el)
-            }
-          });
-          this.dataarrayobj = tempstoreuser
+    //   objdata.forEach((pair: any) => {
+    //     const [key, value] = pair.split(':');
+    //     dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
+    //   });
+    //   this.dataarrayobj.push(dataObject)
+    // })
+    if (checkcase === 'YES') {
+      let tempstoreuser: any = []
+      this.dataarrayobj.filter((el: any) => {
+        // console.log(el)
+        if (el.Name === this.msg) {
+          tempstoreuser.push(el)
         }
-        this.dataarrayobj.forEach((el: any) => {
-          el.Material = el.Material.replaceAll(' ', '_').toUpperCase()
-          el.materialendaname = el.Materialgroup + '|' + el.Material
-        });
-        // console.log([this.dataarrayobj,'ddg'])
-        let tempgrooupdatarraobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Liability');
-        let tempholderdataarrobj = Object.values(this.groupAndSum(this.dataarrayobj, 'materialendaname', 'Price'));
-        this.groupedData = Object.values(this.groupAndSum(tempgrooupdatarraobj, 'Materialgroup', 'Price'));
-        let total = 0
-        let tempgroupname: any = []
-        this.groupedData.forEach((el: any) => {
-          el.name = el.Materialgroup
-          el.category = el.Materialgroup
-          el.value = el.Price
-          total += el.Price
-          tempgroupname.push(el.Materialgroup)
-        })
-        // console.log([tempholderdataarrobj, 'afterdonut'])
+      });
+      this.dataarrayobj = tempstoreuser
+    }
+    this.dataarrayobj.forEach((el: any) => {
+      el.Material = el.Material.replaceAll(' ', '_').toUpperCase()
+      el.materialendaname = el.Materialgroup + '|' + el.Material
+    });
+    // console.log([this.dataarrayobj,'ddg'])
+    let tempgrooupdatarraobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] != 'Liability');
+    let tempholderdataarrobj = Object.values(this.groupAndSum(this.dataarrayobj, 'materialendaname', 'Price'));
+    this.groupedData = Object.values(this.groupAndSum(tempgrooupdatarraobj, 'Materialgroup', 'Price'));
+    let total = 0
+    let tempgroupname: any = []
+    this.groupedData.forEach((el: any) => {
+      el.name = el.Materialgroup
+      el.category = el.Materialgroup
+      el.value = el.Price
+      total += el.Price
+      tempgroupname.push(el.Materialgroup)
+    })
+    // console.log([tempholderdataarrobj, 'afterdonut'])
 
-        tempholderdataarrobj.forEach((temp: any) => {
+    tempholderdataarrobj.forEach((temp: any) => {
 
-          this.dataarrayobj.forEach((el: any) => {
-            if (temp.materialendaname != undefined) {
-              // console.log(temp.materialendaname, 'jgj')
-              let materialendsplit = temp.materialendaname.split('|')
-              temp.Material = materialendsplit[1]
-              if (materialendsplit[1] == el.Material) {
-                temp.Materialgroup = materialendsplit[0]
-              }
-            }
-          })
-        })
-
-        // console.log(tempholderdataarrobj,'tempholderdataarrobj')
-        this.groupedData.forEach((grp: any, index: number) => {
-          tempholderdataarrobj.forEach((mat: any) => {
-            if (grp.Materialgroup == mat.Materialgroup) {
-              if (this.groupedData[index].children == undefined) this.groupedData[index].children = []
-              grp.linkWith = tempgroupname
-              this.groupedData[index].children.push({ name: mat.Material, value: mat.Price })
-            }
-          });
-        });
-        // console.log([this.groupedData, 'afterdonutthanditen', tempholderdataarrobj])
-
-
-
-        this.groupedData.forEach((item: any) => {
-          item.value = (item.value / total) * 100;
-          item.value = item.value * 100
-          if (item.children != undefined) {
-            item.children.forEach((chel: any) => {
-              chel.percentage = (chel.value / item.Price) * 100;
-              chel.Price = chel.value
-              chel.value = chel.percentage * 5
-            });
+      this.dataarrayobj.forEach((el: any) => {
+        if (temp.materialendaname != undefined) {
+          // console.log(temp.materialendaname, 'jgj')
+          let materialendsplit = temp.materialendaname.split('|')
+          temp.Material = materialendsplit[1]
+          if (materialendsplit[1] == el.Material) {
+            temp.Materialgroup = materialendsplit[0]
           }
+        }
+      })
+    })
+
+    // console.log(tempholderdataarrobj,'tempholderdataarrobj')
+    this.groupedData.forEach((grp: any, index: number) => {
+      tempholderdataarrobj.forEach((mat: any) => {
+        if (grp.Materialgroup == mat.Materialgroup) {
+          if (this.groupedData[index].children == undefined) this.groupedData[index].children = []
+          grp.linkWith = tempgroupname
+          this.groupedData[index].children.push({ name: mat.Material, value: mat.Price })
+        }
+      });
+    });
+    // console.log([this.groupedData, 'afterdonutthanditen', tempholderdataarrobj])
+
+
+
+    this.groupedData.forEach((item: any) => {
+      item.value = (item.value / total) * 100;
+      item.value = item.value * 100
+      if (item.children != undefined) {
+        item.children.forEach((chel: any) => {
+          chel.percentage = (chel.value / item.Price) * 100;
+          chel.Price = chel.value
+          chel.value = chel.percentage * 5
         });
-
-
-        // console.log(this.groupedData, this.dataarrayobj, tempholderdataarrobj, total)
-
-        this.bubblechart(this.groupedData)
-        const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');
-        this.groupedData = sortedObject
-
-      },
-      error => {
-        console.error('Error fetching data from GitHub:', error);
       }
-    );
+    });
+
+
+    // console.log(this.groupedData, this.dataarrayobj, tempholderdataarrobj, total)
+
+    this.bubblechart(this.groupedData)
+    const sortedObject = _.sortBy([...this.groupedData], 'Materialgroup');
+    this.groupedData = sortedObject
+
+    // }
+    // ,  error => {
+    //     console.error('Error fetching data from GitHub:', error);
+    //   }
+    // );
   }
   groupAndSum(array: any, groupByKey: any, sumByKey: any) {
     return array.reduce((result: any, item: any) => {
@@ -155,21 +165,21 @@ export class BubbleComponent implements OnInit, OnDestroy {
       return result;
     }, {});
   }
-  expand() { 
-   
-    if(this.bubblebuttontoggle!='Back'){
-      this.bubblebuttontoggle='Back'
-      this.height=1000
-      this.width=200
+  expand() {
+
+    if (this.bubblebuttontoggle != 'Back') {
+      this.bubblebuttontoggle = 'Back'
+      this.height = 1000
+      this.width = 200
 
       this.router.navigate(['b']);
-    }else{
-      this.height=700
-      this.width=100
-      this.bubblebuttontoggle='Expand'
+    } else {
+      this.height = 700
+      this.width = 100
+      this.bubblebuttontoggle = 'Expand'
       this.router.navigate(['new']);
     }
-  } 
+  }
 
   bubblechart(chartdata: any) {
     // Create chart instance

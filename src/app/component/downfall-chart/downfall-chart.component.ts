@@ -6,6 +6,7 @@ import { GithubServiceService } from 'src/app/service/github-service.service';
 import * as _ from 'lodash';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { FirebaseService } from 'src/app/service/firebase.service';
 am4core.useTheme(am4themes_animated);
 @Component({
   selector: 'app-downfall-chart',
@@ -35,7 +36,7 @@ export class DownfallChartComponent implements OnInit {
   searchusername: any = '';
   code: boolean = false;
 
-  constructor(private githubService: GithubServiceService, private router: Router) { }
+  constructor(private githubService: GithubServiceService, private router: Router,private dataService: FirebaseService) { }
   private chart!: am4charts.XYChart;
 
   msg: any = '';
@@ -50,31 +51,41 @@ export class DownfallChartComponent implements OnInit {
       // console.log('msg', msg)
       this.msg = msg
       // this.disposeChart()
-      if (msg != '') this.fetchData('YES')
+      if (msg != '') 
+      {
+        // this.fetchData('YES')
+        this.dataService.getAllItems().subscribe(async (res: any) => {
+          this.dataarrayobj = res.map((el: any) => {
+            let data = el.payload.doc.data()
+            return data
+          })
+          await this.fetchData('YES')
+        })
+      }
     })
 
   }
 
   fetchData(checkcase: any) {
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        contentfake.pop()
-        this.dataarrayobj = []
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    //   (response: any) => {
+    //     this.content = atob(response.content); // Decode content from base64
+    //     let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    //     contentfake.pop()
+    //     this.dataarrayobj = []
+    //     contentfake.forEach((el: any) => {
+    //       el.replace('Name:', '')
           // let indexcut = el.indexOf(',') + 1
           // let datecrindexcut = el.indexOf('Datecr:') - 1
           // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          const dataObject: any = {};
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
+        //   let objdata: any = el.trim().split(',');
+        //   const dataObject: any = {};
+        //   objdata.forEach((pair: any) => {
+        //     const [key, value] = pair.split(':');
+        //     dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
+        //   });
+        //   this.dataarrayobj.push(dataObject)
+        // })
         // console.log([this.dataarrayobj,checkcase])
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
@@ -133,11 +144,11 @@ export class DownfallChartComponent implements OnInit {
         this.dataarrayobj = _.sortBy(this.dataarrayobj, (item) => new Date(item.date));
         // console.log([this.dataarrayobj, 'afterdown'])
         this.createChart()
-      },
-      error => {
-        // console.error('Error fetching data from GitHub:', error);
-      }
-    );
+    //   },
+    //   error => {
+    //     // console.error('Error fetching data from GitHub:', error);
+    //   }
+    // );
   }
 
 

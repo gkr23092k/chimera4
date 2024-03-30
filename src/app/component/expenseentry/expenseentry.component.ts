@@ -8,7 +8,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { DialogComponent } from '../dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-
+import { FirebaseService } from 'src/app/service/firebase.service';
+import fs from 'fs';
+import * as XLSX from 'xlsx';
+import { subscribe } from 'diagnostics_channel';
 
 @Component({
   selector: 'app-expenseentry',
@@ -86,8 +89,10 @@ export class ExpenseentryComponent implements OnInit {
   favourities: any = [];
   isfavour: boolean = false;
   isswitch: boolean = false;
+  newItem: any = {};
+  jsondata: any = [];
   constructor(private githubService: GithubServiceService, private router: Router, private spinner: NgxSpinnerService
-    , public dialog: MatDialog) {
+    , public dialog: MatDialog, private dataService: FirebaseService) {
 
   }
 
@@ -131,7 +136,7 @@ export class ExpenseentryComponent implements OnInit {
   cswitch() {
     this.materialgroup = 'switch'
     this.material = 'switch'
-    this.price='0'
+    this.price = '0'
     this.isswitch = !this.isswitch
     this.offer = 'ACB'
   }
@@ -160,8 +165,17 @@ export class ExpenseentryComponent implements OnInit {
 
     this.searchusername = localStorage.getItem('g0r@usern@mechimera')
     this.msg = localStorage.getItem('g0r@usern@mechimera')
+    // this.deletedata()
+    this.dataService.getAllItems().subscribe((res: any) => {
+      this.dataarrayobj = res.map((el: any) => {
+        let data = el.payload.doc.data()
+        data.id = el.payload.doc.id
+        return data
+      })
+      console.log(res, 'fsdgsd')
 
-    this.fetchData('YES');
+      this.fetchData('YES');
+    })
     this.dateentry = new Date();
     this.githubService.invokeFirstComponentFunction.subscribe((name: string) => {
       // console.log('expense component')
@@ -183,7 +197,6 @@ export class ExpenseentryComponent implements OnInit {
     //   }
     //   this.searchuser()
     // }
-
   }
 
 
@@ -199,192 +212,198 @@ export class ExpenseentryComponent implements OnInit {
 
 
   fetchData(checkcase: any) {
+
+
     this.showcontent = ''
     this.materialdropdown = []
-    this.dataarrayobj = []
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        // console.log(this.content)
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        contentfake.pop()
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
-          // let indexcut = el.indexOf(',') + 1
-          // let datecrindexcut = el.indexOf('Datecr:') - 1
-          // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          // this.showcontent += `\n${el}`
+    // this.dataarrayobj = []
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    // (response: any) => {
+    // console.log(this.content)
+    // this.content = atob(response.content); // Decode content from base64
+    // let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    // contentfake.pop()
+    // contentfake.forEach((el: any) => {
+    //   el.replace('Name:', '')
+    // let indexcut = el.indexOf(',') + 1
+    // let datecrindexcut = el.indexOf('Datecr:') - 1
+    // let data = el.substring(indexcut, datecrindexcut)
+    // let objdata: any = el.trim().split(',');
+    // this.showcontent += `\n${el}`
 
-          const dataObject: any = {};
+    // const dataObject: any = {};
 
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
-        // console.log(this.dataarrayobj)
-
-        this.favourities = []
-        this.dataarrayobj.filter((el: any) => {
-          if (el.Favourities == 'Yes') {
-            this.favourities.push(el)
-          }
-        })
-        if (checkcase === 'YES') {
-          let tempstoreuser: any = []
-          this.dataarrayobj.filter((el: any) => {
-            // console.log(el)
-            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
-              if(el.Material!=undefined)
-              this.materialdropdown.push(el.Material.toUpperCase())
-            }
-
-            if (el.Name === this.msg) {
-              tempstoreuser.push(el)
-
-            }
-          });
-          if (tempstoreuser.length < 1) {
-            this.dataarrayobj = [{ Name: this.msg, Mailid: '', Material: '', Materialgroup: '', Price: 0, Planned: 'Yes', Offer: 'No', AccountBalance: 0, InhandBalance: 0, Liabilitystatus: 'No', Date: 'Mon Jan 01 2024', Comment: 'No comments' }]
-          }
-          else {
-            this.dataarrayobj = tempstoreuser
-
-          }
-        }
-        // console.log(this.dataarrayobj)
-        this.highestofalltime = []
-        this.last7DaysData = [];
-        this.todayData = [];
-        this.last30DaysData = [];
-        this.resultArray = []
-        this.resultArray7 = []
-        this.resultArray30 = []
-        this.last30DaysDatainv = [];
-        this.last30Daysinv = [];
-        this.totalinvest = []
-        this.last7DaysDatainv = [];
-        this.last7Daysinv = [];
-        this.last1DaysDatainv = []
-        this.last1Daysinv = []
-        this.totalspent = 0
-        this.liablegettemp = []
-        this.liablegivetemp = []
-        this.dataarrayobjholder = []
-        this.networth = 0
-        const groupedByKeys = _.groupBy(this.dataarrayobj, 'Name');
-        let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
-        resultObjectAcc = _.values(resultObjectAcc);
-        let resultObjectIhb: any = _.mapValues(groupedByKeys, group => _.last(group).InhandBalance);
-        resultObjectIhb = _.values(resultObjectIhb);
-        let accbalance = _.sum(resultObjectAcc);
-        let ihbbalance = _.sum(resultObjectIhb);
-
-        this.networth = accbalance + ihbbalance
-        if (this.materialdropdown.length < 1) {
-          this.dataarrayobj.forEach((el: any) => {
-            if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
-              this.materialdropdown.push(el.Material.toUpperCase())
-            }
-          })
-        }
-        this.dataarrayobjliability = this.dataarrayobj
-        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liablegettemp.push(el) })
-        this.liablegetval = _.sumBy(this.liablegettemp, 'Price');
-        this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegivetemp.push(el) })
-        this.liablegiveval = _.sumBy(this.liablegivetemp, 'Price');
-
-        this.dataarrayobjinvest = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] === 'Investment');
-        if (this.dataarrayobjinvest.length == 0) {
-          this.dataarrayobjinvest = [{ "Price": "Nil" }]
-        }
-        this.highestofalltimeinv = _.maxBy(this.dataarrayobjinvest, 'Price')
-
-        this.filterDataByDate(this.dataarrayobjinvest, 1, this.last1DaysDatainv);
-        // console.log(['resultArray', this.resultArray])
-        if (this.last1DaysDatainv.length == 0) {
-          this.last1DaysDatainv = [{ "Price": "Nil" }]
-        }
-        this.last1Daysinv = _.maxBy(this.last1DaysDatainv, 'Price')
-
-
-        this.filterDataByDate(this.dataarrayobjinvest, 7, this.last7DaysDatainv);
-        // console.log(['resultArray', this.resultArray])
-        if (this.last7DaysDatainv.length == 0) {
-          this.last7DaysDatainv = [{ "Price": "Nil" }]
-        }
-        this.last7Daysinv = _.maxBy(this.last7DaysDatainv, 'Price')
-
-
-        this.filterDataByDate(this.dataarrayobjinvest, 30, this.last30DaysDatainv);
-        // console.log(['resultArray', this.resultArray])
-        if (this.last30DaysDatainv.length == 0) {
-          this.last30DaysDatainv = [{ "Price": "Nil" }]
-        }
-        this.last30Daysinv = _.maxBy(this.last30DaysDatainv, 'Price')
-
-        if (this.dataarrayobjinvest.length == 0) {
-          this.dataarrayobjinvest = [{ "Price": 0 }]
-        }
-        this.totalinvest = _.sumBy(this.dataarrayobjinvest, 'Price');
-
-
-        this.dataarrayobjholder = this.dataarrayobj
-        this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' &&expense['Materialgroup'] !== 'switch'&& expense['Materialgroup'] !== 'Investment'
-          && expense['Liabilitystatus'] !== 'Get' && expense['Liabilitystatus'] !== 'Give');
-        if (this.dataarrayobj.length == 0) {
-          this.dataarrayobj = [{ "Price": "Nil" }]
-        }
-        // this.dataarrayobj.filter((expense: any) =>{
-        // console.log(this.dataarrayobj)
-        // })
-
-        this.totalspent = _.sumBy(this.dataarrayobj, 'Price');
-        this.highestofalltime = _.maxBy(this.dataarrayobj, 'Price')
-
-
-        this.filterDataByDate(this.dataarrayobj, 1, this.resultArray);
-        if (this.resultArray.length == 0) {
-          this.resultArray = [{ "Price": "Nil" }]
-        }
-        this.todayData = _.maxBy(this.resultArray, 'Price')
-        this.todaytotal = _.sumBy(this.resultArray, 'Price')
-
-
-        this.filterDataByDate(this.dataarrayobj, 7, this.resultArray7);
-        if (this.resultArray7.length == 0) {
-          this.resultArray7 = [{ "Price": "Nil" }]
-        }
-        this.last7DaysData = _.maxBy(this.resultArray7, 'Price')
-        this.last7DaysDatatotal = _.sumBy(this.resultArray7, 'Price')
-
-
-        this.filterDataByDate(this.dataarrayobj, 30, this.resultArray30);
-        if (this.resultArray30.length == 0) {
-          this.resultArray30 = [{ "Price": "Nil" }]
-        }
-        this.last30DaysData = _.maxBy(this.resultArray30, 'Price')
-        this.last30DaysDatatotal = _.sumBy(this.resultArray30, 'Price')
-
-
-        // console.log(this.materialdropdown)
-
-        let arraymateraildropdown = [...new Set(this.materialdropdown)];
-        this.materialdropdown = []
-        arraymateraildropdown.forEach((element: any, index: number) => {
-          this.materialdropdown.push({ item_id: index, item_text: element })
-        });
-        this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
-        this.liability()
-
-      },
-      error => {
-        console.error('Error fetching data from GitHub:', error);
+    // objdata.forEach((pair: any) => {
+    //     const [key, value] = pair.split(':');
+    //     dataObject[key] = isNaN(value) ? (value != null && value != '') ? value.trim() : value : parseFloat(value);
+    //   });
+    //   this.dataarrayobj.push(dataObject)
+    // })
+    // this.dataService.getAllItems().subscribe((res:any)=>{
+    //   this.dataarrayobj=res
+    // })
+    this.dataarrayobj = _.sortBy(this.dataarrayobj, 'pid')
+    this.dataarrayobj=this.dataarrayobj.reverse()
+    console.log(this.dataarrayobj, 'this.dataarrayobj')
+    this.favourities = []
+    this.dataarrayobj.filter((el: any) => {
+      if (el.Favourities == 'Yes') {
+        this.favourities.push(el)
       }
-    );
+    })
+    if (checkcase === 'YES') {
+      let tempstoreuser: any = []
+      this.dataarrayobj.filter((el: any) => {
+        // console.log(el)
+        if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
+          if (el.Material != undefined)
+            this.materialdropdown.push(el.Material.toUpperCase())
+        }
+
+        if (el.Name === this.msg) {
+          tempstoreuser.push(el)
+
+        }
+      });
+      if (tempstoreuser.length < 1) {
+        this.dataarrayobj = [{ Name: this.msg, Mailid: '', Material: '', Materialgroup: '', Price: 0, Planned: 'Yes', Offer: 'No', AccountBalance: 0, InhandBalance: 0, Liabilitystatus: 'No', Date: 'Mon Jan 01 2024', Comment: 'No comments' }]
+      }
+      else {
+        this.dataarrayobj = tempstoreuser
+
+      }
+    }
+    // console.log(this.dataarrayobj)
+    this.highestofalltime = []
+    this.last7DaysData = [];
+    this.todayData = [];
+    this.last30DaysData = [];
+    this.resultArray = []
+    this.resultArray7 = []
+    this.resultArray30 = []
+    this.last30DaysDatainv = [];
+    this.last30Daysinv = [];
+    this.totalinvest = []
+    this.last7DaysDatainv = [];
+    this.last7Daysinv = [];
+    this.last1DaysDatainv = []
+    this.last1Daysinv = []
+    this.totalspent = 0
+    this.liablegettemp = []
+    this.liablegivetemp = []
+    this.dataarrayobjholder = []
+    this.networth = 0
+    const groupedByKeys = _.groupBy(this.dataarrayobj, 'Name');
+    let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
+    resultObjectAcc = _.values(resultObjectAcc);
+    let resultObjectIhb: any = _.mapValues(groupedByKeys, group => _.last(group).InhandBalance);
+    resultObjectIhb = _.values(resultObjectIhb);
+    let accbalance = _.sum(resultObjectAcc);
+    let ihbbalance = _.sum(resultObjectIhb);
+
+    this.networth = accbalance + ihbbalance
+    if (this.materialdropdown.length < 1) {
+      this.dataarrayobj.forEach((el: any) => {
+        if (el.Materialgroup != 'Liability' && el.Liabilitystatus != 'Give' && el.Liabilitystatus != 'Get') {
+          this.materialdropdown.push(el.Material.toUpperCase())
+        }
+      })
+    }
+    this.dataarrayobjliability = this.dataarrayobj
+    this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Get') this.liablegettemp.push(el) })
+    this.liablegetval = _.sumBy(this.liablegettemp, 'Price');
+    this.dataarrayobj.filter((el: any) => { if (el.Liabilitystatus == 'Give') this.liablegivetemp.push(el) })
+    this.liablegiveval = _.sumBy(this.liablegivetemp, 'Price');
+
+    this.dataarrayobjinvest = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] === 'Investment');
+    if (this.dataarrayobjinvest.length == 0) {
+      this.dataarrayobjinvest = [{ "Price": "Nil" }]
+    }
+    this.highestofalltimeinv = _.maxBy(this.dataarrayobjinvest, 'Price')
+
+    this.filterDataByDate(this.dataarrayobjinvest, 1, this.last1DaysDatainv);
+    // console.log(['resultArray', this.resultArray])
+    if (this.last1DaysDatainv.length == 0) {
+      this.last1DaysDatainv = [{ "Price": "Nil" }]
+    }
+    this.last1Daysinv = _.maxBy(this.last1DaysDatainv, 'Price')
+
+
+    this.filterDataByDate(this.dataarrayobjinvest, 7, this.last7DaysDatainv);
+    // console.log(['resultArray', this.resultArray])
+    if (this.last7DaysDatainv.length == 0) {
+      this.last7DaysDatainv = [{ "Price": "Nil" }]
+    }
+    this.last7Daysinv = _.maxBy(this.last7DaysDatainv, 'Price')
+
+
+    this.filterDataByDate(this.dataarrayobjinvest, 30, this.last30DaysDatainv);
+    // console.log(['resultArray', this.resultArray])
+    if (this.last30DaysDatainv.length == 0) {
+      this.last30DaysDatainv = [{ "Price": "Nil" }]
+    }
+    this.last30Daysinv = _.maxBy(this.last30DaysDatainv, 'Price')
+
+    if (this.dataarrayobjinvest.length == 0) {
+      this.dataarrayobjinvest = [{ "Price": 0 }]
+    }
+    this.totalinvest = _.sumBy(this.dataarrayobjinvest, 'Price');
+
+
+    this.dataarrayobjholder = this.dataarrayobj
+    this.dataarrayobj = this.dataarrayobj.filter((expense: any) => expense['Materialgroup'] !== 'Liability' && expense['Materialgroup'] !== 'switch' && expense['Materialgroup'] !== 'Investment'
+      && expense['Liabilitystatus'] !== 'Get' && expense['Liabilitystatus'] !== 'Give');
+    if (this.dataarrayobj.length == 0) {
+      this.dataarrayobj = [{ "Price": "Nil" }]
+    }
+    // this.dataarrayobj.filter((expense: any) =>{
+    // console.log(this.dataarrayobj)
+    // })
+
+    this.totalspent = _.sumBy(this.dataarrayobj, 'Price');
+    this.highestofalltime = _.maxBy(this.dataarrayobj, 'Price')
+
+
+    this.filterDataByDate(this.dataarrayobj, 1, this.resultArray);
+    if (this.resultArray.length == 0) {
+      this.resultArray = [{ "Price": "Nil" }]
+    }
+    this.todayData = _.maxBy(this.resultArray, 'Price')
+    this.todaytotal = _.sumBy(this.resultArray, 'Price')
+
+
+    this.filterDataByDate(this.dataarrayobj, 7, this.resultArray7);
+    if (this.resultArray7.length == 0) {
+      this.resultArray7 = [{ "Price": "Nil" }]
+    }
+    this.last7DaysData = _.maxBy(this.resultArray7, 'Price')
+    this.last7DaysDatatotal = _.sumBy(this.resultArray7, 'Price')
+
+
+    this.filterDataByDate(this.dataarrayobj, 30, this.resultArray30);
+    if (this.resultArray30.length == 0) {
+      this.resultArray30 = [{ "Price": "Nil" }]
+    }
+    this.last30DaysData = _.maxBy(this.resultArray30, 'Price')
+    this.last30DaysDatatotal = _.sumBy(this.resultArray30, 'Price')
+
+
+    // console.log(this.materialdropdown)
+
+    let arraymateraildropdown = [...new Set(this.materialdropdown)];
+    this.materialdropdown = []
+    arraymateraildropdown.forEach((element: any, index: number) => {
+      this.materialdropdown.push({ item_id: index, item_text: element })
+    });
+    this.materialdropdown = _.sortBy([...this.materialdropdown], 'item_text');
+    this.liability()
+
   }
+  //, error => {
+  //   console.error('Error fetching data from GitHub:', error);
+  // }
+  // );
+  // }
 
   async filterDataByDate(data: any[], daysAgo: number, resultArray: any[]) {
     const currentDate = new Date();
@@ -505,14 +524,14 @@ export class ExpenseentryComponent implements OnInit {
     this.dataarrayobjholder.forEach((el: any) => {
       if (this.materialgroup != 'Liability' && el.Materialgroup != 'Get' && el.Materialgroup != 'Give' && el.Materialgroup != 'Credit') {
         if (el.Materialgroup != 'Liability') {
-          if(el.Material!=undefined)
-          this.materialdropdown.push(el.Material.toUpperCase())
+          if (el.Material != undefined)
+            this.materialdropdown.push(el.Material.toUpperCase())
         }
       }
       else if (this.materialgroup == 'Liability') {
         if (el.Materialgroup == 'Liability' || el.Materialgroup == 'Get' || el.Materialgroup == 'Give') {
-          if(el.Material!=undefined)
-          this.materialdropdown.push(el.Material.toUpperCase())
+          if (el.Material != undefined)
+            this.materialdropdown.push(el.Material.toUpperCase())
         }
       }
     })
@@ -615,6 +634,10 @@ export class ExpenseentryComponent implements OnInit {
   }
 
 
+  deletedata(key:any) {
+    this.dataService.deletedatakey(key)
+  }
+
   chipSelectionChange(event: any) {
     if (event.source.selected) {
       // console.log('Selected:', event.source.value);
@@ -661,52 +684,54 @@ export class ExpenseentryComponent implements OnInit {
           const formattedentryDateTime = `${this.dateentry.toDateString()}`;
           // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
           let newdata = `Name:${this.user},Mailid:${this.email},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Favourities:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
-
+          this.onSubmit({
+            Name: this.user, Mailid: this.email, Material: this.material, Materialgroup: this.materialgroup, Price: this.price, Favourities: this.planned, Offer: this.offer, AccountBalance: this.accbalance, InhandBalance: this.inhandbalance, Liabilitystatus: this.liabilitystatus, Date: formattedentryDateTime, Comment: this.comment, Datecr: formattedDateTime
+          })
           const newData = this.content + newdata
-          this.githubService.fetchDataFromGitHub().subscribe(
-            (response: any) => {
-              const sha = response.sha;
-              this.spinner.hide();
-              // console.log(newdata)
-              this.githubService.appendDataToGitHub(newData, sha).pipe(take(1)).subscribe(
-                () => {
-                  this.code = true
+          // this.githubService.fetchDataFromGitHub().subscribe(
+          //   (response: any) => {
+          //     const sha = response.sha;
+          //     this.spinner.hide();
+          //     // console.log(newdata)
+          //     this.githubService.appendDataToGitHub(newData, sha).pipe(take(1)).subscribe(
+          //       () => {
+          //         this.code = true
 
-                  console.log('Data appended successfully!');
+          //         console.log('Data appended successfully!');
 
-                  this.fetchData('YES');
+          //         this.fetchData('YES');
 
-                  const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'center',
-                    showConfirmButton: false,
-                    timer: 5000,
-                    showCloseButton: true,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                      toast.addEventListener('mouseenter', Swal.stopTimer)
-                      toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                  })
+          //         const Toast = Swal.mixin({
+          //           toast: true,
+          //           position: 'center',
+          //           showConfirmButton: false,
+          //           timer: 5000,
+          //           showCloseButton: true,
+          //           timerProgressBar: true,
+          //           didOpen: (toast) => {
+          //             toast.addEventListener('mouseenter', Swal.stopTimer)
+          //             toast.addEventListener('mouseleave', Swal.resumeTimer)
+          //           }
+          //         })
 
-                  Toast.fire({
-                    icon: 'info',
-                    title: 'Material Added Successfully'
-                  })
-                  this.router.navigate(['wait']);
-                  this.msg = ''
-                  setTimeout(() => {
-                    this.router.navigate(['entry']);
+          //         Toast.fire({
+          //           icon: 'info',
+          //           title: 'Material Added Successfully'
+          //         })
+          //         this.router.navigate(['wait']);
+          //         this.msg = ''
+          //         setTimeout(() => {
+          //           this.router.navigate(['entry']);
 
-                  }, 200);
+          //         }, 200);
 
 
-                });
-            },
-            error => {
-              console.error('Error fetching data from GitHub:', error);
-            }
-          );
+          //       });
+          //   },
+          //   error => {
+          //     console.error('Error fetching data from GitHub:', error);
+          //   }
+          // );
         } catch (error) {
           const Toast = Swal.mixin({
             toast: true,
@@ -765,6 +790,61 @@ export class ExpenseentryComponent implements OnInit {
       })
     }
   }
+
+
+  async start() {
+    try {
+
+
+      await this.addDataToFirestore(this.jsondata);
+
+      console.log('Excel file processed successfully!');
+    } catch (error) {
+      console.error('Error reading or processing Excel file:', error);
+    }
+
+  }
+  async onFileChange(event: any) {
+    const file = event.target.files[0];
+    const fileReader = new FileReader();
+    fileReader.onload = async (e) => {
+      const data = new Uint8Array(fileReader.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      this.jsondata = jsonData
+    };
+    fileReader.readAsArrayBuffer(file);
+  }
+
+  async addDataToFirestore(data: any) {
+    try {
+
+
+      // **Option 2: Separate Writes**
+      for (const item of data) {
+        await this.onSubmit(item);
+      }
+
+      console.log('Data import completed successfully!');
+    } catch (error) {
+      console.error('Error adding data:', error);
+    }
+  }
+  async onSubmit(data: any) {
+    this.dataService.addDocument('items', data) // Replace 'items' with your collection name
+      .then(() => {
+        console.log("Document added successfully!");
+        // Clear form or handle success state (optional)
+      })
+      .catch((error) => {
+        console.error("Error adding document:", error);
+        // Handle errors (optional)
+      });
+  }
+
+
+
   openDialog(): void {
     const dynamicheight = ((window.innerWidth < 768) ? 390 : 350)
     console.log(dynamicheight, 'dynamicheight', window.innerWidth, (window.innerWidth < 768) ? 390 : 350)
@@ -971,5 +1051,9 @@ export class ExpenseentryComponent implements OnInit {
         }, 100);
       }
     });
+  }
+
+  allocate() {
+
   }
 }

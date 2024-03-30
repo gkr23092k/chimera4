@@ -346,7 +346,7 @@ export class GridComponent {
         }
       })
       console.log(this.xlsxdataarrayobj)
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.xlsxdataarrayobj);
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataarrayobj);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
       XLSX.writeFile(workbook, 'data' + formattedDate + '.xlsx');

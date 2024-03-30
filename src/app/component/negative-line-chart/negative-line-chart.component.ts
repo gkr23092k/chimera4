@@ -4,6 +4,7 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import { GithubServiceService } from 'src/app/service/github-service.service';
 import * as _ from 'lodash';
+import { FirebaseService } from 'src/app/service/firebase.service';
 
 am4core.useTheme(am4themes_animated);
 
@@ -12,14 +13,14 @@ am4core.useTheme(am4themes_animated);
   templateUrl: './negative-line-chart.component.html',
   styleUrls: ['./negative-line-chart.component.css']
 })
-export class NegativeLineChartComponent implements OnInit, OnDestroy {
+export class NegativeLineChartComponent implements OnInit {
   private chart!: am4charts.XYChart;
   dataarrayobj: any = [];
   content: string = '';
   groupedData: any = [];
   msg: any='';
 
-  constructor(private githubService: GithubServiceService) { }
+  constructor(private githubService: GithubServiceService,private dataService: FirebaseService) { }
 
   ngOnInit() {
     // this.fetchData('NO');
@@ -32,37 +33,44 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
       console.log('msg', msg)
       this.msg = msg
       this.disposeChart()
-      if(msg!='')this.fetchData('YES')
+      if(msg!='') {
+        this.dataService.getAllItems().subscribe(async (res: any) => {
+          this.dataarrayobj = res.map((el: any) => {
+            let data = el.payload.doc.data()
+            return data
+          })
+          await this.fetchData('YES')
+        })
+        // this.fetchData('YES')
+      }
     })
 
   }
 
 
-  ngOnDestroy() {
-    this.disposeChart();
-  }
-  fetchData(checkcase:any) {
-    this.githubService.fetchDataFromGitHub().subscribe(
-      (response: any) => {
-        this.content = atob(response.content); // Decode content from base64
-        let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
-        contentfake.pop()
-        this.dataarrayobj=[]
-        contentfake.forEach((el: any) => {
-          el.replace('Name:', '')
+ 
+async  fetchData(checkcase:any) {
+    // this.githubService.fetchDataFromGitHub().subscribe(
+    //   (response: any) => {
+    //     this.content = atob(response.content); // Decode content from base64
+    //     let contentfake = this.content.trim().split('GORAR@WS#P@R@TOR')
+    //     contentfake.pop()
+    //     this.dataarrayobj=[]
+    //     contentfake.forEach((el: any) => {
+    //       el.replace('Name:', '')
 
           // let indexcut = el.indexOf(',') + 1
           // let datecrindexcut = el.indexOf('Datecr:') - 1
           // let data = el.substring(indexcut, datecrindexcut)
-          let objdata: any = el.trim().split(',');
-          const dataObject: any = {};
+        //   let objdata: any = el.trim().split(',');
+        //   const dataObject: any = {};
 
-          objdata.forEach((pair: any) => {
-            const [key, value] = pair.split(':');
-            dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
-          });
-          this.dataarrayobj.push(dataObject)
-        })
+        //   objdata.forEach((pair: any) => {
+        //     const [key, value] = pair.split(':');
+        //     dataObject[key] = isNaN(value) ? (value!=null&&value!='')?value.trim():value : parseFloat(value);
+        //   });
+        //   this.dataarrayobj.push(dataObject)
+        // })
         if (checkcase === 'YES') {
           let tempstoreuser: any = []
           this.dataarrayobj.filter((el: any) => {
@@ -77,19 +85,19 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
         this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' 
         &&expense['Materialgroup'] !== 'Investment' &&expense['Materialgroup'] !== 'switch');
         this.groupedData = Object.values(this.groupAndSumByMonthYear(this.dataarrayobj, 'Date', 'Price'));
-        // console.log(this.groupedData);
         this.groupedData.forEach((el: any) => {
           el.date = el.monthYear
           el.value = el.Price
         })
         this.groupedData = _.sortBy(this.groupedData, (item) => new Date(item.date));
-
+        
+        console.log(this.groupedData,'negativeline');
         this.initializeChart();
-      },
-      error => {
-        console.error('Error fetching data from GitHub:', error);
-      }
-    );
+    //   },
+    //   error => {
+    //     console.error('Error fetching data from GitHub:', error);
+    //   }
+    // );
   }
 
   groupAndSumByMonthYear(array: any, dateKey: any, sumByKey: any) {
@@ -139,7 +147,7 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
     // console.log(processedData)
     // Create date axis
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
-    dateAxis.renderer.minGridDistance = 0; // or set it to a smaller value like 30
+    dateAxis.renderer.minGridDistance = 60; // or set it to a smaller value like 30
 
 
     // Create value axis
@@ -159,9 +167,9 @@ export class NegativeLineChartComponent implements OnInit, OnDestroy {
     // Enable scrollbar
     this.chart.scrollbarX = new am4core.Scrollbar();
     this.chart.scrollbarX.marginBottom = 30;
-    dateAxis.renderer.labels.template.fontSize = 12; // Adjust the font size as needed
+    dateAxis.renderer.labels.template.fontSize = 0; // Adjust the font size as needed
     dateAxis.renderer.labels.template.rotation = 45; // Adjust the rotation angle as needed
-    dateAxis.renderer.grid.template.location = 0.5; // Adjust the grid location to center the labels
+    dateAxis.renderer.grid.template.location = 0; // Adjust the grid location to center the labels
 
 
     // Add legend

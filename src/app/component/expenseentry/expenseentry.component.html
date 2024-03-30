@@ -1,8 +1,10 @@
 <div class="d-flex justify-content-between align-items-center container mt-3 border border-5 rounded-5"
     style="background-color: #003153; color: aliceblue;">
     <h1 class="text-center">GORA MONEY </h1>
-    <!-- <button mat-icon-button class="me-2 mb-1" ><img src='./assets/images/logout.png' style='width: 2rem; height: 2rem' /></button> -->
+    <!-- <button mat-icon-button class="me-2 mb-1" ><img src='./assets/images/logout.png' style='width: 2rem; height: 2rem' /></button> --> 
+     <input type="file" (change)="onFileChange($event)"> 
 
+    <button (click)="start()">start</button>
     <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
         <mat-icon>menu</mat-icon> </button>
     <mat-menu #menu="matMenu" #beforeMenu="matMenu" xPosition="before">
@@ -18,11 +20,14 @@
             <mat-icon>favorite</mat-icon>
             <span>Favorite</span>
         </button>
+        <button (click)="allocate()" mat-menu-item>
+            <mat-icon>spa</mat-icon>
+            <span>ExpenseAllocation</span>
+        </button>
         <button (click)="logout()" mat-menu-item>
             <mat-icon>exit_to_app</mat-icon>
             <span>Logout</span>
         </button>
-
     </mat-menu>
 </div>
 
