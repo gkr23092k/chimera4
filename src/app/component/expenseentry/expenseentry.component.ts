@@ -430,7 +430,7 @@ export class ExpenseentryComponent implements OnInit {
       // console.log('called', val, this.price, this.user)
       let objectsWithDateObjects = this.dataarrayobjholder.map((obj: any) => ({
         ...obj,
-        dateObject: new Date(obj.Date)
+        dateObject: new Date(obj.Datecr)
       }));
       let latestaccbalnce = []
       latestaccbalnce = _.sortBy(objectsWithDateObjects, 'dateObject')
