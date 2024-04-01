@@ -243,7 +243,7 @@ export class ExpenseentryComponent implements OnInit {
     //   this.dataarrayobj=res
     // })
     this.dataarrayobj = _.sortBy(this.dataarrayobj, 'pid')
-    this.dataarrayobj=this.dataarrayobj.reverse()
+    this.dataarrayobj = this.dataarrayobj.reverse()
     console.log(this.dataarrayobj, 'this.dataarrayobj')
     this.favourities = []
     this.dataarrayobj.filter((el: any) => {
@@ -428,8 +428,13 @@ export class ExpenseentryComponent implements OnInit {
     if (this.price != 0 && this.price.trim() != '' && this.price.replaceAll('0', '') != ''
       && this.user != undefined && this.user.trim() != '') {
       // console.log('called', val, this.price, this.user)
-
-      this.dataarrayobjholder.filter((bal: any) => {
+      let objectsWithDateObjects = this.dataarrayobjholder.map((obj: any) => ({
+        ...obj,
+        dateObject: new Date(obj.Date)
+      }));
+      let latestaccbalnce = []
+      latestaccbalnce = _.sortBy(objectsWithDateObjects, 'dateObject')
+      latestaccbalnce.filter((bal: any) => {
         if (bal.Name == this.user) {
           // console.log(bal, this.user)
           this.userfiltered.push(bal)
@@ -634,7 +639,7 @@ export class ExpenseentryComponent implements OnInit {
   }
 
 
-  deletedata(key:any) {
+  deletedata(key: any) {
     this.dataService.deletedatakey(key)
   }
 
