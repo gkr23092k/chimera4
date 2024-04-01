@@ -690,7 +690,7 @@ export class ExpenseentryComponent implements OnInit {
           // this.dateentry = this.dateentry.toLocaleString('en-US', { timeZone: 'UTC' });
           let newdata = `Name:${this.user},Mailid:${this.email},Material:${this.material},Materialgroup:${this.materialgroup},Price:${this.price},Favourities:${this.planned},Offer:${this.offer},AccountBalance:${this.accbalance},InhandBalance:${this.inhandbalance},Liabilitystatus:${this.liabilitystatus},Date:${formattedentryDateTime},Comment:${this.comment},Datecr:${formattedDateTime}GORAR@WS#P@R@TOR`;
           this.onSubmit({
-            Name: this.user, Mailid: this.email, Material: this.material, Materialgroup: this.materialgroup, Price: this.price, Favourities: this.planned, Offer: this.offer, AccountBalance: this.accbalance, InhandBalance: this.inhandbalance, Liabilitystatus: this.liabilitystatus, Date: formattedentryDateTime, Comment: this.comment, Datecr: formattedDateTime
+            Name: this.user, Mailid: this.email, Material: this.material, Materialgroup: this.materialgroup, Price: parseInt(this.price), Favourities: this.planned, Offer: this.offer, AccountBalance: this.accbalance, InhandBalance: this.inhandbalance, Liabilitystatus: this.liabilitystatus, Date: formattedentryDateTime, Comment: this.comment, Datecr: formattedDateTime
           })
           const newData = this.content + newdata
           // this.githubService.fetchDataFromGitHub().subscribe(
