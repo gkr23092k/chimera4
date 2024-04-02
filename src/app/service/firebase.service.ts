@@ -8,11 +8,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 }) 
 export class FirebaseService {
+  user: string | null;
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(private firestore: AngularFirestore) {
+    this.user = localStorage.getItem('g0r@usern@mechimera');
+
+    // console.log(this.user,'from services')
+   }
 
   getAllItems(): Observable<any[]> {
-    return this.firestore.collection('items').snapshotChanges();
+    return this.firestore.collection('items', ref => ref.where('Name', '==', this.user)).snapshotChanges();
   }
 
   addDocument(collectionName: string, data: any) {

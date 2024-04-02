@@ -188,7 +188,7 @@ export class GridComponent {
             }
             return null;
           },
-          filter: true, initialWidth: this.intialwidth - 30, minWidth: 100, maxWidth: 300
+          filter: true, initialWidth: this.intialwidth - 30, minWidth: 100, maxWidth: 200
         },
         {
           headerName: 'Price', field: 'Price',
@@ -205,9 +205,9 @@ export class GridComponent {
               return { color: 'white', backgroundColor: 'orange', fontWeight: 'bold' };
             }
             return null;
-          }, filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300
+          }, filter: true, initialWidth: 120, minWidth: 120, maxWidth: 200
         },
-        { headerName: 'IHBalance', field: 'InhandBalance', initialWidth: 150, filter: true, minWidth: 100, maxWidth: 300 },
+        { headerName: 'IHBalance', field: 'InhandBalance', initialWidth: 120, filter: true, minWidth: 120, maxWidth: 200 },
         {
           headerName: 'Liablestatus'
           , cellStyle: (params: { value: string; }) => {
@@ -219,14 +219,14 @@ export class GridComponent {
               return { color: 'white', backgroundColor: 'green', fontWeight: 'bold' };
             }
             return null;
-          }, field: 'Liabilitystatus', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300
+          }, field: 'Liabilitystatus', filter: true, initialWidth: 100, minWidth: 150, maxWidth: 300
         },
         
-        { headerName: 'Date', field: 'Date', filter: true, initialWidth: 200, minWidth: this.intialwidth - 30, maxWidth: 300 },
+        { headerName: 'Date', field: 'Date', filter: true, initialWidth: 100, minWidth: this.intialwidth - 30, maxWidth: 170 },
         // { headerName: 'Datecr', field: 'Datecr', filter: true, initialWidth: 200, minWidth: this.intialwidth - 30, maxWidth: 300 },
         { headerName: 'Favourities', field: 'Favourities', filter: true, initialWidth: 150, minWidth: 100, maxWidth: 300 },
-        { headerName: 'Offer', field: 'Offer', filter: true, initialWidth: 100, minWidth: 100, maxWidth: 300 },
-        { headerName: 'Comment', field: 'Comment', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 300 }
+        // { headerName: 'Offer', field: 'Offer', filter: true, initialWidth: 100, minWidth: 100, maxWidth: 300 },
+        { headerName: 'Comment', field: 'Comment', filter: true, initialWidth: 150, minWidth: 150, maxWidth: 320 }
       ];
       let temprefresh = this.columnDefs
       this.columnDefs = []
