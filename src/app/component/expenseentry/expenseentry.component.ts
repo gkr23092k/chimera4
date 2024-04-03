@@ -293,10 +293,28 @@ export class ExpenseentryComponent implements OnInit {
     this.liablegivetemp = []
     this.dataarrayobjholder = []
     this.networth = 0
-    const groupedByKeys = _.groupBy(this.dataarrayobj, 'Name');
-    let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
+    let tempdataarr=this.dataarrayobj.sort((a: any, b: any) => {
+      const dateA = new Date(a.Date); 
+      const dateB = new Date(b.Date); 
+      
+      const yearDiff = dateB.getFullYear() - dateA.getFullYear();
+      if (yearDiff !== 0) {
+          return yearDiff;
+      }
+      
+      const monthDiff = dateB.getMonth() - dateA.getMonth();
+      if (monthDiff !== 0) {
+          return monthDiff;
+      }
+      
+      const dayDiff = dateB.getDate() - dateA.getDate();
+      return dayDiff;
+  });
+    const groupedByKeys = _.groupBy(tempdataarr, 'Name');
+    let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.first(group).AccountBalance);
+    resultObjectAcc
     resultObjectAcc = _.values(resultObjectAcc);
-    let resultObjectIhb: any = _.mapValues(groupedByKeys, group => _.last(group).InhandBalance);
+    let resultObjectIhb: any = _.mapValues(groupedByKeys, group => _.first(group).InhandBalance);
     resultObjectIhb = _.values(resultObjectIhb);
     let accbalance = _.sum(resultObjectAcc);
     let ihbbalance = _.sum(resultObjectIhb);
