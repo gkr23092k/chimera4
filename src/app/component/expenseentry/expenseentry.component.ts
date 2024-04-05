@@ -864,6 +864,7 @@ export class ExpenseentryComponent implements OnInit {
         console.error("Error adding document:", error);
         // Handle errors (optional)
       }).finally(() => {
+        this.fieldsrefresh()
         this.spinner.hide()
       });
   }
@@ -1095,5 +1096,15 @@ export class ExpenseentryComponent implements OnInit {
 
   allocate() {
 
+  }
+
+  fieldsrefresh() {
+    this.material = ''
+    this.materialgroup = ''
+    this.price = 0
+    this.accbalance = ''
+    this.inhandbalance = ''
+    this.offer = 'No'
+    this.planned = 'No'
   }
 }

@@ -71,19 +71,39 @@ async  fetchData(checkcase:any) {
         //   });
         //   this.dataarrayobj.push(dataObject)
         // })
-        if (checkcase === 'YES') {
-          let tempstoreuser: any = []
-          this.dataarrayobj.filter((el: any) => {
+        // if (checkcase === 'YES') {
+        //   let tempstoreuser: any = []
+        //   this.dataarrayobj.filter((el: any) => {
             // console.log(el)
-            if (el.Name === this.msg) {
-              tempstoreuser.push(el)
-            }
-          });
-          this.dataarrayobj = tempstoreuser
+          //   if (el.Name === this.msg) {
+          //     tempstoreuser.push(el)
+          //   }
+          // });
+          // this.dataarrayobj = tempstoreuser
           // console.log([this.dataarrayobj,tempstoreuser,'after',this.msg])
-        }
+        // }
         this.dataarrayobj = this.dataarrayobj.filter((expense:any )=> expense['Materialgroup'] !== 'Liability' 
         &&expense['Materialgroup'] !== 'Investment' &&expense['Materialgroup'] !== 'switch');
+
+        this.dataarrayobj.sort((a: any, b: any) => {
+          const dateA = new Date(b.Date); 
+          const dateB = new Date(a.Date); 
+          
+          const yearDiff = dateB.getFullYear() - dateA.getFullYear();
+          if (yearDiff !== 0) {
+              return yearDiff;
+          }
+          
+          const monthDiff = dateB.getMonth() - dateA.getMonth();
+          if (monthDiff !== 0) {
+              return monthDiff;
+          }
+          
+          const dayDiff = dateB.getDate() - dateA.getDate();
+          return dayDiff;
+      });
+
+
         this.groupedData = Object.values(this.groupAndSumByMonthYear(this.dataarrayobj, 'Date', 'Price'));
         this.groupedData.forEach((el: any) => {
           el.date = el.monthYear
@@ -91,7 +111,7 @@ async  fetchData(checkcase:any) {
         })
         this.groupedData = _.sortBy(this.groupedData, (item) => new Date(item.date));
         
-        console.log(this.groupedData,'negativeline');
+        console.log(this.groupedData,'negativelinegrouped');
         this.initializeChart();
     //   },
     //   error => {
@@ -147,7 +167,7 @@ async  fetchData(checkcase:any) {
     // console.log(processedData)
     // Create date axis
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
-    dateAxis.renderer.minGridDistance = 60; // or set it to a smaller value like 30
+    dateAxis.renderer.minGridDistance = 10; // or set it to a smaller value like 30
 
 
     // Create value axis
@@ -167,7 +187,7 @@ async  fetchData(checkcase:any) {
     // Enable scrollbar
     this.chart.scrollbarX = new am4core.Scrollbar();
     this.chart.scrollbarX.marginBottom = 30;
-    dateAxis.renderer.labels.template.fontSize = 0; // Adjust the font size as needed
+    dateAxis.renderer.labels.template.fontSize = 10; // Adjust the font size as needed
     dateAxis.renderer.labels.template.rotation = 45; // Adjust the rotation angle as needed
     dateAxis.renderer.grid.template.location = 0; // Adjust the grid location to center the labels
 
@@ -175,13 +195,13 @@ async  fetchData(checkcase:any) {
     // Add legend
     this.chart.legend = new am4charts.Legend();
     // Dynamically set zoom range to the past 5 months and the next 5 months
-    const currentDate = new Date();
-    const pastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 5, 1);
-    const futureDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 5, 31);
+    // const currentDate = new Date();
+    // const pastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 10, 1);
+    // const futureDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 10, 28);
 
-    this.chart.events.on('ready', () => {
-      dateAxis.zoomToDates(pastDate, futureDate, true);
-    });
+    // this.chart.events.on('ready', () => {
+    //   dateAxis.zoomToDates(pastDate, futureDate, true);
+    // });
 
 
   }
