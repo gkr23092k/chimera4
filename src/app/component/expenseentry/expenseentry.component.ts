@@ -293,23 +293,23 @@ export class ExpenseentryComponent implements OnInit {
     this.liablegivetemp = []
     this.dataarrayobjholder = []
     this.networth = 0
-    let tempdataarr=this.dataarrayobj.sort((a: any, b: any) => {
-      const dateA = new Date(a.Date); 
-      const dateB = new Date(b.Date); 
-      
+    let tempdataarr = this.dataarrayobj.sort((a: any, b: any) => {
+      const dateA = new Date(a.Date);
+      const dateB = new Date(b.Date);
+
       const yearDiff = dateB.getFullYear() - dateA.getFullYear();
       if (yearDiff !== 0) {
-          return yearDiff;
+        return yearDiff;
       }
-      
+
       const monthDiff = dateB.getMonth() - dateA.getMonth();
       if (monthDiff !== 0) {
-          return monthDiff;
+        return monthDiff;
       }
-      
+
       const dayDiff = dateB.getDate() - dateA.getDate();
       return dayDiff;
-  });
+    });
     const groupedByKeys = _.groupBy(tempdataarr, 'Name');
     let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.first(group).AccountBalance);
     resultObjectAcc
@@ -863,6 +863,8 @@ export class ExpenseentryComponent implements OnInit {
       .catch((error) => {
         console.error("Error adding document:", error);
         // Handle errors (optional)
+      }).finally(() => {
+        this.spinner.hide()
       });
   }
 
@@ -890,12 +892,27 @@ export class ExpenseentryComponent implements OnInit {
             this.price = '0'
             this.comment = ((result.comment == '') ? 'No Comments' : result.comment)
             console.log(this.dataarrayobjholder)
-            this.dataarrayobjholder.forEach((bal: any) => {
-              if (this.user == bal.Name) {
-                this.accbalance = bal.AccountBalance
-                this.inhandbalance = bal.InhandBalance
+
+            let tempdataarr = this.dataarrayobjholder.sort((a: any, b: any) => {
+              const dateA = new Date(a.Date);
+              const dateB = new Date(b.Date);
+
+              const yearDiff = dateB.getFullYear() - dateA.getFullYear();
+              if (yearDiff !== 0) {
+                return yearDiff;
               }
+
+              const monthDiff = dateB.getMonth() - dateA.getMonth();
+              if (monthDiff !== 0) {
+                return monthDiff;
+              }
+
+              const dayDiff = dateB.getDate() - dateA.getDate();
+              return dayDiff;
             });
+            this.accbalance = tempdataarr[0].AccountBalance
+            this.inhandbalance = tempdataarr[0].InhandBalance
+
             this.accbalance = parseInt(this.accbalance) + parseInt(result.newaccbalance)
             this.inhandbalance = parseInt(this.inhandbalance) + parseInt(result.newihbbalance)
 
