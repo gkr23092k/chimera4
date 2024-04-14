@@ -135,7 +135,8 @@ export class GridComponent {
 
 
         // console.log(this.dataarrayobj)
-        
+        this.rowData = this.dataarrayobj.reverse()
+    
 
      this.rowData.sort((a:any, b:any) => {
         const dateA = new Date(a.Datecr);
