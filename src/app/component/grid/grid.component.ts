@@ -135,25 +135,46 @@ export class GridComponent {
 
 
         // console.log(this.dataarrayobj)
-        this.rowData = this.dataarrayobj.reverse()
-        this.rowData.sort((a: any, b: any) => {
-          const dateA = new Date(a.Date); 
-          const dateB = new Date(b.Date); 
-          
-          const yearDiff = dateB.getFullYear() - dateA.getFullYear();
-          if (yearDiff !== 0) {
-              return yearDiff;
-          }
-          
-          const monthDiff = dateB.getMonth() - dateA.getMonth();
-          if (monthDiff !== 0) {
-              return monthDiff;
-          }
-          
-          const dayDiff = dateB.getDate() - dateA.getDate();
-          return dayDiff;
-      });
+        
+
+     this.rowData.sort((a:any, b:any) => {
+        const dateA = new Date(a.Datecr);
+        const dateB = new Date(b.Datecr);
       
+        // Year comparison
+        const yearDiff = dateB.getFullYear() - dateA.getFullYear();
+        if (yearDiff !== 0) {
+          return yearDiff;
+        }
+      
+        // Month comparison
+        const monthDiff = dateB.getMonth() - dateA.getMonth();
+        if (monthDiff !== 0) {
+          return monthDiff;
+        }
+      
+        // Day comparison
+        const dayDiff = dateB.getDate() - dateA.getDate();
+        if (dayDiff !== 0) {
+          return dayDiff;
+        }
+      
+        // Hour comparison
+        const hourDiff = dateB.getHours() - dateA.getHours();
+        if (hourDiff !== 0) {
+          return hourDiff;
+        }
+      
+        // Minute comparison
+        const minuteDiff = dateB.getMinutes() - dateA.getMinutes();
+        if (minuteDiff !== 0) {
+          return minuteDiff;
+        }
+      
+        // Second comparison
+        const secondDiff = dateB.getSeconds() - dateA.getSeconds();
+        return secondDiff;
+      });
       
     // },
     // error => {
