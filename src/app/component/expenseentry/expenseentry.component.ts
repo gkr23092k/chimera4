@@ -293,31 +293,55 @@ export class ExpenseentryComponent implements OnInit {
     this.liablegivetemp = []
     this.dataarrayobjholder = []
     this.networth = 0
-    let tempdataarr = this.dataarrayobj.sort((a: any, b: any) => {
-      const dateA = new Date(a.Date);
-      const dateB = new Date(b.Date);
-
+    let tempdataarrnetworth = this.dataarrayobj.sort((a:any, b:any) => {
+      const dateA = new Date(b.Datecr);
+      const dateB = new Date(a.Datecr);
+    
+      // Year comparison
       const yearDiff = dateB.getFullYear() - dateA.getFullYear();
       if (yearDiff !== 0) {
         return yearDiff;
       }
-
+    
+      // Month comparison
       const monthDiff = dateB.getMonth() - dateA.getMonth();
       if (monthDiff !== 0) {
         return monthDiff;
       }
-
+    
+      // Day comparison
       const dayDiff = dateB.getDate() - dateA.getDate();
-      return dayDiff;
+      if (dayDiff !== 0) {
+        return dayDiff;
+      }
+    
+      // Hour comparison
+      const hourDiff = dateB.getHours() - dateA.getHours();
+      if (hourDiff !== 0) {
+        return hourDiff;
+      }
+    
+      // Minute comparison
+      const minuteDiff = dateB.getMinutes() - dateA.getMinutes();
+      if (minuteDiff !== 0) {
+        return minuteDiff;
+      }
+    
+      // Second comparison
+      const secondDiff = dateB.getSeconds() - dateA.getSeconds();
+      return secondDiff;
     });
-    const groupedByKeys = _.groupBy(tempdataarr, 'Name');
-    let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.first(group).AccountBalance);
-    resultObjectAcc
+    
+
+    console.log(tempdataarrnetworth)
+    const groupedByKeys = _.groupBy(tempdataarrnetworth, 'Name');
+    let resultObjectAcc: any = _.mapValues(groupedByKeys, group => _.last(group).AccountBalance);
     resultObjectAcc = _.values(resultObjectAcc);
     let resultObjectIhb: any = _.mapValues(groupedByKeys, group => _.first(group).InhandBalance);
     resultObjectIhb = _.values(resultObjectIhb);
     let accbalance = _.sum(resultObjectAcc);
     let ihbbalance = _.sum(resultObjectIhb);
+
 
     this.networth = accbalance + ihbbalance
     if (this.materialdropdown.length < 1) {
@@ -894,23 +918,46 @@ export class ExpenseentryComponent implements OnInit {
             this.comment = ((result.comment == '') ? 'No Comments' : result.comment)
             console.log(this.dataarrayobjholder)
 
-            let tempdataarr = this.dataarrayobjholder.sort((a: any, b: any) => {
-              const dateA = new Date(a.Date);
-              const dateB = new Date(b.Date);
-
+            let tempdataarr = this.dataarrayobjholder.sort((a:any, b:any) => {
+              const dateA = new Date(a.Datecr);
+              const dateB = new Date(b.Datecr);
+            
+              // Year comparison
               const yearDiff = dateB.getFullYear() - dateA.getFullYear();
               if (yearDiff !== 0) {
                 return yearDiff;
               }
-
+            
+              // Month comparison
               const monthDiff = dateB.getMonth() - dateA.getMonth();
               if (monthDiff !== 0) {
                 return monthDiff;
               }
-
+            
+              // Day comparison
               const dayDiff = dateB.getDate() - dateA.getDate();
-              return dayDiff;
+              if (dayDiff !== 0) {
+                return dayDiff;
+              }
+            
+              // Hour comparison
+              const hourDiff = dateB.getHours() - dateA.getHours();
+              if (hourDiff !== 0) {
+                return hourDiff;
+              }
+            
+              // Minute comparison
+              const minuteDiff = dateB.getMinutes() - dateA.getMinutes();
+              if (minuteDiff !== 0) {
+                return minuteDiff;
+              }
+            
+              // Second comparison
+              const secondDiff = dateB.getSeconds() - dateA.getSeconds();
+              return secondDiff;
             });
+            //  console.log(tempdataarr,'add bal sorted')
+
             this.accbalance = tempdataarr[0].AccountBalance
             this.inhandbalance = tempdataarr[0].InhandBalance
 
